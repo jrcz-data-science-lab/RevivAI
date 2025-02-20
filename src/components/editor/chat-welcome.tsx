@@ -1,0 +1,14 @@
+import { AnimatedText } from '../ui/animated-text';
+
+export function ChatWelcome() {
+	return (
+		<div>
+			<AnimatedText as="h1" className="text-2xl font-black font-serif mb-5">
+				Ask some question about your code!
+			</AnimatedText>
+			<AnimatedText delay={0.3} className="text-sm opacity-70">
+				It could be anything from "How do I create a new table?" to "What is the difference between a LEFT JOIN and a RIGHT JOIN?".
+			</AnimatedText>
+		</div>
+	);
+};

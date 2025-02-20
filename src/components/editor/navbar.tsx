@@ -1,19 +1,26 @@
-import { ArrowLeft, Settings, SunMoon } from 'lucide-react';
+import { ArrowLeft, PanelLeft, Settings, SunMoon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader } from '@/components/ui/dialog';
 import { ThemeToggle } from '../ui/theme-toggle';
+import { memo } from 'react';
 
-export function Navbar() {
+function Navbar() {
     return (
 		<div className="flex w-full justify-center">
-			<div className="w-full">
+			<div className="w-full flex gap-2">
 				<Button className="text-neutral-400" variant="ghost" round asChild>
 					<a href="/">
 						<ArrowLeft />
 						Go back
 					</a>
 				</Button>
+
+				{/* <Button className="text-neutral-400" variant="ghost" round size='icon' asChild>
+					<a href="/">
+						<PanelLeft />
+					</a>
+				</Button> */}
 			</div>
 
 			<Tabs defaultValue="account">
@@ -49,3 +56,5 @@ export function Navbar() {
 		</div>
 	);
 }
+
+export default memo(Navbar);
