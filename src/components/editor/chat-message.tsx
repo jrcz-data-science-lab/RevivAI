@@ -43,12 +43,10 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 				</motion.div>
 
 				{hasThinking && (
-					<div className="pb-4 -mx-6">
-						<span className="text-xs inline-block pb-4 pl-4 opacity-50">Reasoning</span>
-						<div className="text-sm p-6 rounded-xl bg-muted">
-							<ChatMarkdown>{message.think}</ChatMarkdown>
-						</div>
-					</div>
+                    <div className="text-sm p-6 pt-4 mb-8 rounded-xl bg-muted">
+                        <span className="text-xs inline-block mb-4 opacity-30">Reasoning</span>
+                        <ChatMarkdown>{message.think}</ChatMarkdown>
+                    </div>
 				)}
 
 				<div>
