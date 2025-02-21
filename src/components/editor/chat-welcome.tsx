@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { AnimatedText } from '../ui/animated-text';
 
-export function ChatWelcome() {
+function ChatWelcome() {
 	return (
 		<div>
 			<AnimatedText as="h1" className="text-2xl font-black font-serif mb-5">
@@ -12,3 +13,5 @@ export function ChatWelcome() {
 		</div>
 	);
 };
+
+export default memo(ChatWelcome);

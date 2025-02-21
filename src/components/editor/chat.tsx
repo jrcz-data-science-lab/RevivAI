@@ -1,23 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import { messages, PGlite } from '@electric-sql/pglite';
-
-import { CircleStop, LoaderPinwheel, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Toaster } from '@/components/ui/toaster';
-import { marked } from 'marked';
 
-import { useTokensCount } from '@/hooks/useTokensCount';
 import Navbar from './navbar';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { Separator } from '../ui/separator';
 import ChatInput from './chat-input';
 
 import { useChat } from '@/hooks/useChat';
-import { ChatWelcome } from './chat-welcome';
-import { ChatMessage } from './chat-message';
+import ChatMessage from './chat-message';
+import ChatWelcome from './chat-welcome';
 
 export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -68,17 +60,7 @@ export function Chat() {
 								const isLast = index === chat.messages.length - 1;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return (
-									<motion.div
-										key={message.id}
-										initial={{ opacity: 0, translateY: 16 }}
-										animate={{ opacity: isLast ? 1 : 0.5, scale: isLast ? 1 : 0.95, translateY: 0 }}
-										transition={{ duration: 0.3, type: isLast ? 'spring' : 'tween' }}
-										className={cn('message flex flex-col gap-6 origin-center', isLast && 'pb-32')}
-									>
-										<ChatMessage message={message} isWriting={isLast && isWriting} />
-									</motion.div>
-								);
+								return <ChatMessage key={message.id} message={message} isActive={isLast} isWriting={isWriting} />;
 							})}
 						</div>
 					)}

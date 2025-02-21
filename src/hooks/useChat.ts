@@ -14,23 +14,31 @@ export interface Message {
 
 export function useChat() {
 	const abortRef = useRef<AbortController | null>(null);
+
 	const [isStreaming, setIsStreaming] = useState(false);
 	const [messagesHistory, setMessagesHistory] = useState<Message[]>([]);
 	const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
 
+    /**
+     * Abort the current prompt request.
+     * This will stop the current prompt request and clear the current message.
+     */
 	const abort = useCallback(() => {
 		if (abortRef.current) abortRef.current?.abort();
 		abortRef.current = null;
-
 		setIsStreaming(false);
 	}, []);
 
+    /**
+     * Flush the current message to the history.
+     * This will add the current message to the history and clear the current message.
+     */
 	const flush = useCallback(() => {
 		if (currentMessage) {
 			setMessagesHistory((history) => [...history, currentMessage]);
 			setCurrentMessage(null);
 		}
-	}, [currentMessage]);
+	}, [currentMessage?.id]);
 
 	/**
 	 * Prompt the chat model with a given prompt.
@@ -38,8 +46,8 @@ export function useChat() {
 	 */
 	const prompt = useCallback(
 		async (text: string) => {
-			flush();
 			abort();
+			flush();
 
 			const abortController = new AbortController();
 			abortRef.current = abortController;
@@ -94,9 +102,10 @@ export function useChat() {
 
 			setIsStreaming(false);
 		},
-		[currentMessage],
+		[currentMessage?.id, abort, flush],
 	);
 
+    // All messages in the chat history
 	const messages = useMemo(() => {
 		return currentMessage ? [...messagesHistory, currentMessage] : messagesHistory;
 	}, [messagesHistory, currentMessage]);
