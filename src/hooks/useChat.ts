@@ -38,7 +38,7 @@ export function useChat() {
 			setMessagesHistory((history) => [...history, currentMessage]);
 			setCurrentMessage(null);
 		}
-	}, [currentMessage?.id]);
+	}, [currentMessage]);
 
 	/**
 	 * Prompt the chat model with a given prompt.
@@ -102,7 +102,7 @@ export function useChat() {
 
 			setIsStreaming(false);
 		},
-		[currentMessage?.id, abort, flush],
+		[currentMessage, abort, flush],
 	);
 
     // All messages in the chat history

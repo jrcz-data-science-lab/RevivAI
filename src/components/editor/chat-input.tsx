@@ -15,7 +15,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     const [input, setInput] = useState('');
-    const tokensCount = useTokensCount(input, 300);
+    const tokensCount = useTokensCount(input, 100);
 
     useEffect(() => {
         const abortCtrl = new AbortController();
