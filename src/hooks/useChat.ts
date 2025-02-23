@@ -1,114 +1,160 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { atom } from 'jotai';
-import { ollama } from 'ollama-ai-provider';
-import { streamText } from 'ai';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { streamText, type CoreMessage } from 'ai';
 import { chatModel } from '@/lib/ollama';
-import { produce } from 'immer';
 
-export interface Message {
-	id: string;
-	prompt: string;
-	think: string;
-	answer: string;
+interface ChatMessage {
+    id: string;
+    prompt: string;
+    think: string;
+    answer: string;
+}
+
+interface ChatError {
+    message: string;
+    code?: string;
+}
+
+interface ChatState {
+    messages: ChatMessage[];
+    isStreaming: boolean;
+    error: ChatError | null;
+    currentMessage: ChatMessage | null;
 }
 
 export function useChat() {
-	const abortRef = useRef<AbortController | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
+    
+    const [state, setState] = useState<ChatState>({
+        messages: [],
+        isStreaming: false,
+        error: null,
+        currentMessage: null,
+    });
 
-	const [isStreaming, setIsStreaming] = useState(false);
-	const [messagesHistory, setMessagesHistory] = useState<Message[]>([]);
-	const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
 
-    /**
-     * Abort the current prompt request.
-     * This will stop the current prompt request and clear the current message.
-     */
-	const abort = useCallback(() => {
-		if (abortRef.current) abortRef.current?.abort();
-		abortRef.current = null;
-		setIsStreaming(false);
-	}, []);
+    const abort = useCallback(() => {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = null;
+        setState(prev => ({ ...prev, isStreaming: false }));
+    }, []);
 
-    /**
-     * Flush the current message to the history.
-     * This will add the current message to the history and clear the current message.
-     */
-	const flush = useCallback(() => {
-		if (currentMessage) {
-			setMessagesHistory((history) => [...history, currentMessage]);
-			setCurrentMessage(null);
-		}
-	}, [currentMessage]);
+    const addMessage = useCallback((message: ChatMessage) => {
+        setState(prev => ({
+            ...prev,
+            messages: [...prev.messages, message],
+            currentMessage: null,
+        }));
+    }, []);
 
-	/**
-	 * Prompt the chat model with a given prompt.
-	 * @param prompt The prompt to send to the chat model.
-	 */
-	const prompt = useCallback(
-		async (text: string) => {
-			abort();
-			flush();
+    const prompt = useCallback(async (text: string) => {
+        // Cleanup previous state
+        abort();
+        if (state.currentMessage) {
+            addMessage(state.currentMessage);
+        }
 
-			const abortController = new AbortController();
-			abortRef.current = abortController;
+        // Create new message
+        const newMessage: ChatMessage = {
+            id: crypto.randomUUID(),
+            prompt: text,
+            think: '',
+            answer: '',
+        };
 
-			const { textStream } = streamText({
-				model: chatModel,
-				prompt: text,
-				abortSignal: abortController.signal,
-				onError: (error) => {
-					setIsStreaming(false);
-				},
-				onFinish: () => {
-					setIsStreaming(false);
-				},
-			});
+        setState(prev => ({
+            ...prev,
+            isStreaming: true,
+            error: null,
+            currentMessage: newMessage,
+        }));
 
-			if (!currentMessage) {
-				const newMessage: Message = {
-					id: Date.now().toString(),
-					prompt: text,
-					think: '',
-					answer: '',
-				};
+        // Setup abort controller
+        const abortController = new AbortController();
+        abortControllerRef.current = abortController;
 
-				setCurrentMessage(newMessage);
-			}
+        // Prepare message history
+        const messageHistory: CoreMessage[] = state.messages.flatMap(msg => ([
+            { role: 'user', content: msg.prompt },
+            { role: 'assistant', content: msg.answer }
+        ]));
 
-			setIsStreaming(true);
+		messageHistory.unshift({ role: 'system', content: 'Act as an idiot' });
+        messageHistory.push({ role: 'user', content: text });
 
-			let isThinking = false;
-			for await (const textPart of textStream) {
-				if (textPart.includes('<think>')) isThinking = true;
-				if (textPart.includes('</think>')) isThinking = false;
+        try {
+            const { textStream } = streamText({
+                model: chatModel,
+                messages: messageHistory,
+                abortSignal: abortController.signal,
+                maxTokens: 60_000,
+                temperature: 0.3,
+            });
 
-				setCurrentMessage((currentMessage) => {
-					if (!currentMessage) {
-						return {
-							id: Date.now().toString(),
-							prompt: text,
-							think: '',
-							answer: '',
-						};
-					}
+            let isThinking = false;
+            for await (let chunk of textStream) {
+                if (abortController.signal.aborted) break;
 
-					const responseType = isThinking ? 'think' : 'answer';
-					return {
-						...currentMessage,
-						[responseType]: currentMessage[responseType] + textPart,
-					};
-				});
-			}
+                // Handle thinking state
+                if (chunk.includes('<think>')) isThinking = true;
+                if (chunk.includes('</think>')) isThinking = false;
+                chunk = chunk.replace(/<\/?think>/g, '');
 
-			setIsStreaming(false);
-		},
-		[currentMessage, abort, flush],
-	);
+                // Update message content
+                setState(prev => {
+                    if (!prev.currentMessage) return prev;
+                    
+                    const field = isThinking ? 'think' : 'answer';
+                    return {
+                        ...prev,
+                        currentMessage: {
+                            ...prev.currentMessage,
+                            [field]: prev.currentMessage[field] + chunk,
+                        }
+                    };
+                });
+            }
 
-    // All messages in the chat history
-	const messages = useMemo(() => {
-		return currentMessage ? [...messagesHistory, currentMessage] : messagesHistory;
-	}, [messagesHistory, currentMessage]);
+            // Finalize message
+            setState(prev => {
+                if (!prev.currentMessage) return prev;
+                return {
+                    ...prev,
+                    messages: [...prev.messages, prev.currentMessage],
+                    currentMessage: null,
+                    isStreaming: false,
+                };
+            });
 
-	return { prompt, abort, messages, currentMessage, messagesHistory, isStreaming };
+        } catch (error) {
+            if ((error as Error)?.name === 'AbortError') return;
+
+			console.error(error);
+			
+            setState(prev => ({
+                ...prev,
+                error: {
+                    message: (error as Error)?.message || 'An error occurred',
+                    code: 'STREAM_ERROR'
+                },
+                isStreaming: false,
+            }));
+        }
+    }, [state.messages, state.currentMessage, abort, addMessage]);
+
+    return {
+		messages: [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[],
+		currentMessage: state.currentMessage,
+		isStreaming: state.isStreaming,
+		error: state.error,
+		prompt,
+		abort,
+	} as const;
 }
+
+export type { ChatMessage, ChatError };

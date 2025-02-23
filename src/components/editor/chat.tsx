@@ -1,15 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Textarea } from '@/components/ui/textarea';
+import { useEffect, useRef } from 'react';
 import { Toaster } from '@/components/ui/toaster';
-
-import Navbar from './navbar';
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import ChatInput from './chat-input';
-
 import { useChat } from '@/hooks/useChat';
-import ChatMessage from './chat-message';
+import { cn } from '@/lib/utils';
+import Navbar from './navbar';
+import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
+import ChatMessage from './chat-message';
 
 export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -22,11 +18,11 @@ export function Chat() {
 		const messageElement = chatContainerRef.current?.querySelector('.message:last-child');
 		if (!messageElement) return;
 
-		// const offset = 128;
-		// const top = messageElement.getBoundingClientRect().top + chatContainerRef.current.scrollTop - offset;
-		// chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
+		const offset = 128;
+		const top = messageElement.getBoundingClientRect().top + chatContainerRef.current.scrollTop - offset;
+		chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
 
-		messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		// messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	
 	}, [chatContainerRef, chat.currentMessage?.id]);
 
@@ -49,7 +45,7 @@ export function Chat() {
 					<div className="z-30 fixed top-0 left-0 w-full h-16 bg-gradient-to-b from-background to-transparent"></div>
 
 					{!chatActive && (
-						<div className="px-4">
+						<div className="px-0 prose dark:prose-invert">
 							<ChatWelcome />
 						</div>
 					)}
@@ -57,10 +53,17 @@ export function Chat() {
 					{chatActive && (
 						<div className="flex flex-col gap-12 py-32 pb-[60vh]">
 							{chat.messages.map((message, index) => {
+								if (!message) return null;
+
 								const isLast = index === chat.messages.length - 1;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return <ChatMessage key={message.id} message={message} isActive={isLast} isWriting={isWriting} />;
+								return <ChatMessage 
+									key={message.id} 
+									message={message} 
+									isActive={isLast} 
+									isWriting={isWriting} 
+								/>;
 							})}
 						</div>
 					)}

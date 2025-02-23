@@ -16,7 +16,7 @@ export default defineConfig({
       format: 'es',
     },
     optimizeDeps: {
-      exclude: ['@electric-sql/pglite', 'react-dropzone'],
+      exclude: ['@electric-sql/pglite'],
     },
   }
 });

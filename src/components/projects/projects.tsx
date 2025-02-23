@@ -23,13 +23,13 @@ export function Projects() {
 }
 
 
-	async function getDatabases() {
-        console.log(123)
-		const databases = await window.indexedDB.databases();
+	// async function getDatabases() {
+    //     console.log(123)
+	// 	const databases = await window.indexedDB.databases();
 
-		databases.map((db) => db.name);
-	}
+	// 	databases.map((db) => db.name);
+	// }
 
-	getDatabases().then(console.log);
+	// getDatabases().then(console.log);
 
     

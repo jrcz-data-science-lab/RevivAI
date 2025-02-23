@@ -1,0 +1,14 @@
+.markdown img {
+	display: none;
+}
+
+.markdown hr {
+	display: none;
+}
+
+.shiki {
+	font-size: 0.75rem;
+	padding: 0.75rem 1rem !important;
+	background-color: #262626 !important;
+	border-radius: var(--radius-xl) !important;
+}
