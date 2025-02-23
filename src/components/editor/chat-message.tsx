@@ -4,7 +4,6 @@ import { memo, lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
 import { LoaderPinwheel } from 'lucide-react';
 import { Separator } from '../ui/separator';
-// import ChatMarkdown from './chat-markdown';
 import ChatReasoning from './chat-reasoning';
 import { AnimatedText } from '../ui/animated-text';
 
@@ -31,10 +30,7 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 			className={cn('message w-full flex flex-col gap-6 origin-center p-6', isActive && 'pb-32')}
 		>
 			<div className="relative flex flex-col gap-2">
-				<AnimatedText speed={1} as='h3' className='text-2xl font-black font-serif'>
-					{message.prompt}
-				</AnimatedText>
-				{/* <h3 className={cn('break-words text-2xl font-black font-serif')}>{message.prompt}</h3> */}
+				<h3 className="text-2xl font-black font-serif">{message.prompt}</h3>
 
 				<Separator className="mb-4" />
 
@@ -52,11 +48,9 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 
 				{hasThinking && <ChatReasoning open={hasThinking && !hasAnswer} content={message.think} />}
 
-				<div className="prose dark:prose-invert">
-					<Suspense fallback={<p>{message.answer}</p>}>
-						<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>
-					</Suspense>
-				</div>
+				<Suspense fallback={<p className="prose dark:prose-invert">{message.answer}</p>}>
+					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>
+				</Suspense>
 			</div>
 
 			{/* <div className="flex justify-start items-center -mx-2">

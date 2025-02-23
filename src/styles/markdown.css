@@ -6,9 +6,18 @@
 	display: none;
 }
 
-.shiki {
+.markdown > pre {
 	font-size: 0.75rem;
 	padding: 0.75rem 1rem !important;
 	background-color: #262626 !important;
 	border-radius: var(--radius-xl) !important;
+}
+
+.markdown .shiki {
+	background-color: #262626 !important;
+}
+
+.markdown #shiki-container .languageLabel {
+	top: 0 !important;
+	right: 0 !important;
 }

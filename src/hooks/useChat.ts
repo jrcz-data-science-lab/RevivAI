@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { streamText, type CoreMessage } from 'ai';
-import { chatModel } from '@/lib/ollama';
+import { chatModel, reasoningModel } from '@/lib/ollama';
 
 interface ChatMessage {
     id: string;
@@ -89,7 +89,7 @@ export function useChat() {
 
         try {
             const { textStream } = streamText({
-                model: chatModel,
+                model: reasoningModel,
                 messages: messageHistory,
                 abortSignal: abortController.signal,
                 maxTokens: 60_000,
@@ -147,8 +147,11 @@ export function useChat() {
         }
     }, [state.messages, state.currentMessage, abort, addMessage]);
 
+    // Collect all messages 
+    const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
+
     return {
-		messages: [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[],
+		messages: messages,
 		currentMessage: state.currentMessage,
 		isStreaming: state.isStreaming,
 		error: state.error,
