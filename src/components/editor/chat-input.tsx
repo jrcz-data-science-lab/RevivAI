@@ -25,7 +25,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
             if (event.key !== 'Tab' && !event.metaKey) inputRef.current?.focus();
         });
 
-        return abortCtrl.abort;
+        return () => abortCtrl.abort();
     }, []);
 
     const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

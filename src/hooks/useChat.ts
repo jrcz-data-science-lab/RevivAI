@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { atom, useAtomValue } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { streamText, type CoreMessage } from 'ai';
@@ -34,6 +34,7 @@ export const selectedChatModelAtom = atomWithStorage<ChatModelKey>('selectedChat
 
 export function useChat() {
     const selectedModel = useAtomValue(selectedChatModelAtom);
+
     const abortControllerRef = useRef<AbortController | null>(null);
     
     const [state, setState] = useState<ChatState>({
@@ -42,6 +43,14 @@ export function useChat() {
         error: null,
         currentMessage: null,
     });
+
+    // Chat history for LLM prompt
+    const chatHistory = useMemo(() => {
+        return state.messages.flatMap((msg) => [
+            { role: 'user', content: msg.prompt },
+            { role: 'assistant', content: msg.answer },
+        ]) satisfies CoreMessage[];
+    }, [state.messages]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -68,10 +77,8 @@ export function useChat() {
 		async (text: string) => {
 			// Cleanup previous state
 			abort();
-			if (state.currentMessage) {
-				addMessage(state.currentMessage);
-			}
-
+			if (state.currentMessage) addMessage(state.currentMessage); // TODO: Fix this, its not adding current message to the prompt
+            
 			// Create new message
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
@@ -87,26 +94,21 @@ export function useChat() {
 				currentMessage: newMessage,
 			}));
 
-			// Setup abort controller
-			const abortController = new AbortController();
-			abortControllerRef.current = abortController;
-
 			// Prepare message history
-			const chatHistory: CoreMessage[] = state.messages.flatMap((msg) => [
-				{ role: 'user', content: msg.prompt },
-				{ role: 'assistant', content: msg.answer },
-			]);
-
-			chatHistory.unshift({
-				role: 'system',
-				content: 'Act as a helpful coding assistant. When responding with the code - specify programming language in markdown after quotes.',
-			});
-			chatHistory.push({ role: 'user', content: text });
+			const messages: CoreMessage[] = [
+				{ role: 'system', content: 'When responding with the code - specify programming language in markdown after quotes.' },
+				...chatHistory,
+				{ role: 'user', content: text },
+			];
 
 			try {
+				// Setup abort controller
+				const abortController = new AbortController();
+				abortControllerRef.current = abortController;
+
 				const { textStream } = streamText({
 					model: models[selectedModel].model,
-					messages: chatHistory,
+					messages,
 					abortSignal: abortController.signal,
 					maxTokens: 60_000,
 					temperature: 0.3,
@@ -161,7 +163,7 @@ export function useChat() {
 				}));
 			}
 		},
-		[state.messages, state.currentMessage, abort, addMessage, selectedModel],
+		[state.messages, state.currentMessage, abort, addMessage, selectedModel, chatHistory],
 	);
 
     // Collect all messages 

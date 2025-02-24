@@ -62,19 +62,14 @@ export function Chat() {
 						</div>
 					)}
 
-					<div
-						className={cn(
-							'w-full h-auto bg-background',
-							chatActive && 'flex justify-center absolute bottom-0 left-0',
-						)}
-					>
+					<div className={cn('w-full h-auto bg-background', chatActive && 'flex justify-center absolute bottom-0 left-0')}>
 						<motion.div
 							initial={{ opacity: 0, translateY: 16 }}
 							animate={{ opacity: 1, translateY: 0 }}
 							transition={{ duration: 0.6, type: 'spring' }}
 							className="max-w-prose w-full pb-8"
 						>
-							<ChatInput onSubmit={chat.prompt} onAbort={chat.abort} isStreaming={chat.isStreaming} />
+							<ChatInput onSubmit={(text) => chat.prompt(text)} onAbort={() => chat.abort()} isStreaming={chat.isStreaming} />
 						</motion.div>
 					</div>
 
