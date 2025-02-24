@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { CircleStop, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTokensCount } from '@/hooks/useTokensCount';
+import ChatModelSelect from './chat-model-select';
 
 interface ChatInputProps {
     onSubmit: (value: string) => void;
@@ -42,7 +43,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
     };
 
     return (
-        <div className="flex flex-col gap-2 w-full h-auto">
+        <div className="flex flex-col gap-3 w-full h-auto">
             <div id="chat-input" className="relative w-full h-auto">
                 <Button
                     size="icon"
@@ -50,11 +51,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
                     onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
                     className={cn('absolute bottom-1.5 right-1.5')}
                 >
-                    {isStreaming ? (
-                        <CircleStop />
-                    ) : (
-                        <Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />
-                    )}
+                    {isStreaming ? <CircleStop /> : <Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />}
                 </Button>
                 <Textarea
                     ref={inputRef}
@@ -64,12 +61,16 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
                     onChange={(event) => setInput(event.target.value)}
                 />
             </div>
-            <p className="text-xs text-muted-foreground">
-                Currently, context size is <b>{tokensCount}</b> {tokensCount === 1 ? 'token' : 'tokens'}.
-            </p>
+
+            <div className="flex justify-between">
+                <p className="text-xs text-muted-foreground">
+                    Currently, context size is <b>{tokensCount}</b> {tokensCount === 1 ? 'token' : 'tokens'}.
+                </p>
+
+                <ChatModelSelect />
+            </div>
         </div>
     );
 }
-
 
 export default memo(ChatInput);

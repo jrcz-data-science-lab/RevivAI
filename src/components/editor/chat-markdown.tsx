@@ -9,6 +9,7 @@ const ChatMarkdown = ({ children, ...props }: { children: string }) => {
             <ReactMarkdown 
                 rehypePlugins={[rehypeInlineCodeProperty]} 
                 components={{ code: CodeHighlight }}
+                disallowedElements={['img', 'hr']}
             >
                 {children.trim()}
             </ReactMarkdown>

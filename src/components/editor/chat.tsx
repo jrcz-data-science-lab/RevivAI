@@ -6,6 +6,7 @@ import Navbar from './navbar';
 import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
+import { motion } from 'motion/react';
 
 export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -38,14 +39,12 @@ export function Chat() {
 			<Toaster />
 
 			<div className="flex justify-center items-center">
-				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose mx-auto overflow-x-hidden gap-2 px-4">
+				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{/* Gradient overlays */}
-					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
-					<div className="z-30 fixed top-0 left-0 w-full h-24 bg-gradient-to-b from-background to-transparent"></div>
-					<div className="z-30 fixed top-0 left-0 w-full h-16 bg-gradient-to-b from-background to-transparent"></div>
+					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent not-dark:hidden"></div>
 
 					{!chatActive && (
-						<div className="px-0 prose dark:prose-invert">
+						<div className="mb-12">
 							<ChatWelcome />
 						</div>
 					)}
@@ -58,24 +57,35 @@ export function Chat() {
 								const isLast = index === chat.messages.length - 1;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return <ChatMessage 
-									key={message.id} 
-									message={message} 
-									isActive={isLast} 
-									isWriting={isWriting} 
-								/>;
+								return <ChatMessage key={message.id} message={message} isActive={isLast} isWriting={isWriting} />;
 							})}
 						</div>
 					)}
 
 					<div
 						className={cn(
+							'w-full h-auto bg-background',
+							chatActive && 'flex justify-center absolute bottom-0 left-0',
+						)}
+					>
+						<motion.div
+							initial={{ opacity: 0, translateY: 16 }}
+							animate={{ opacity: 1, translateY: 0 }}
+							transition={{ duration: 0.6, type: 'spring' }}
+							className="max-w-prose w-full pb-8"
+						>
+							<ChatInput onSubmit={chat.prompt} onAbort={chat.abort} isStreaming={chat.isStreaming} />
+						</motion.div>
+					</div>
+
+					{/* <div
+						className={cn(
 							'flex flex-col gap-2 w-full h-auto mt-16 max-w-prose bg-background',
 							chatActive && 'absolute bottom-0 pb-8 pr-8 w-full',
 						)}
 					>
 						<ChatInput onSubmit={chat.prompt} onAbort={chat.abort} isStreaming={chat.isStreaming} />
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

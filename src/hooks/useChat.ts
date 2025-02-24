@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { atom, useAtomValue } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { streamText, type CoreMessage } from 'ai';
 import { chatModel, reasoningModel } from '@/lib/ollama';
 
@@ -21,7 +23,17 @@ interface ChatState {
     currentMessage: ChatMessage | null;
 }
 
+export const models = {
+	default: { name: chatModel.modelId, model: chatModel },
+	reasoning: { name: reasoningModel.modelId, model: reasoningModel }
+};
+
+export type ChatModelKey = keyof typeof models;
+
+export const selectedChatModelAtom = atomWithStorage<ChatModelKey>('selectedChatModel', 'default');
+
 export function useChat() {
+    const selectedModel = useAtomValue(selectedChatModelAtom);
     const abortControllerRef = useRef<AbortController | null>(null);
     
     const [state, setState] = useState<ChatState>({
@@ -52,100 +64,105 @@ export function useChat() {
         }));
     }, []);
 
-    const prompt = useCallback(async (text: string) => {
-        // Cleanup previous state
-        abort();
-        if (state.currentMessage) {
-            addMessage(state.currentMessage);
-        }
+    const prompt = useCallback(
+		async (text: string) => {
+			// Cleanup previous state
+			abort();
+			if (state.currentMessage) {
+				addMessage(state.currentMessage);
+			}
 
-        // Create new message
-        const newMessage: ChatMessage = {
-            id: crypto.randomUUID(),
-            prompt: text,
-            think: '',
-            answer: '',
-        };
+			// Create new message
+			const newMessage: ChatMessage = {
+				id: crypto.randomUUID(),
+				prompt: text,
+				think: '',
+				answer: '',
+			};
 
-        setState(prev => ({
-            ...prev,
-            isStreaming: true,
-            error: null,
-            currentMessage: newMessage,
-        }));
+			setState((prev) => ({
+				...prev,
+				isStreaming: true,
+				error: null,
+				currentMessage: newMessage,
+			}));
 
-        // Setup abort controller
-        const abortController = new AbortController();
-        abortControllerRef.current = abortController;
+			// Setup abort controller
+			const abortController = new AbortController();
+			abortControllerRef.current = abortController;
 
-        // Prepare message history
-        const messageHistory: CoreMessage[] = state.messages.flatMap(msg => ([
-            { role: 'user', content: msg.prompt },
-            { role: 'assistant', content: msg.answer }
-        ]));
+			// Prepare message history
+			const chatHistory: CoreMessage[] = state.messages.flatMap((msg) => [
+				{ role: 'user', content: msg.prompt },
+				{ role: 'assistant', content: msg.answer },
+			]);
 
-		messageHistory.unshift({ role: 'system', content: 'Act as an idiot' });
-        messageHistory.push({ role: 'user', content: text });
+			chatHistory.unshift({
+				role: 'system',
+				content: 'Act as a helpful coding assistant. When responding with the code - specify programming language in markdown after quotes.',
+			});
+			chatHistory.push({ role: 'user', content: text });
 
-        try {
-            const { textStream } = streamText({
-                model: reasoningModel,
-                messages: messageHistory,
-                abortSignal: abortController.signal,
-                maxTokens: 60_000,
-                temperature: 0.3,
-            });
+			try {
+				const { textStream } = streamText({
+					model: models[selectedModel].model,
+					messages: chatHistory,
+					abortSignal: abortController.signal,
+					maxTokens: 60_000,
+					temperature: 0.3,
+				});
 
-            let isThinking = false;
-            for await (let chunk of textStream) {
-                if (abortController.signal.aborted) break;
+				let isThinking = false;
+				for await (let chunk of textStream) {
+					if (abortController.signal.aborted) break;
 
-                // Handle thinking state
-                if (chunk.includes('<think>')) isThinking = true;
-                if (chunk.includes('</think>')) isThinking = false;
-                chunk = chunk.replace(/<\/?think>/g, '');
+					// Handle thinking state
+					if (chunk.includes('<think>')) isThinking = true;
+					if (chunk.includes('</think>')) isThinking = false;
+					chunk = chunk.replace(/<\/?think>/g, '');
 
-                // Update message content
-                setState(prev => {
-                    if (!prev.currentMessage) return prev;
-                    
-                    const field = isThinking ? 'think' : 'answer';
-                    return {
-                        ...prev,
-                        currentMessage: {
-                            ...prev.currentMessage,
-                            [field]: prev.currentMessage[field] + chunk,
-                        }
-                    };
-                });
-            }
+					// Update message content
+					setState((prev) => {
+						if (!prev.currentMessage) return prev;
 
-            // Finalize message
-            setState(prev => {
-                if (!prev.currentMessage) return prev;
-                return {
-                    ...prev,
-                    messages: [...prev.messages, prev.currentMessage],
-                    currentMessage: null,
-                    isStreaming: false,
-                };
-            });
+						const field = isThinking ? 'think' : 'answer';
+						return {
+							...prev,
+							currentMessage: {
+								...prev.currentMessage,
+								[field]: prev.currentMessage[field] + chunk,
+							},
+						};
+					});
+				}
 
-        } catch (error) {
-            if ((error as Error)?.name === 'AbortError') return;
+				// Finalize message
+				setState((prev) => {
+					if (!prev.currentMessage) return prev;
+					return {
+						...prev,
+						messages: [...prev.messages, prev.currentMessage],
+						currentMessage: null,
+						isStreaming: false,
+					};
+				});
+			} catch (error) {
+				if ((error as Error)?.name === 'AbortError') return;
 
-			console.error(error);
-			
-            setState(prev => ({
-                ...prev,
-                error: {
-                    message: (error as Error)?.message || 'An error occurred',
-                    code: 'STREAM_ERROR'
-                },
-                isStreaming: false,
-            }));
-        }
-    }, [state.messages, state.currentMessage, abort, addMessage]);
+				console.error(error);
+
+				setState((prev) => ({
+					...prev,
+					error: {
+						message: (error as Error)?.message || 'An error occurred',
+						code: 'STREAM_ERROR',
+					},
+					isStreaming: false,
+				}));
+			}
+		},
+		[state.messages, state.currentMessage, abort, addMessage, selectedModel],
+	);
 
     // Collect all messages 
     const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];

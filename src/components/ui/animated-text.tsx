@@ -23,7 +23,7 @@ export function AnimatedText({ as: Element = 'p', delay = 0, speed = 0.6, classN
 						initial={{ translateY: 64 }}
 						animate={{ translateY: 0 }}
 						exit={{ opacity: 0 }}
-						transition={{ duration: speed, type: 'spring', delay: delay + i * (speed / words.length) }}
+						transition={{ duration: speed, type: 'spring', delay: delay + i * 0.02 }}
 					>
 						{word}
 					</motion.span>
