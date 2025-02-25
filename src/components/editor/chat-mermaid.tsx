@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDebounce } from '@/hooks/useDebounce';
+import { cn } from '@/lib/utils';
 
 mermaid.initialize({ startOnLoad: true, theme: 'neutral', darkMode: true });
 
@@ -25,5 +26,5 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 	}, [code]);
 
 
-	return <div className={`flex justify-center items-center min-h-32`} dangerouslySetInnerHTML={{ __html:  rendered ?? children }} />;
+	return <div className={cn(`flex min-h-32`, rendered && 'justify-center items-center')} dangerouslySetInnerHTML={{ __html:  rendered ?? children }} />;
 }

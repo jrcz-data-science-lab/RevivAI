@@ -3,8 +3,7 @@ import MainLayout from './main-layout.astro';
 ---
 
 <!-- React Scan in dev mode -->
-<script crossorigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js"></script>
-
+<!-- <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js"></script> -->
 <MainLayout>
 	<div class="relative flex flex-col items-center justify-center mx-auto min-h-screen overflow-x-hidden">
 		<slot />
@@ -13,20 +12,10 @@ import MainLayout from './main-layout.astro';
 
 <script is:inline>
 	function getThemePreference() {
-		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-			return localStorage.getItem('theme');
-		}
+		if (localStorage) return localStorage.getItem('theme') ?? 'light';
 		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 	}
 
 	const isDark = getThemePreference() === 'dark';
 	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
-
-	// if (typeof localStorage !== 'undefined') {
-	// 	const observer = new MutationObserver(() => {
-	// 		const isDark = document.documentElement.classList.contains('dark');
-	// 		localStorage.setItem('theme', isDark ? 'dark' : 'light');
-	// 	});
-	// 	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-	// }
 </script>

@@ -16,14 +16,14 @@ export function Chat() {
 		if (!chatContainerRef.current) return;
 		if (!chat.currentMessage) return;
 
+		// Select last message
 		const messageElement = chatContainerRef.current?.querySelector('.message:last-child');
 		if (!messageElement) return;
 
+		// Scroll to last message
 		const offset = 128;
 		const top = messageElement.getBoundingClientRect().top + chatContainerRef.current.scrollTop - offset;
 		chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
-
-		// messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	
 	}, [chatContainerRef, chat.currentMessage?.id]);
 
@@ -72,15 +72,6 @@ export function Chat() {
 							<ChatInput onSubmit={(text) => chat.prompt(text)} onAbort={() => chat.abort()} isStreaming={chat.isStreaming} />
 						</motion.div>
 					</div>
-
-					{/* <div
-						className={cn(
-							'flex flex-col gap-2 w-full h-auto mt-16 max-w-prose bg-background',
-							chatActive && 'absolute bottom-0 pb-8 pr-8 w-full',
-						)}
-					>
-						<ChatInput onSubmit={chat.prompt} onAbort={chat.abort} isStreaming={chat.isStreaming} />
-					</div> */}
 				</div>
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { ArrowLeft, PanelLeft, Settings, SunMoon } from 'lucide-react';
+import { ArrowLeft, PanelLeft, Settings, SlidersHorizontal, SunMoon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader } from '@/components/ui/dialog';
@@ -15,12 +15,6 @@ function Navbar() {
 						Go back
 					</a>
 				</Button>
-
-				{/* <Button className="text-neutral-400" variant="ghost" round size='icon' asChild>
-					<a href="/">
-						<PanelLeft />
-					</a>
-				</Button> */}
 			</div>
 
 			<Tabs defaultValue="account">
@@ -40,7 +34,7 @@ function Navbar() {
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant="ghost" round size="icon">
-							<Settings />
+							<SlidersHorizontal />
 						</Button>
 					</DialogTrigger>
 					<DialogContent>

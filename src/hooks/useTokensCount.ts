@@ -3,7 +3,7 @@ import { useDebounce } from './useDebounce';
 import { Tiktoken } from 'js-tiktoken/lite';
 import o200kBase from 'js-tiktoken/ranks/o200k_base';
 
-const enc = new Tiktoken(o200kBase);
+export const enc = new Tiktoken(o200kBase);
 
 /**
  * Hook to count the number of tokens in a given input string.

@@ -10,12 +10,12 @@
 	background-color: #262626 !important;
 }
 
+.markdown #shiki-container {
+	min-height: 1ch;
+}
+
 .markdown #shiki-container .languageLabel {
 	top: 0 !important;
 	right: 0 !important;
+	color: rgb(84, 84, 84) !important;
 }
-/* 
-.markdown pre {
-	margin: 0 -8 rem !important;
-	background-color: var(--muted) !important;
-} */

@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
+import { memo } from 'react';
 
-export default function Title() {
-
+function Title() {
 	return (
 		<h1 className="flex flex-col items-center gap-2 text-4xl font-serif max-md:text-2xl max-md:gap-1">
 			{/* Automatically generate */}
@@ -76,3 +76,6 @@ export default function Title() {
 		</h1>
 	);
 }
+
+
+export default memo(Title);

@@ -5,6 +5,10 @@ import { CircleStop, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTokensCount } from '@/hooks/useTokensCount';
 import ChatModelSelect from './chat-model-select';
+import { contextSizeAtom } from '@/hooks/useChat';
+import { useAtomValue } from 'jotai';
+
+const formatter = new Intl.NumberFormat('en', { notation: 'compact' });
 
 interface ChatInputProps {
     onSubmit: (value: string) => void;
@@ -13,6 +17,7 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
+    const contextSize = useAtomValue(contextSizeAtom);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     const [input, setInput] = useState('');
@@ -43,34 +48,34 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
     };
 
     return (
-        <div className="flex flex-col gap-3 w-full h-auto">
-            <div id="chat-input" className="relative w-full h-auto">
-                <Button
-                    size="icon"
-                    variant={isStreaming ? 'outline' : 'link'}
-                    onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
-                    className={cn('absolute bottom-1.5 right-1.5')}
-                >
-                    {isStreaming ? <CircleStop /> : <Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />}
-                </Button>
-                <Textarea
-                    ref={inputRef}
-                    placeholder="Type your message here."
-                    value={input}
-                    onKeyDown={handleKeydown}
-                    onChange={(event) => setInput(event.target.value)}
-                />
-            </div>
+		<div className="flex flex-col gap-3 w-full h-auto">
+			<div id="chat-input" className="relative w-full h-auto">
+				<Button
+					size="icon"
+					variant={isStreaming ? 'outline' : 'link'}
+					onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
+					className={cn('absolute bottom-1.5 right-1.5')}
+				>
+					{isStreaming ? <CircleStop /> : <Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />}
+				</Button>
+				<Textarea
+					ref={inputRef}
+					placeholder="Type your message here."
+					value={input}
+					onKeyDown={handleKeydown}
+					onChange={(event) => setInput(event.target.value)}
+				/>
+			</div>
 
-            <div className="flex justify-between">
-                <p className="text-xs text-muted-foreground">
-                    Currently, context size is <b>{tokensCount}</b> {tokensCount === 1 ? 'token' : 'tokens'}.
-                </p>
+			<div className="flex justify-between align-center">
+				<p className="text-xs text-muted-foreground px-1">
+					Currently, context size is <b>{formatter.format(contextSize)}</b> {contextSize === 1 ? 'token' : 'tokens'}.
+				</p>
 
-                <ChatModelSelect />
-            </div>
-        </div>
-    );
+				<ChatModelSelect />
+			</div>
+		</div>
+	);
 }
 
 export default memo(ChatInput);
