@@ -1,6 +1,7 @@
 import { memo, type ReactNode } from 'react';
 import ShikiHighlighter, { isInlineCode, type Element } from 'react-shiki';
 import { ChatMermaid } from './chat-mermaid';
+import { useTheme } from '@/hooks/useTheme';
 
 interface CodeHighlightProps {
 	className?: string;
@@ -8,15 +9,17 @@ interface CodeHighlightProps {
 	node?: Element;
 }
 
-const CodeHighlight = ({ className, children, node, ...props }: CodeHighlightProps) => {
+const CodeHighlight = ({ className, children, node }: CodeHighlightProps) => {
 	const match = className?.match(/language-(\w+)/);
 	const language = match ? match[1] : undefined;
     const isInline = node ? isInlineCode(node) : undefined;
 
+	// Mermaid diagram rendering
 	if (language === 'mermaid') {
 		return <ChatMermaid>{String(children)}</ChatMermaid>;
 	}
 
+	// Is inline rendering
     if (isInline) {
         return (
 			<code className={className}>
@@ -25,8 +28,16 @@ const CodeHighlight = ({ className, children, node, ...props }: CodeHighlightPro
 		);
     }
 
+	// Shiki highlighter
 	return (
-		<ShikiHighlighter language={language} delay={300} as={'div'} addDefaultStyles={false} theme={'material-theme-darker'} className={className}>
+		<ShikiHighlighter
+			language={language}
+			delay={300}
+			as={'div'}
+			addDefaultStyles={false}
+			theme={'vitesse-dark'}
+			className={className}
+		>
 			{String(children)}
 		</ShikiHighlighter>
 	);

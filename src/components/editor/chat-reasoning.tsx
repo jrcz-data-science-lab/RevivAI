@@ -4,6 +4,7 @@ import { ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../ui/collapsible';
 import ChatMarkdown from './chat-markdown';
 import { cn } from '@/lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface ChatReasoningProps {
     open: boolean;

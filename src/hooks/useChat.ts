@@ -11,7 +11,7 @@ import { enc } from './useTokensCount';
 export interface ChatMessage {
 	id: string;
 	prompt: string;
-	think: string;
+	reasoning: string;
 	answer: string;
 }
 
@@ -81,7 +81,7 @@ export function useChat() {
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
 				prompt: text,
-				think: '',
+				reasoning: '',
 				answer: '',
 			};
 
@@ -94,7 +94,7 @@ export function useChat() {
 
 			// Prepare message history
 			const messages: CoreMessage[] = [
-				{ role: 'system', content: mermaidTutorial },
+				// { role: 'system', content: mermaidTutorial },
 				{ role: 'system', content: 'When responding with the code - specify programming language in markdown after quotes.' },
 				...chatHistory,
 				{ role: 'user', content: text },
@@ -114,6 +114,14 @@ export function useChat() {
 					messages,
 					maxTokens: 60_000,
 					temperature: 0.3,
+					onError: (error) => {
+						setState(
+							produce((draft) => {
+								draft.isStreaming = false;
+								draft.error = '' + error?.error;
+							}),
+						);
+					}
 				});
 
 				for await (let chunk of fullStream) {
@@ -125,7 +133,7 @@ export function useChat() {
 							draft.isStreaming = true;
 							
 							if (chunk.type === 'reasoning') {
-								draft.currentMessage.think += chunk.textDelta;
+								draft.currentMessage.reasoning += chunk.textDelta;
 							}
 
 							if (chunk.type === 'text-delta') {
@@ -159,7 +167,7 @@ export function useChat() {
 		},
 		[state.messages, state.currentMessage, abort, addMessage, selectedModel, chatHistory],
 	);
-
+		
 	// Collect all messages
 	const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
 

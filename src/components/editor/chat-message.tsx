@@ -5,7 +5,6 @@ import { motion } from 'motion/react';
 import { LoaderPinwheel } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import ChatReasoning from './chat-reasoning';
-
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {
@@ -15,7 +14,7 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
-	const hasThinking = message.think.replace(/<\/?think>/g, '').trim() !== '';
+	const hasReasoning = message.reasoning.trim() !== '';
 	const hasAnswer = message.answer.trim() !== '';
 
 	return (
@@ -23,13 +22,13 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 			initial={{ opacity: 0, translateY: 16 }}
 			animate={{ opacity: isActive ? 1 : 0.7, scale: isActive ? 1 : 0.95, translateY: 0 }}
 			transition={{ duration: 0.3, type: isActive ? 'spring' : 'tween' }}
-			className={cn('message w-full flex flex-col gap-6 origin-center', isActive && 'pb-32')}
+			className={cn('message w-full flex flex-col gap-6 origin-center')}
 		>
 			<div className="relative flex flex-col gap-2">
 				<h3 className="text-2xl font-black font-serif">{message.prompt}</h3>
 
 				<Separator className="mb-4" />
-
+							
 				<motion.div
 					className="absolute -left-10 top-1.5 opacity-60"
 					initial={{ opacity: 0 }}
@@ -42,7 +41,7 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 					<LoaderPinwheel className="animate-spin" />
 				</motion.div>
 
-				{hasThinking && <ChatReasoning open={hasThinking && !hasAnswer} content={message.think} />}
+				{hasReasoning && <ChatReasoning open={hasReasoning && !hasAnswer} content={message.reasoning} />}
 
 				<Suspense fallback={<p className="prose dark:prose-invert">{message.answer}</p>}>
 					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>

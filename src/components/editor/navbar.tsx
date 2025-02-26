@@ -1,11 +1,13 @@
-import { ArrowLeft, PanelLeft, Settings, SlidersHorizontal, SunMoon } from 'lucide-react';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader } from '@/components/ui/dialog';
-import { ThemeToggle } from '../ui/theme-toggle';
 import { memo } from 'react';
+import Settings from './settings';
+import { useTheme } from '@/hooks/useTheme';
 
 function Navbar() {
+	const { theme, toggle } = useTheme();
+	
     return (
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
@@ -29,23 +31,11 @@ function Navbar() {
 			</Tabs>
 
 			<div className="w-full flex gap-2 justify-end">
-				<ThemeToggle />
+				<Button variant="ghost" round size="icon" onClick={toggle}>
+					{theme === 'dark' ? <Sun /> : <Moon />}
+				</Button>
 
-				<Dialog>
-					<DialogTrigger asChild>
-						<Button variant="ghost" round size="icon">
-							<SlidersHorizontal />
-						</Button>
-					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Are you absolutely sure?</DialogTitle>
-							<DialogDescription>
-								This action cannot be undone. This will permanently delete your account and remove your data from our servers.
-							</DialogDescription>
-						</DialogHeader>
-					</DialogContent>
-				</Dialog>
+				<Settings />
 			</div>
 		</div>
 	);

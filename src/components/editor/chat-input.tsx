@@ -1,14 +1,15 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CircleStop, Send } from 'lucide-react';
+import { CircleStop, CircleX, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTokensCount } from '@/hooks/useTokensCount';
 import ChatModelSelect from './chat-model-select';
 import { contextSizeAtom } from '@/hooks/useChat';
 import { useAtomValue } from 'jotai';
+import { Alert, AlertTitle, AlertDescription } from '../ui/alert';
 
-const formatter = new Intl.NumberFormat('en', { notation: 'compact' });
+const formatter = new Intl.NumberFormat('en', { notation: 'standard' });
 
 interface ChatInputProps {
     onSubmit: (value: string) => void;
@@ -49,6 +50,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 
     return (
 		<div className="flex flex-col gap-3 w-full h-auto">
+
 			<div id="chat-input" className="relative w-full h-auto">
 				<Button
 					size="icon"

@@ -1,15 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { useChat } from '@/hooks/useChat';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import Navbar from './navbar';
 import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
-import { motion } from 'motion/react';
+import { ChatError } from './chat-error';
+import { useTheme } from '@/hooks/useTheme';
 
 export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
+	const { theme } = useTheme();
 	const chat = useChat();
 
 	useEffect(() => {
@@ -36,12 +39,12 @@ export function Chat() {
 				<Navbar />
 			</div>
 
-			<Toaster />
+			<Toaster theme={theme} position="bottom-left" />
 
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{/* Gradient overlays */}
-					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent not-dark:hidden"></div>
+					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
 
 					{!chatActive && (
 						<div className="mb-12">
@@ -62,13 +65,17 @@ export function Chat() {
 						</div>
 					)}
 
-					<div className={cn('w-full h-auto bg-background', chatActive && 'flex justify-center absolute bottom-0 left-0')}>
+					<div className={cn('w-full h-auto bg-background', chatActive && 'flex flex-col items-center absolute bottom-0 left-0')}>
 						<motion.div
 							initial={{ opacity: 0, translateY: 16 }}
 							animate={{ opacity: 1, translateY: 0 }}
 							transition={{ duration: 0.6, type: 'spring' }}
 							className="max-w-prose w-full pb-8"
 						>
+							<AnimatePresence>
+								{chat.error && <ChatError error={chat.error} />}
+							</AnimatePresence>
+
 							<ChatInput onSubmit={(text) => chat.prompt(text)} onAbort={() => chat.abort()} isStreaming={chat.isStreaming} />
 						</motion.div>
 					</div>
