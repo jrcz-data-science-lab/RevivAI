@@ -114,14 +114,7 @@ export function useChat() {
 					messages,
 					maxTokens: 60_000,
 					temperature: 0.3,
-					onError: (error) => {
-						setState(
-							produce((draft) => {
-								draft.isStreaming = false;
-								draft.error = '' + error?.error;
-							}),
-						);
-					}
+					onError: ({ error }) => handleError(error as Error),
 				});
 
 				for await (let chunk of fullStream) {
@@ -131,13 +124,17 @@ export function useChat() {
 						produce((draft) => {
 							if (!draft.currentMessage) return;
 							draft.isStreaming = true;
-							
-							if (chunk.type === 'reasoning') {
-								draft.currentMessage.reasoning += chunk.textDelta;
-							}
 
-							if (chunk.type === 'text-delta') {
-								draft.currentMessage.answer += chunk.textDelta;
+							switch (chunk.type) {
+								case 'reasoning':
+									draft.currentMessage.reasoning += chunk.textDelta;
+									break;
+								case 'text-delta':
+									draft.currentMessage.answer += chunk.textDelta;
+									break;
+								case 'error':
+									handleError(chunk.error as Error);
+									break;
 							}
 						}),
 					);
@@ -147,7 +144,6 @@ export function useChat() {
 				setState(
 					produce((draft) => {
 						if (!draft.currentMessage) return;
-
 						draft.messages.push(draft.currentMessage);
 						draft.currentMessage = null;
 						draft.isStreaming = false;
@@ -156,17 +152,24 @@ export function useChat() {
 
 			} catch (error: any) {
 				if (error?.name === 'AbortError') return;
-
-				setState(
-					produce((draft) => {
-						draft.isStreaming = false;
-						draft.error = error?.message ?? 'An error occured';
-					}),
-				);
+				handleError(error?.message);
 			}
 		},
 		[state.messages, state.currentMessage, abort, addMessage, selectedModel, chatHistory],
 	);
+
+	/**
+	 * Handle streaming errors
+	 */
+	const handleError = useCallback((error: Error) => {
+		setState(
+			produce((draft) => {
+				draft.isStreaming = false;
+				draft.error = error?.message ?? 'An error occured';
+			}),
+		);
+	}, []);
+
 		
 	// Collect all messages
 	const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
