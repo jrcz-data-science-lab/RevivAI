@@ -72,9 +72,7 @@ export function Chat() {
 							transition={{ duration: 0.6, type: 'spring' }}
 							className="max-w-prose w-full pb-8"
 						>
-							<AnimatePresence>
-								{chat.error && <ChatError error={chat.error} />}
-							</AnimatePresence>
+							<AnimatePresence>{chat.errorMessage && <ChatError errorMessage={chat.errorMessage} />}</AnimatePresence>
 
 							<ChatInput onSubmit={(text) => chat.prompt(text)} onAbort={() => chat.abort()} isStreaming={chat.isStreaming} />
 						</motion.div>

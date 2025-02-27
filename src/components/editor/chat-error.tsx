@@ -3,13 +3,13 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { CircleX } from 'lucide-react';
 
 interface ChatErrorProps {
-    error: string | null;
+	errorMessage: string | null;
 }
 
-export function ChatError({ error }: ChatErrorProps) {
-    if (!error) return null;
+export function ChatError({ errorMessage }: ChatErrorProps) {
+	if (!errorMessage) return null;
 
-    return (
+	return (
 		<motion.div
 			initial={{ opacity: 0, translateY: 16 }}
 			animate={{ opacity: 1, translateY: 0 }}
@@ -20,7 +20,7 @@ export function ChatError({ error }: ChatErrorProps) {
 			<Alert variant="destructive">
 				<CircleX className="h-4 w-4" />
 				<AlertTitle>Error sending request to LLM!</AlertTitle>
-				<AlertDescription>{error}</AlertDescription>
+				<AlertDescription>{errorMessage}</AlertDescription>
 			</Alert>
 		</motion.div>
 	);

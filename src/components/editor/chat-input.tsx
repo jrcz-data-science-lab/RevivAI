@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CircleStop, CircleX, Send } from 'lucide-react';
@@ -18,11 +18,13 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
-    const contextSize = useAtomValue(contextSizeAtom);
     const inputRef = useRef<HTMLTextAreaElement>(null);
-
     const [input, setInput] = useState('');
+
+    // Display context size
+    const contextSize = useAtomValue(contextSizeAtom);
     const tokensCount = useTokensCount(input, 100);
+    const totalTokens = useMemo(() => tokensCount + contextSize, [tokensCount, contextSize]);
 
     useEffect(() => {
         const abortCtrl = new AbortController();
@@ -34,23 +36,22 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
         return () => abortCtrl.abort();
     }, []);
 
-    const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const submitMessage = useCallback((value: string) => {
+        if (value === '') return;
+        setInput('');
+        onSubmit(value);
+    }, [onSubmit]);
+
+    const handleKeydown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
         if (event.key === 'Enter') {
             event.preventDefault();
             submitMessage(event.currentTarget.value);
         }
-    };
-
-    const submitMessage = (value: string) => {
-        if (value === '') return;
-        setInput('');
-        onSubmit(value);
-    };
+    }, [submitMessage]);
 
     return (
 		<div className="flex flex-col gap-3 w-full h-auto">
-
 			<div id="chat-input" className="relative w-full h-auto">
 				<Button
 					size="icon"
@@ -71,7 +72,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 
 			<div className="flex justify-between align-center">
 				<p className="text-xs text-muted-foreground px-1">
-					Currently, context size is <b>{formatter.format(contextSize)}</b> {contextSize === 1 ? 'token' : 'tokens'}.
+					Currently, context size is <b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}.
 				</p>
 
 				<ChatModelSelect />

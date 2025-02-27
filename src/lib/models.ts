@@ -6,7 +6,6 @@ const ollama = createOllama({ baseURL: import.meta.env.PUBLIC_OLLAMA_API_URL });
 
 // Create a type for the model keys
 export type LanguageModelKey = keyof typeof languageModels;
-
 export type EmbeddingModelKey = keyof typeof embeddingModels;
 
 // Export the LLMs
@@ -18,7 +17,7 @@ export const languageModels = {
 	reasoning: {
 		name: 'DeepSeek R1',
 		model: wrapLanguageModel({
-			model: ollama('deepseek-r1'),
+			model: ollama('deepseek-r1:latest'),
 			middleware: extractReasoningMiddleware({ tagName: 'think' }),
 		}),
 	},

@@ -4,8 +4,6 @@ import { produce } from 'immer';
 import { atomWithStorage } from 'jotai/utils';
 import { streamText, type CoreMessage } from 'ai';
 import { languageModels, type LanguageModelKey } from '@/lib/models';
-
-import mermaidTutorial from '@/lib/prompts/mermaid.md?raw'
 import { enc } from './useTokensCount';
 
 export interface ChatMessage {
@@ -18,7 +16,7 @@ export interface ChatMessage {
 export interface ChatState {
 	messages: ChatMessage[];
 	isStreaming: boolean;
-	error: string | null;
+	errorMessage: string | null;
 	currentMessage: ChatMessage | null;
 }
 
@@ -30,25 +28,17 @@ export const contextSizeAtom = atom(0);
  * Chat hook for interacting with the AI models
  */
 export function useChat() {
+	const abortControllerRef = useRef<AbortController | null>(null);
+
 	const selectedModel = useAtomValue(selectedChatModelAtom);
 	const [contextSize, setContextSize] = useAtom(contextSizeAtom);
-
-	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const [state, setState] = useState<ChatState>({
 		messages: [],
 		isStreaming: false,
-		error: null,
+		errorMessage: null,
 		currentMessage: null,
 	});
-
-	// Chat history for LLM prompt
-	const chatHistory = useMemo(() => {
-		return state.messages.flatMap((msg) => [
-			{ role: 'user', content: msg.prompt },
-			{ role: 'assistant', content: msg.answer },
-		]) satisfies CoreMessage[];
-	}, [state.messages]);
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -57,12 +47,18 @@ export function useChat() {
 		};
 	}, []);
 
+	/**
+	 * Abort the current streaming request
+	 */
 	const abort = useCallback(() => {
 		abortControllerRef.current?.abort();
 		abortControllerRef.current = null;
 		setState((prev) => ({ ...prev, isStreaming: false }));
 	}, []);
 
+	/**
+	 * Add a message to the chat history
+	 */
 	const addMessage = useCallback((message: ChatMessage) => {
 		setState((prev) => ({
 			...prev,
@@ -71,13 +67,14 @@ export function useChat() {
 		}));
 	}, []);
 
+	/**
+	 * Prompt the AI with a message
+	 */
 	const prompt = useCallback(
 		async (text: string) => {
-			// Cleanup previous state
+			// Cleanup previous streams
 			abort();
-			if (state.currentMessage) addMessage(state.currentMessage); // TODO: Fix this, its not adding current message to the prompt
-
-			// Create new message
+		
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
 				prompt: text,
@@ -85,12 +82,22 @@ export function useChat() {
 				answer: '',
 			};
 
-			setState((prev) => ({
-				...prev,
-				error: null,
-				isStreaming: true,
-				currentMessage: newMessage,
+			// Get current messages before state update
+			const currentMessages = [...state.messages];
+			if (state.currentMessage) currentMessages.push(state.currentMessage);
+			
+			setState(produce((draft) => {
+				draft.currentMessage = newMessage;
+				draft.messages = currentMessages;
+				draft.errorMessage = null;
+				draft.isStreaming = true;
 			}));
+
+			// Convert chat history to CoreMessage using properly captured messages
+			const chatHistory: CoreMessage[] = currentMessages.flatMap((msg) => [
+				{ role: 'user', content: msg.prompt },
+				{ role: 'assistant', content: msg.answer },
+			]);
 
 			// Prepare message history
 			const messages: CoreMessage[] = [
@@ -100,6 +107,7 @@ export function useChat() {
 				{ role: 'user', content: text },
 			];
 
+			// Calculate new context size
 			const newContextSize = messages.reduce((acc, msg) => acc + enc.encode(msg.content as string).length, 0);
 			setContextSize(newContextSize);
 
@@ -149,28 +157,33 @@ export function useChat() {
 						draft.isStreaming = false;
 					}),
 				);
-
-			} catch (error: any) {
-				if (error?.name === 'AbortError') return;
-				handleError(error?.message);
+			} catch (error) {
+				handleError(error);
 			}
 		},
-		[state.messages, state.currentMessage, abort, addMessage, selectedModel, chatHistory],
+		[abort, setContextSize, state.messages, state.currentMessage], // Added state dependencies to avoid stale closures
 	);
 
 	/**
 	 * Handle streaming errors
 	 */
-	const handleError = useCallback((error: Error) => {
+	const handleError = useCallback((error: unknown) => {
+		if ((error as Error)?.name === 'AbortError') return; // Ignore controller aborts
+
+		console.error(error);
+
+		let errorMessage = 'An error occured.';
+		if (error instanceof Error) errorMessage = error.message;
+		if (typeof error === 'string') errorMessage = error;
+
 		setState(
 			produce((draft) => {
 				draft.isStreaming = false;
-				draft.error = error?.message ?? 'An error occured';
+				draft.errorMessage = errorMessage;
 			}),
 		);
 	}, []);
 
-		
 	// Collect all messages
 	const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
 
@@ -178,7 +191,7 @@ export function useChat() {
 		messages: messages,
 		currentMessage: state.currentMessage,
 		isStreaming: state.isStreaming,
-		error: state.error,
+		errorMessage: state.errorMessage,
 		prompt,
 		abort,
 	} as const;
