@@ -37,18 +37,21 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
     }, []);
 
     const submitMessage = useCallback((value: string) => {
-        if (value === '') return;
+        value = value.trim();
+        if (!value) return;
+        
         setInput('');
-        onSubmit(value);
+        setTimeout(() => onSubmit(value));
     }, [onSubmit]);
 
-    const handleKeydown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
+
         if (event.key === 'Enter') {
             event.preventDefault();
-            submitMessage(event.currentTarget.value);
+            submitMessage(input);
         }
-    }, [submitMessage]);
+    };
 
     return (
 		<div className="flex flex-col gap-3 w-full h-auto">

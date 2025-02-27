@@ -55,7 +55,7 @@ export function useChat() {
 
 	/**
 	 * Abort the current streaming request
-	 */
+	 */ 
 	const abort = useCallback(() => {
 		abortControllerRef.current?.abort();
 		abortControllerRef.current = null;
@@ -156,7 +156,7 @@ export function useChat() {
 				handleError(error);
 			}
 		},
-		[abort, setContextSize, state.messages, state.currentMessage], // Added state dependencies to avoid stale closures
+		[abort, setContextSize, state.messages, state.currentMessage, selectedModel], // Added state dependencies to avoid stale closures
 	);
 
 	/**

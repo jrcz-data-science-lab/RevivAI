@@ -24,7 +24,7 @@ export function Chat() {
 		if (!messageElement) return;
 
 		// Scroll to last message
-		const offset = 128;
+		const offset = 200;
 		const top = messageElement.getBoundingClientRect().top + chatContainerRef.current.scrollTop - offset;
 		chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
 	
@@ -52,7 +52,7 @@ export function Chat() {
 					)}
 
 					{chatActive && (
-						<div className="flex flex-col gap-12 py-32 pb-[60vh] px-3 max-sm:px-4">
+						<div className="flex flex-col gap-12 pt-48 pb-[80vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
 
