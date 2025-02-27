@@ -47,6 +47,12 @@ export function useChat() {
 		};
 	}, []);
 
+	// Recalculate context size when messages change
+	useEffect(() => {
+		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
+		setContextSize(newContextSize);
+	}, [state.messages.length]);
+
 	/**
 	 * Abort the current streaming request
 	 */
@@ -137,10 +143,6 @@ export function useChat() {
 						}),
 					);
 				}
-
-				// Calculate new context size
-				const currentContextSize = messages.reduce((acc, msg) => acc + countTokens(`${msg.content}`), 0);
-				setContextSize(currentContextSize);
 
 				// Finalize message
 				setState(
