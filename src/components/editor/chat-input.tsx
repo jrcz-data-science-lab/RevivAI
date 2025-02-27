@@ -23,7 +23,7 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 
     // Display context size
     const contextSize = useAtomValue(contextSizeAtom);
-    const tokensCount = useTokensCount(input, 100);
+    const tokensCount = useTokensCount(input, 150);
     const totalTokens = useMemo(() => tokensCount + contextSize, [tokensCount, contextSize]);
 
     useEffect(() => {

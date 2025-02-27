@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
 import { useDebounce } from './useDebounce';
-import { Tiktoken } from 'js-tiktoken/lite';
-import o200kBase from 'js-tiktoken/ranks/o200k_base';
-
-export const enc = new Tiktoken(o200kBase);
+import { countTokens } from '@/lib/utils';
 
 /**
  * Hook to count the number of tokens in a given input string.
@@ -14,10 +11,10 @@ export function useTokensCount(input: string, throttle = 0) {
     const debouncedInput = useDebounce(input, throttle);
 
     // Skip throttling if throttle is 0
-    if (throttle === 0) return enc.encode(debouncedInput).length;
+    if (throttle === 0) return countTokens(debouncedInput);
 
     const tokensCount = useMemo(() => {
-		return enc.encode(debouncedInput).length;
+		return countTokens(debouncedInput);
 	}, [debouncedInput]);
 
     return tokensCount;

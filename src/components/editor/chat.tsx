@@ -20,7 +20,7 @@ export function Chat() {
 		if (!chat.currentMessage) return;
 
 		// Select last message
-		const messageElement = chatContainerRef.current?.querySelector('.message:last-child');
+		const messageElement = chatContainerRef.current?.querySelector('.message:last-child .markdown');
 		if (!messageElement) return;
 
 		// Scroll to last message
@@ -43,17 +43,16 @@ export function Chat() {
 
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
-					{/* Gradient overlays */}
 					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
 
 					{!chatActive && (
-						<div className="mb-12">
+						<div className="mb-12 mx-7">
 							<ChatWelcome />
 						</div>
 					)}
 
 					{chatActive && (
-						<div className="flex flex-col gap-12 py-32 pb-[60vh]">
+						<div className="flex flex-col gap-12 py-32 pb-[60vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
 
@@ -65,7 +64,7 @@ export function Chat() {
 						</div>
 					)}
 
-					<div className={cn('w-full h-auto bg-background', chatActive && 'flex flex-col items-center absolute bottom-0 left-0')}>
+					<div className={cn('w-full h-auto bg-background px-4', chatActive && 'flex flex-col items-center absolute bottom-0 left-0')}>
 						<motion.div
 							initial={{ opacity: 0, translateY: 16 }}
 							animate={{ opacity: 1, translateY: 0 }}

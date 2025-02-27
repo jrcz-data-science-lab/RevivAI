@@ -4,7 +4,7 @@ import { produce } from 'immer';
 import { atomWithStorage } from 'jotai/utils';
 import { streamText, type CoreMessage } from 'ai';
 import { languageModels, type LanguageModelKey } from '@/lib/models';
-import { enc } from './useTokensCount';
+import { countTokens } from '@/lib/utils';
 
 export interface ChatMessage {
 	id: string;
@@ -57,24 +57,13 @@ export function useChat() {
 	}, []);
 
 	/**
-	 * Add a message to the chat history
-	 */
-	const addMessage = useCallback((message: ChatMessage) => {
-		setState((prev) => ({
-			...prev,
-			messages: [...prev.messages, message],
-			currentMessage: null,
-		}));
-	}, []);
-
-	/**
 	 * Prompt the AI with a message
 	 */
 	const prompt = useCallback(
 		async (text: string) => {
 			// Cleanup previous streams
 			abort();
-		
+
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
 				prompt: text,
@@ -85,13 +74,15 @@ export function useChat() {
 			// Get current messages before state update
 			const currentMessages = [...state.messages];
 			if (state.currentMessage) currentMessages.push(state.currentMessage);
-			
-			setState(produce((draft) => {
-				draft.currentMessage = newMessage;
-				draft.messages = currentMessages;
-				draft.errorMessage = null;
-				draft.isStreaming = true;
-			}));
+
+			setState(
+				produce((draft) => {
+					draft.currentMessage = newMessage;
+					draft.messages = currentMessages;
+					draft.errorMessage = null;
+					draft.isStreaming = true;
+				}),
+			);
 
 			// Convert chat history to CoreMessage using properly captured messages
 			const chatHistory: CoreMessage[] = currentMessages.flatMap((msg) => [
@@ -108,8 +99,7 @@ export function useChat() {
 			];
 
 			// Calculate new context size
-			const newContextSize = messages.reduce((acc, msg) => acc + enc.encode(msg.content as string).length, 0);
-			setContextSize(newContextSize);
+			setContextSize((prev) => prev + countTokens(text));
 
 			try {
 				// Setup abort controller
@@ -122,7 +112,7 @@ export function useChat() {
 					messages,
 					maxTokens: 60_000,
 					temperature: 0.3,
-					onError: ({ error }) => handleError(error as Error),
+					onError: ({ error }) => handleError(error),
 				});
 
 				for await (let chunk of fullStream) {
@@ -148,11 +138,14 @@ export function useChat() {
 					);
 				}
 
+				// Calculate new context size
+				const currentContextSize = messages.reduce((acc, msg) => acc + countTokens(`${msg.content}`), 0);
+				setContextSize(currentContextSize);
+
 				// Finalize message
 				setState(
 					produce((draft) => {
-						if (!draft.currentMessage) return;
-						draft.messages.push(draft.currentMessage);
+						if (draft.currentMessage) draft.messages.push(draft.currentMessage);
 						draft.currentMessage = null;
 						draft.isStreaming = false;
 					}),
