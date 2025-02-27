@@ -13,7 +13,7 @@ function Alert({ className, variant = 'default', ...props }: AlertProps) {
   const variantClasses = {
 		default: 'bg-background text-foreground',
 		destructive:
-			'text-red-500 *:data-[slot=alert-description]:text-red-500/60 [&>svg]:text-current border-destructive bg-destructive/5',
+			'text-destructive *:data-[slot=alert-description]:text-destructive/60 [&>svg]:text-current border-destructive bg-red-500/5',
   }[variant];
 
   return (

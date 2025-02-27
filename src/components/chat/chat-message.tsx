@@ -26,12 +26,10 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>
 			<div className="relative flex flex-col gap-2">
-				<h3 className="text-2xl font-black font-serif break-words whitespace-pre-wrap">{message.prompt}</h3>
-
-				<Separator className="mt-2 mb-4" />
-
+				<h3 className="relative text-2xl font-black font-serif break-words whitespace-pre-wrap">
+					{message.prompt}
 				<motion.div
-					className="absolute -left-10 top-1.5 opacity-60"
+					className="absolute -left-10 bottom-0.5 opacity-60"
 					initial={{ opacity: 0 }}
 					animate={{
 						scale: isWriting ? 0.8 : 1.1,
@@ -41,6 +39,11 @@ function ChatMessage({ message, isActive, isWriting }: ChatMessageProps) {
 				>
 					<LoaderPinwheel className="animate-spin" />
 				</motion.div>
+				
+				</h3>
+
+				<Separator className="mt-2 mb-4" />
+
 
 				{hasReasoning && <ChatReasoning open={hasReasoning && !hasAnswer} content={message.reasoning} />}
 

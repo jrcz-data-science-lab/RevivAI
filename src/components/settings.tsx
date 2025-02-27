@@ -1,7 +1,7 @@
 import { memo } from 'react';
-import { Button } from '../ui/button';
+import { Button } from './ui/button';
 import { SlidersHorizontal } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 function Settings() {
 	return (

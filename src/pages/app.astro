@@ -1,8 +1,8 @@
 ---
-import { Chat as ChatApp } from '@/components/editor/chat';
+import AppContainer from '@/components/app';
 import AppLayout from '@/layouts/app-layout.astro';
 ---
 
 <AppLayout>
-	<ChatApp client:load />
+	<AppContainer client:load />
 </AppLayout>

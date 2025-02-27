@@ -1,18 +1,14 @@
 import { useEffect, useRef } from 'react';
-import { Toaster } from '@/components/ui/toaster';
 import { useChat } from '@/hooks/useChat';
 import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import Navbar from './navbar';
 import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
-import { useTheme } from '@/hooks/useTheme';
 
 export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
-	const { theme } = useTheme();
 	const chat = useChat();
 
 	useEffect(() => {
@@ -20,14 +16,12 @@ export function Chat() {
 		if (!chat.currentMessage) return;
 
 		// Select last message
-		const messageElement = chatContainerRef.current?.querySelector('.message:last-child .markdown');
+		const messageElement = chatContainerRef.current?.querySelector('.message:last-child h3');
 		if (!messageElement) return;
-
 		// Scroll to last message
-		const offset = 200;
-		const top = messageElement.getBoundingClientRect().top + chatContainerRef.current.scrollTop - offset;
+		const offset = window.innerHeight / 3;
+		const top = messageElement.getBoundingClientRect().bottom + chatContainerRef.current.scrollTop - offset;
 		chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
-	
 	}, [chatContainerRef, chat.currentMessage?.id]);
 
 	// Check if there are any messages in chat
@@ -35,15 +29,8 @@ export function Chat() {
 
 	return (
 		<div ref={chatContainerRef} className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
-			<div className="z-50 fixed top-4 left-0 px-4 md:top-8 md:px-12 flex w-full justify-space-between">
-				<Navbar />
-			</div>
-
-			<Toaster theme={theme} position="bottom-left" />
-
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
-					<div className="z-30 fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-background to-transparent"></div>
 
 					{!chatActive && (
 						<div className="mb-12 mx-7">
@@ -52,7 +39,7 @@ export function Chat() {
 					)}
 
 					{chatActive && (
-						<div className="flex flex-col gap-12 pt-48 pb-[80vh] px-3 max-sm:px-4">
+						<div className="flex flex-col gap-12 pt-48 pb-[1200vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
 
