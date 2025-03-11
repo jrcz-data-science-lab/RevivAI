@@ -1,33 +1,47 @@
-import { cn } from '@/lib/utils';
+import { useRef, useState } from 'react';
 import { FolderUp, LoaderPinwheel } from 'lucide-react';
-import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 type DropzoneProps = React.ComponentProps<'div'> & {
-	onDrop?: (files: FileList) => void;
+	onFilesDrop?: (files: FileList) => void;
 	loading?: boolean;
+	acceptDirectories?: boolean;
 };
 
-export function Dropzone({ onDrop, loading = false, ...props }: DropzoneProps) {
+export function Dropzone({ 
+	onFilesDrop, 
+	loading = false, 
+	acceptDirectories = true,
+	...props 
+}: DropzoneProps) {
 	const [isDragging, setIsDragging] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
 		setIsDragging(true);
 	};
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && onDrop) onDrop(e.target.files);
-	}
-
 	const handleDragLeave = (e: React.DragEvent) => {
 		e.preventDefault();
 		setIsDragging(false);
+	};
+	
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && onFilesDrop) onFilesDrop(e.target.files);
 	};
 
 	const handleDrop = (e: React.DragEvent) => {
 		e.preventDefault();
 		setIsDragging(false);
-		if (onDrop && e.dataTransfer.files) onDrop(e.dataTransfer.files);
+		
+		if (onFilesDrop && e.dataTransfer.files.length > 0) onFilesDrop(e.dataTransfer.files);
+	};
+
+	const handleClick = () => {
+		if (fileInputRef.current) {
+			fileInputRef.current.click();
+		}
 	};
 
 	return (
@@ -42,17 +56,21 @@ export function Dropzone({ onDrop, loading = false, ...props }: DropzoneProps) {
 				loading && 'pointer-events-none',
 				isDragging && 'border-neutral-500',
 			)}
+			onDragOver={handleDragOver}
+			onDragLeave={handleDragLeave}
+			onDrop={handleDrop}
+			onClick={handleClick}
 			{...props}
 		>
+			
 			<input
+				ref={fileInputRef}
 				type="file"
 				multiple={true}
-				accept=".zip,.ts,.tsx,.md,.json,.js"
+				{...(acceptDirectories ? { webkitdirectory: "", directory: "" } : {})}
+				accept=".zip,.ts,.tsx,.md,.json,.js,.html,.css"
 				onChange={handleChange}
-				onDragOver={handleDragOver}
-				onDragLeave={handleDragLeave}
-				onDrop={handleDrop}
-				className={cn('cursor-pointer w-full h-full opacity-0 absolute top-0 left-0', loading && 'cursor-wait')}
+				className="hidden"
 			/>
 
 			{loading ? (
@@ -63,7 +81,7 @@ export function Dropzone({ onDrop, loading = false, ...props }: DropzoneProps) {
 			) : (
 				<>
 					<FolderUp className="mb-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-					<p className="text-lg font-medium font-serif">Drop files here</p>
+					<p className="text-lg font-medium font-serif">Drop folder with your code</p>
 					<p className="text-sm opacity-50">or click to select</p>
 				</>
 			)}

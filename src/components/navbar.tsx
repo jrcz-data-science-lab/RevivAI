@@ -4,40 +4,63 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
 import Settings from './settings';
 import { useTheme } from '@/hooks/useTheme';
+import { motion } from 'motion/react';
 
-function Navbar() {
+type TabName = 'chat' | 'writer';
+
+interface NavbarProps {
+	onTabChange?: (tab: TabName) => void;
+	value?: TabName;
+	showThemeToggle?: boolean;
+	showSettings?: boolean;
+	showBackButton?: boolean;
+	showTabs?: boolean;
+}
+
+function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showThemeToggle = true }: NavbarProps) {
 	const { theme, toggle } = useTheme();
-	
-    return (
-		<div className="flex w-full justify-center">
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, translateY: -16 }}
+			animate={{ opacity: 1, translateY: 0 }}
+			transition={{ duration: 0.3 }}
+			className="flex w-full justify-center"
+		>
 			<div className="w-full flex gap-2">
-				<Button className="text-neutral-400" variant="ghost" round asChild>
-					<a href="/">
-						<ArrowLeft />
-						Go back
-					</a>
-				</Button>
+				{showBackButton && (
+					<Button className="text-neutral-400" variant="ghost" round asChild>
+						<a href="/">
+							<ArrowLeft />
+							Go back
+						</a>
+					</Button>
+				)}
 			</div>
 
-			<Tabs defaultValue="account">
-				<TabsList className="rounded-full">
-					<TabsTrigger value="account" className="w-20 rounded-full">
-						Chat
-					</TabsTrigger>
-					<TabsTrigger value="password" className="w-20 rounded-full">
-						Writer
-					</TabsTrigger>
-				</TabsList>
-			</Tabs>
+			{showTabs && (
+				<Tabs value={value} onValueChange={(value) => onTabChange && onTabChange(value as TabName)}>
+					<TabsList className="rounded-full">
+						<TabsTrigger value="chat" className="w-20 rounded-full">
+							Chat
+						</TabsTrigger>
+						<TabsTrigger value="writer" className="w-20 rounded-full">
+							Writer
+						</TabsTrigger>
+					</TabsList>
+				</Tabs>
+			)}
 
 			<div className="w-full flex gap-2 justify-end">
-				<Button variant="ghost" round size="icon" onClick={toggle}>
-					{theme === 'dark' ? <Sun /> : <Moon />}
-				</Button>
+				{showThemeToggle && (
+					<Button variant="ghost" round size="icon" onClick={toggle}>
+						{theme === 'dark' ? <Sun /> : <Moon />}
+					</Button>
+				)}
 
-				<Settings />
+				{showSettings && <Settings />}
 			</div>
-		</div>
+		</motion.div>
 	);
 }
 

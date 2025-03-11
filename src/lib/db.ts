@@ -1,6 +1,7 @@
 import { PGlite } from '@electric-sql/pglite';
+import { vector } from '@electric-sql/pglite/vector';
 
-const db = new PGlite('idb://my-pgdata');
+const db = new PGlite('idb://my-pg', { extensions: { vector }});
 
 await db.exec(`
   CREATE TABLE IF NOT EXISTS todo (

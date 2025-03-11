@@ -20,8 +20,10 @@ export interface ChatState {
 	currentMessage: ChatMessage | null;
 }
 
+// Selected chat model
 export const selectedChatModelAtom = atomWithStorage<LanguageModelKey>('selectedChatModel', 'default');
 
+// Context size
 export const contextSizeAtom = atom(0);
 
 /**
@@ -31,7 +33,7 @@ export function useChat() {
 	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const selectedModel = useAtomValue(selectedChatModelAtom);
-	const [contextSize, setContextSize] = useAtom(contextSizeAtom);
+	const [_, setContextSize] = useAtom(contextSizeAtom);
 
 	const [state, setState] = useState<ChatState>({
 		messages: [],
@@ -55,7 +57,7 @@ export function useChat() {
 
 	/**
 	 * Abort the current streaming request
-	 */ 
+	 */
 	const abort = useCallback(() => {
 		abortControllerRef.current?.abort();
 		abortControllerRef.current = null;
@@ -179,6 +181,17 @@ export function useChat() {
 		);
 	}, []);
 
+	/**
+	 * Delete a message from the chat
+	 */
+	const deleteMessage = useCallback((id: string) => {
+		setState(
+			produce((draft) => {
+				draft.messages = draft.messages.filter((msg) => msg.id !== id);
+			}),
+		);
+	}, []);
+
 	// Collect all messages
 	const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
 
@@ -187,7 +200,8 @@ export function useChat() {
 		currentMessage: state.currentMessage,
 		isStreaming: state.isStreaming,
 		errorMessage: state.errorMessage,
+		deleteMessage,
 		prompt,
 		abort,
 	} as const;
-};
+}
