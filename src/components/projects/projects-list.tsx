@@ -3,12 +3,12 @@ import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
-interface ProjectListProps {
+interface ProjectsListProps {
     projects: ProjectMetadata[];
     deleteProject: (projectId: string) => void;
 }
 
-export function ProjectList({ projects, deleteProject }: ProjectListProps) {
+export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 	const sortedProjects = projects.sort((a, b) => {
 		const dateA = new Date(a.createdAt);
 		const dateB = new Date(b.createdAt);
@@ -33,7 +33,7 @@ export function ProjectList({ projects, deleteProject }: ProjectListProps) {
 							{project.name}
 						</a>
 
-						<span className="text-xs italic right-3 absolute opacity-40 text-right group-hover:opacity-0 group-hover:-translate-y-2 transition-all">
+						<span className="text-xs italic right-4 absolute opacity-40 text-right group-hover:opacity-0 group-hover:-translate-y-2 transition-all">
 							Created {createdAtFormatted}
 						</span>
 

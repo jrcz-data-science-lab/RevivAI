@@ -4,7 +4,7 @@ import { produce } from 'immer';
 import { atomWithStorage } from 'jotai/utils';
 import { streamText, type CoreMessage } from 'ai';
 import { languageModels, type LanguageModelKey } from '@/lib/models';
-import { countTokens } from '@/lib/utils';
+import { countTokens } from '@/lib/countTokens';
 
 export interface ChatMessage {
 	id: string;

@@ -2,10 +2,11 @@ import type { ChatMessage } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { memo, lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
-import { Copy, LoaderPinwheel, Trash2 } from 'lucide-react';
+import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import ChatReasoning from './chat-reasoning';
 import { Button } from '../ui/button';
+
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {
@@ -15,9 +16,16 @@ interface ChatMessageProps {
 	isWriting: boolean;
 }
 
+/**
+ * Chat message component
+ */
 function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProps) {
 	const hasReasoning = message.reasoning.trim() !== '';
 	const hasAnswer = message.answer.trim() !== '';
+
+	const copyToClipboard = () => {
+		navigator.clipboard.writeText(message.answer);
+	};
 
 	return (
 		<motion.div
@@ -52,12 +60,12 @@ function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProp
 			</div>
 
 			<div className="flex justify-start items-center -mx-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-0 right-0">
-				<Button size="icon" variant="ghost" className="w-8 h-8">
+				<Button size="icon" variant="ghost" className="w-8 h-8" onClick={copyToClipboard}>
 					<Copy />
 				</Button>
 
-				<Button size="icon" variant="ghost" onClick={() => onDelete && onDelete(message.id)} className="w-8 h-8">
-					<Trash2 className="text-destructive" />
+				<Button size="icon" variant="ghost" onClick={() => onDelete && onDelete(message.id)} className="w-8 h-8 hover:text-destructive">
+					<Trash />
 				</Button>
 			</div>
 		</motion.div>

@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { useProjects } from '@/hooks/useProjects';
-import { ProjectList } from './project-list';
+import { ProjectsList } from './projects-list';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
@@ -21,7 +21,7 @@ export function Projects() {
 					</p>
 				</div>
 
-				<ProjectList projects={projects} deleteProject={deleteProject} />
+				<ProjectsList projects={projects} deleteProject={deleteProject} />
 
 				<Button
 					className="block ml-auto"

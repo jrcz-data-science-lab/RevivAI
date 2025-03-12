@@ -1,10 +1,10 @@
 import { Button } from '../ui/button';
-import { memo, useEffect, useState } from 'react';
-import { ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { lazy, memo, Suspense, useEffect, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../ui/collapsible';
-import ChatMarkdown from './chat-markdown';
 import { cn } from '@/lib/utils';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+
+const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatReasoningProps {
     open: boolean;
@@ -16,7 +16,7 @@ function ChatReasoning({ open, content }: ChatReasoningProps) {
     const isOpen = isUserOpened === null ? open : isUserOpened;
 
 	return (
-		<Collapsible open={isOpen} onOpenChange={setIsUserOpened} className={cn("bg-muted rounded-xl p-4 py-3 w-full mb-3")}>
+		<Collapsible open={isOpen} onOpenChange={setIsUserOpened} className={cn('bg-muted rounded-xl p-4 py-3 w-full mb-3')}>
 			<div className={cn('flex items-center justify-between -mr-2', isOpen && 'mb-3')}>
 				<span className={cn('text-sm inline-block opacity-30', open && 'animate-pulse')}>Reasoning</span>
 				<CollapsibleTrigger asChild>
@@ -28,7 +28,9 @@ function ChatReasoning({ open, content }: ChatReasoningProps) {
 			</div>
 
 			<CollapsibleContent>
-				<ChatMarkdown>{content.trim()}</ChatMarkdown>
+				<Suspense fallback={<p className="prose dark:prose-invert">{content}</p>}>
+					<ChatMarkdown>{content.trim()}</ChatMarkdown>
+				</Suspense>
 			</CollapsibleContent>
 		</Collapsible>
 	);
