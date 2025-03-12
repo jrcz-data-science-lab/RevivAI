@@ -30,6 +30,7 @@ export default defineConfig({
           // Split some dependencies into a separate bundle chunks
 					manualChunks: (id) => {
 						if (id.includes('js-tiktoken')) return 'js-tiktoken';
+            if (id.includes('mermaid')) return 'mermaid';
 					},
 				},
 			},
