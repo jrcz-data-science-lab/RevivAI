@@ -24,16 +24,5 @@ export default defineConfig({
 		optimizeDeps: {
 			exclude: ['@electric-sql/pglite'],
 		},
-		build: {
-			rollupOptions: {
-				output: {
-          // Split some dependencies into a separate bundle chunks
-					manualChunks: (id) => {
-						if (id.includes('js-tiktoken')) return 'js-tiktoken';
-            if (id.includes('mermaid')) return 'mermaid';
-					},
-				},
-			},
-		},
 	},
 });
