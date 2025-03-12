@@ -4,19 +4,13 @@ import { useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
-const themeAtom = atom<Theme>('light');
+const themeAtom = atomWithStorage<Theme>('theme', 'light');
 
 /**
  * Hook for managing the theme state
  */
 export function useTheme() {
 	const [theme, setTheme] = useAtom(themeAtom);
-
-    // Set the theme on initial load
-    useEffect(() => {
-        const currentTheme = localStorage.getItem('theme') as Theme;
-        setTheme(currentTheme);
-    }, []);
 
 	useEffect(() => {
 		const isDark = theme === 'dark';

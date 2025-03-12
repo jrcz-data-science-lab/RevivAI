@@ -11,11 +11,6 @@ import MainLayout from './main-layout.astro';
 </MainLayout>
 
 <script is:inline>
-	function getThemePreference() {
-		if (localStorage) return localStorage.getItem('theme') ?? 'light';
-		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-	}
-
-	const isDark = getThemePreference() === 'dark';
+	const isDark = localStorage.getItem('theme') ===  JSON.stringify('dark');
 	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
 </script>

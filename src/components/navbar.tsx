@@ -21,16 +21,13 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 	const { theme, toggle } = useTheme();
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, translateY: -16 }}
-			animate={{ opacity: 1, translateY: 0 }}
-			transition={{ duration: 0.3 }}
+		<div
 			className="flex w-full justify-center"
 		>
 			<div className="w-full flex gap-2">
 				{showBackButton && (
 					<Button className="text-neutral-400" variant="ghost" round asChild>
-						<a href="/">
+						<a href="/projects">
 							<ArrowLeft />
 							Go back
 						</a>
@@ -60,7 +57,7 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 
 				{showSettings && <Settings />}
 			</div>
-		</motion.div>
+		</div>
 	);
 }
 
