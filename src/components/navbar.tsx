@@ -17,6 +17,9 @@ interface NavbarProps {
 	showTabs?: boolean;
 }
 
+/**
+ * Navbar component for the app
+ */
 function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showThemeToggle = true }: NavbarProps) {
 	const { theme, toggle } = useTheme();
 
@@ -26,11 +29,9 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 		>
 			<div className="w-full flex gap-2">
 				{showBackButton && (
-					<Button className="text-neutral-400" variant="ghost" round asChild>
-						<a href="/projects">
-							<ArrowLeft />
-							Go back
-						</a>
+					<Button className="text-neutral-400" variant="ghost" round onClick={() => window.history.back()}>
+						<ArrowLeft />
+						<span>Back</span>
 					</Button>
 				)}
 			</div>
@@ -50,7 +51,7 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 
 			<div className="w-full flex gap-2 justify-end">
 				{showThemeToggle && (
-					<Button variant="ghost" round size="icon" onClick={toggle}>
+					<Button variant="ghost" size="icon" round onClick={toggle}>
 						{theme === 'dark' ? <Sun /> : <Moon />}
 					</Button>
 				)}

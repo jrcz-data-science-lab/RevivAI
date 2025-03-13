@@ -68,12 +68,11 @@ export function FileUploadForm() {
   return (
 		<div className="space-y-4">
 			<AnimatedText as="h1" className="text-xl font-bold font-serif">
-				1. Upload your code files.
+				1. Select your code files.
 			</AnimatedText>
 
 			<p className="pb-6 opacity-80">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi earum nulla culpa iusto tempore, repellendus quam ea doloremque quo
-				corporis quas animi expedita voluptate. Sit ad ex accusantium quisquam ea.
+				Click on the area below to select folder with your projects code files. You can select multiple files at once.
 			</p>
 
 			<Dropzone onFilesDrop={handleDrop} loading={loading} />
@@ -86,9 +85,7 @@ export function FileUploadForm() {
 				<div className="space-y-4">
 					<div className="flex items-center justify-between">
 						<h2 className="text-md font-serif">Uploaded files ({files.length})</h2>
-						<Button variant="outline" size="sm" onClick={clearFiles}>
-							Clear Files
-						</Button>
+						<Button variant="outline" size="sm" onClick={clearFiles}>Clear</Button>
 					</div>
 					<FileContent files={files} />
 				</div>

@@ -1,17 +1,11 @@
-import type { ProjectMetadata } from '@/hooks/useProjects';
-import { Button } from '../ui/button';
-import { Trash } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { FileUploadForm } from '../file-upload/file-upload-form';
+import Navbar from '../navbar';
+import { ProjectsContainer } from './projects-container';
 
-interface ProjectsNewProps {
-	projects: ProjectMetadata[];
-	deleteProject: (projectId: string) => void;
-}
-
-export function ProjectsNew({ projects, deleteProject }: ProjectsNewProps) {
-	return (
-		<div>
-            
-		</div>
+export function ProjectsNew() {
+    return (
+        <ProjectsContainer>
+            <FileUploadForm />
+        </ProjectsContainer>
 	);
 }

@@ -2,7 +2,7 @@ import { useTheme } from '@/hooks/useTheme';
 import Navbar from './navbar';
 import { Toaster } from 'sonner';
 import { Chat } from './chat/chat';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface AppProps {
 	projectId: string;

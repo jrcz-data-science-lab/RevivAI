@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronRight, File, Folder } from 'lucide-react';
+import { ChevronRight, File, Folder } from 'lucide-react';
 
 type FileWithContent = {
   path: string;
@@ -116,7 +116,7 @@ function FolderComponent({ node, depth = 0 }: { node: FolderNode; depth?: number
 				<Folder className="h-4 w-4 ml-3 mr-2" />
 				<span className="font-medium">{node.name}</span>
 				<span className="ml-auto">
-					<ChevronDown className={cn('h-4 w-4 transition-transform', expanded && '-rotate-90')} />
+					<ChevronRight className={cn('h-4 w-4 transition-transform', expanded && 'rotate-90')} />
 				</span>
 			</button>
 
