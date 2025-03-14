@@ -2,11 +2,14 @@
 import { Button } from '@/components/ui/button';
 import Title from '@/components/title';
 import GridImage from '@/assets/grid.webp';
+import LogoImage from '@/assets/logo.webp';
 import MainLayout from '@/layouts/main-layout.astro';
 ---
 
 <MainLayout>
 	<header class="z-50 relative h-[60dvh] flex justify-center items-center">
+		<img src={LogoImage.src} alt="Logo" class="z-50 absolute top-8 h-16" />
+
 		<img
 			src={GridImage.src}
 			alt="Grid"
