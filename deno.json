@@ -1,0 +1,34 @@
+{
+	"version": "1.0.0",
+	"fmt": {
+		"lineWidth": 160,
+		"indentWidth": 4,
+		"useTabs": true,
+		"semiColons": true,
+		"singleQuote": true,
+		"exclude": [
+			"./ui",
+			"./web"
+		]
+	},
+	"tasks": {
+		"start": "deno run -allow-all main.ts",
+		"dev": "deno run --watch main.ts",
+		"compile": "deno compile --allow-all --include ./ui/dist --output build/ main.ts",
+		"compile:win": "deno compile --allow-all --include ./ui/dist --target x86_64-pc-windows-msvc --output build/ main.ts",
+		"compile:mac": "deno compile --allow-all --include ./ui/dist --target x86_64-apple-darwin --output build/ main.ts",
+		"compile:linux": "deno compile --allow-all --include ./ui/dist --target x86_64-unknown-linux-gnu --output build/ main.ts"
+	},
+	"imports": {
+		"@clack/prompts": "npm:@clack/prompts@^0.10.0",
+		"@std/fs": "jsr:@std/fs@^1.0.14",
+		"@std/http": "jsr:@std/http@^1.0.13",
+		"@std/path": "jsr:@std/path@^1.0.8",
+		"chalk": "npm:chalk@5.4.1",
+		"commander": "npm:commander@13.1.0",
+		"get-port": "npm:get-port@6.1.0",
+		"open": "npm:open@10.1.0",
+		"openai": "npm:openai@4.87.4",
+		"ora": "npm:ora@8.2.0"
+	}
+}
