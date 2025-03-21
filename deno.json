@@ -12,8 +12,7 @@
 		]
 	},
 	"tasks": {
-		"start": "deno run -allow-all main.ts",
-		"dev": "deno run --watch main.ts",
+		"start": "deno run --allow-all main.ts",
 		"compile": "deno compile --allow-all --include ./ui/dist --output build/ main.ts",
 		"compile:win": "deno compile --allow-all --include ./ui/dist --target x86_64-pc-windows-msvc --output build/ main.ts",
 		"compile:mac": "deno compile --allow-all --include ./ui/dist --target x86_64-apple-darwin --output build/ main.ts",

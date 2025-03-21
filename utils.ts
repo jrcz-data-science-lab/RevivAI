@@ -6,7 +6,7 @@ const openai = new OpenAI({
 })
 
 export async function generateEmbeddings(input: string) {
-	const { data, usage } = await openai.embeddings.create({ input, model: 'nomic-embed-text:latest' });
+	const { data, usage } = await openai.embeddings.create({ input, model: 'nomic-embed-text:latest' }); 
 	return { embedding: data[0].embedding, tokens: usage.total_tokens };
 }
 

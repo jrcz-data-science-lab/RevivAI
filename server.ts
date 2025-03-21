@@ -1,8 +1,6 @@
-import { join } from '@std/path';
-import { exists } from '@std/fs';
 import open from "open";
 import getPort from "get-port";
-import { serveFile } from '@std/http';
+import { serveDir } from '@std/http';
 import { log } from '@clack/prompts';
 
 // Path to the UI directory
@@ -17,23 +15,32 @@ const handler = async (req: Request) => {
 		return new Response('API not implemented yet', { status: 200 });
 	}
 
-	// Serve file if found in
-	const filePath = join(webPath, pathname);
-	const fileExists = await exists(filePath, { isFile: true, isReadable: true });
-	if (fileExists) return serveFile(req, filePath);
-
-	// Serve index.html for all other requests
-	return serveFile(req, join(webPath, 'index.html'));
+	// Serve directory
+	return serveDir(req, { fsRoot: webPath });
 };
 
-export async function startServer(preferedPort = 3000) {
-	const port = await getPort({ port: [preferedPort, 3001, 3002, 3003, 3004, 3005, 8080, 8081] });
+/**
+ * Start HTTP server on a preferred port.
+ * @param port Port to start the server on.
+ */
+export async function startServer(port: number | undefined) {
+
+	// Find appropriate port if not provided
+	if (typeof port !== 'number') {
+		port = await getPort({ port: 3000 });
+	}
 	
+	const serverUrl = `http://localhost:${port}`;
+
 	Deno.serve({
 		port: port,
 		onListen: () => {
-			log.success(`HTTP server started on http://localhost:${port}`);
-			open(`http://localhost:${port}`);
+			log.success(`HTTP server started on ${serverUrl}`);
+			open(serverUrl);
 		},
+		onError: (error) => {
+			log.error(`Failed to start server: ${error}`);
+			Deno.exit(1);
+		}
 	}, handler);
 }
