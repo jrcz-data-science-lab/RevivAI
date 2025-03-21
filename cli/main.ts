@@ -1,12 +1,13 @@
-import chalk from 'chalk';
+
 import process from 'node:process';
-import { ensureDir } from '@std/fs';
+import * as color from '@std/fmt/colors';
+import { ensureDir, walk } from '@std/fs';
 import { join } from '@std/path';
-import { intro, outro, confirm, log } from '@clack/prompts';
+import { intro, outro, confirm, log, isCancel, cancel } from '@clack/prompts';
 import { Command } from 'commander';
 import { startServer } from './server.ts';
 import { generateEmbeddings, testOllamaConnection } from './utils.ts';
-import config from './deno.json' with { type: 'json' };
+import config from '../deno.json' with { type: 'json' };
 
 // Modify color mode based on Deno.noColor
 process.env[Deno.noColor ? 'NO_COLOR' : 'FORCE_COLOR'] = 'true';
@@ -17,19 +18,18 @@ const cli = new Command('revivai')
 
 // Style help output
 cli.configureHelp({
-	styleTitle: (str) => chalk.bold(str),
-	styleCommandText: (str) => chalk.white(str),
-	styleCommandDescription: (str) => chalk.gray(chalk.italic(str)),
-	styleDescriptionText: (str) => chalk.gray(chalk.italic(str)),
-	styleOptionText: (str) => chalk.green(str),
-	styleArgumentText: (str) => chalk.cyan(str),
-	styleSubcommandText: (str) => chalk.cyan(str),
+	styleTitle: (str) => color.bold(str),
+	styleCommandText: (str) => color.white(str),
+	styleCommandDescription: (str) => color.gray(color.italic(str)),
+	styleDescriptionText: (str) => color.gray(color.italic(str)),
+	styleOptionText: (str) => color.green(str),
+	styleArgumentText: (str) => color.cyan(str),
+	styleSubcommandText: (str) => color.cyan(str),
 });
 
 // Serve command - starts HTTP server
 cli.command('serve')
 	.description('start HTTP server')
-	.option('-p, --port <port:number>', 'port to start server on. Default is 3000.')
 	.option('-o, --open', 'open browser on server start')
 	.option('-p, --port <port:number>', 'port to start server on. Default is 3000.')
 	.action(({ port }: { port: number | undefined }) => {
@@ -43,6 +43,13 @@ cli.command('init')
 
 		const currentDir = Deno.cwd();
 		const revivaiDir = join(currentDir, '.revivai');
+
+		// list all files in the current directory
+		const files = Deno.readDirSync(currentDir);
+		for (const file of files) {
+			const fsFile = await Deno.open(file.name);
+			const fsStat = await fsFile.stat();
+		}
 
 		const ollamaAvailable = await testOllamaConnection();
 		if (ollamaAvailable) {
@@ -58,6 +65,11 @@ cli.command('init')
 			message: 'Do you want to use local Ollama instance?',
 			initialValue: true,
 		});
+
+		if (isCancel(useOllama)) {
+			cancel('Operation cancelled.');
+			process.exit(0);
+		}
 
 
 		const createFolder = await confirm({

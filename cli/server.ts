@@ -1,14 +1,18 @@
 import open from "open";
 import getPort from "get-port";
 import { serveDir } from '@std/http';
-import { log } from '@clack/prompts';
+import { join } from '@std/path';
+import * as color from '@std/fmt/colors';
 
 // Path to the UI directory
-const webPath = import.meta.dirname + '/ui/dist';
+const WEB_UI_PATH = join(import.meta?.dirname + '', '../ui/dist');
 
-const handler = async (req: Request) => {
+/**
+ * Request handler for the HTTP server.
+ * @param req Request object.
+ */
+const handler = (req: Request) => {
 	const { pathname } = new URL(req.url);
-	console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
 
 	// Handle API requests
 	if (pathname.startsWith('/api')) {
@@ -16,7 +20,7 @@ const handler = async (req: Request) => {
 	}
 
 	// Serve directory
-	return serveDir(req, { fsRoot: webPath });
+	return serveDir(req, { fsRoot: WEB_UI_PATH });
 };
 
 /**
@@ -29,17 +33,20 @@ export async function startServer(port: number | undefined) {
 	if (typeof port !== 'number') {
 		port = await getPort({ port: 3000 });
 	}
-	
-	const serverUrl = `http://localhost:${port}`;
 
+	const serverUrl = `http://localhost:${port}`;
+	
 	Deno.serve({
 		port: port,
 		onListen: () => {
-			log.success(`HTTP server started on ${serverUrl}`);
+			console.log('');
+			console.log(color.cyan('● ') + `HTTP server started on ${color.cyan(serverUrl)}`);
+			console.log(color.gray('  To stop server, press Ctrl+C'));
+			console.log('')
 			open(serverUrl);
 		},
 		onError: (error) => {
-			log.error(`Failed to start server: ${error}`);
+			console.error(color.red('● ') + `Failed to start the server: ${error}`);
 			Deno.exit(1);
 		}
 	}, handler);
