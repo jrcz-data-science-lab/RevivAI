@@ -27,7 +27,6 @@
 		"commander": "npm:commander@13.1.0",
 		"get-port": "npm:get-port@6.1.0",
 		"open": "npm:open@10.1.0",
-		"openai": "npm:openai@4.87.4",
-		"ora": "npm:ora@8.2.0"
+		"openai": "npm:openai@4.87.4"
 	}
 }
