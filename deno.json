@@ -7,8 +7,7 @@
 		"semiColons": true,
 		"singleQuote": true,
 		"exclude": [
-			"./ui",
-			"./web"
+			"./ui"
 		]
 	},
 	"tasks": {
