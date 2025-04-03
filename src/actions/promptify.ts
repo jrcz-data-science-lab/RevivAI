@@ -12,19 +12,28 @@ export const promptify = defineAction({
 		files: z.array(z.instanceof(File)),
 	}),
 	handler: async ({ files }) => {
+		// Generate unique ID
+		const submissionID = crypto.randomUUID();
+
+		// Create a temporary directory for the submission
+		const tempDir = path.join(workingDir, '_temp', submissionID);
+
+		// Define the output file path
+		const outputFile = path.join(tempDir, `${submissionID}.md`);
+
 		try {
-			// Generate unique ID
-			const submissionID = crypto.randomUUID();
-			const tempDir = path.join(workingDir, '_temp', submissionID);
 
 			// Create temporary directory
 			await mkdir(tempDir, { recursive: true });
 
 			// Save files to the temporary directory
-			const savedFilePaths = await Promise.all(
+			let savedFilePaths = await Promise.all(
 				files.map(async (file, index) => {
 					// Sanitize the filename to prevent path traversal
 					const filePath = path.join(tempDir, file.name);
+
+					// Skip files in node_modules
+					if (filePath.includes('node_modules/')) return null;
 
 					// Verify the path is still within our temp directory (prevent path traversal)
 					if (!filePath.startsWith(tempDir)) {
@@ -45,7 +54,8 @@ export const promptify = defineAction({
 				}),
 			);
 
-			const outputFile = path.join(tempDir, `${submissionID}.md`);
+			// Filter out null values (files that were skipped)
+			savedFilePaths = savedFilePaths.filter((filePath) => filePath !== null);
 
 			const result = await runCli([tempDir], workingDir, {
 				compress: true,
@@ -60,11 +70,6 @@ export const promptify = defineAction({
 
 			const fileContent = await readFile(outputFile, 'utf-8');
 
-			// Cleanup: remove the temporary directory and its contents
-			await rm(tempDir, { recursive: true, force: true });
-			await rm(outputFile, { recursive: true, force: true });
-			console.log('Temporary directory cleaned up');
-
 			return {
 				success: true,
 				prompt: fileContent,
@@ -77,6 +82,9 @@ export const promptify = defineAction({
 				success: false,
 				error: error instanceof Error ? error.message : 'Unknown error',
 			};
+		} finally {
+			rm(tempDir, { recursive: true, force: true });
+			rm(outputFile, { recursive: true, force: true });
 		}
 	},
 });
