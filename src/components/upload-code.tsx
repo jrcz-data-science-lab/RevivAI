@@ -4,10 +4,11 @@ import { Input } from './ui/input';
 
 import { actions } from 'astro:actions';
 import ShikiHighlighter from 'react-shiki';
+import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 
 export function UploadCode() {
-    const [prompt, setPrompt] = useState('');
-    const [metadata, setMetadata] = useState('');
+    const [prompt, setPrompt] = useState<string>('');
+    const [metadata, setMetadata] = useState<PackResult>();
 
     const [files, setFiles] = useState<FileList | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -51,8 +52,8 @@ export function UploadCode() {
 			//     throw new Error('Upload failed');
 			// }
 
-			setPrompt(data?.prompt);
-            setMetadata(data?.metadata);
+			if (data.prompt) setPrompt(data.prompt);
+            if (data.metadata) setMetadata(data.metadata);
 			setUploadStatus('success');
 			// Optional: Clear files after successful upload
 			setFiles(null);
