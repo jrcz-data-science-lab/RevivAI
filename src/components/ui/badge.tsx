@@ -23,7 +23,7 @@ function Badge({ className, variant = 'default', asChild = false, ...props }: Ba
 	const finalClasses = cn(baseClasses, variantClasses, className);
 	const Comp = asChild ? Slot : 'span';
 
-	return <Comp data-slot='badge' className={finalClasses} {...props} />;
+	return <Comp data-slot="badge" className={finalClasses} {...props} />;
 }
 
 export { Badge };

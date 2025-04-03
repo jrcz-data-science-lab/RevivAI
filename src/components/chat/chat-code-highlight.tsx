@@ -21,23 +21,12 @@ const CodeHighlight = ({ className, children, node }: CodeHighlightProps) => {
 
 	// Is inline rendering
 	if (isInline) {
-		return (
-			<code className={className}>
-				{String(children)}
-			</code>
-		);
+		return <code className={className}>{String(children)}</code>;
 	}
 
 	// Shiki highlighter
 	return (
-		<ShikiHighlighter
-			language={language}
-			delay={300}
-			as={'div'}
-			addDefaultStyles={false}
-			theme={'vitesse-dark'}
-			className={className}
-		>
+		<ShikiHighlighter language={language} delay={300} as={'div'} addDefaultStyles={false} theme={'vitesse-dark'} className={className}>
 			{String(children)}
 		</ShikiHighlighter>
 	);

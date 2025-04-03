@@ -36,5 +36,5 @@ export function Button({ className, variant = 'default', size = 'default', round
 	const finalClasses = cn(baseClasses, variantClasses, sizeClasses, roundClasses, className);
 	const Comp = asChild ? Slot : 'button';
 
-	return <Comp data-slot='button' className={finalClasses} {...props} />;
+	return <Comp data-slot="button" className={finalClasses} {...props} />;
 }

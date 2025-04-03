@@ -15,10 +15,10 @@ export function ChatError({ errorMessage }: ChatErrorProps) {
 			animate={{ opacity: 1, translateY: 0 }}
 			exit={{ opacity: 0, translateY: -16 }}
 			transition={{ duration: 0.6, type: 'spring' }}
-			className='mb-4'
+			className="mb-4"
 		>
-			<Alert variant='destructive'>
-				<CircleX className='h-4 w-4' />
+			<Alert variant="destructive">
+				<CircleX className="h-4 w-4" />
 				<AlertTitle>Error sending request to LLM!</AlertTitle>
 				<AlertDescription>{errorMessage}</AlertDescription>
 			</Alert>

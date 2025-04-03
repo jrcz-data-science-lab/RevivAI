@@ -5,12 +5,8 @@ import { rehypeInlineCodeProperty } from 'react-shiki';
 
 const ChatMarkdown = ({ children, ...props }: { children: string }) => {
 	return (
-		<div className='markdown prose dark:prose-invert' {...props}>
-			<ReactMarkdown
-				rehypePlugins={[rehypeInlineCodeProperty]}
-				components={{ code: CodeHighlight }}
-				disallowedElements={['img', 'hr']}
-			>
+		<div className="markdown prose dark:prose-invert" {...props}>
+			<ReactMarkdown rehypePlugins={[rehypeInlineCodeProperty]} components={{ code: CodeHighlight }} disallowedElements={['img', 'hr']}>
 				{children.trim()}
 			</ReactMarkdown>
 		</div>

@@ -8,12 +8,7 @@ type DropzoneProps = React.ComponentProps<'div'> & {
 	acceptDirectories?: boolean;
 };
 
-export function Dropzone({
-	onFilesDrop,
-	loading = false,
-	acceptDirectories = true,
-	...props
-}: DropzoneProps) {
+export function Dropzone({ onFilesDrop, loading = false, acceptDirectories = true, ...props }: DropzoneProps) {
 	const [isDragging, setIsDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,28 +59,26 @@ export function Dropzone({
 		>
 			<input
 				ref={fileInputRef}
-				type='file'
+				type="file"
 				multiple={true}
 				{...(acceptDirectories ? { webkitdirectory: '', directory: '' } : {})}
-				accept='.zip,.ts,.tsx,.md,.json,.js,.html,.css'
+				accept=".zip,.ts,.tsx,.md,.json,.js,.html,.css"
 				onChange={handleChange}
-				className='hidden'
+				className="hidden"
 			/>
 
-			{loading
-				? (
-					<>
-						<LoaderPinwheel className='mb-4 opacity-50 group-hover:opacity-100 transition-opacity animate-spin spin-in-180' />
-						<p className='text-lg font-medium font-serif'>Uploading...</p>
-					</>
-				)
-				: (
-					<>
-						<FolderUp className='mb-4 opacity-50 group-hover:opacity-100 transition-opacity' />
-						<p className='text-lg font-medium font-serif'>Drop folder with your code</p>
-						<p className='text-sm opacity-50'>or click to select</p>
-					</>
-				)}
+			{loading ? (
+				<>
+					<LoaderPinwheel className="mb-4 opacity-50 group-hover:opacity-100 transition-opacity animate-spin spin-in-180" />
+					<p className="text-lg font-medium font-serif">Uploading...</p>
+				</>
+			) : (
+				<>
+					<FolderUp className="mb-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+					<p className="text-lg font-medium font-serif">Drop folder with your code</p>
+					<p className="text-sm opacity-50">or click to select</p>
+				</>
+			)}
 		</div>
 	);
 }

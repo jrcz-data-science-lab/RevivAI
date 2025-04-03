@@ -50,6 +50,7 @@ export function useChat() {
 	}, []);
 
 	// Recalculate context size when messages change
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Should be triggered only when messages added / removed
 	useEffect(() => {
 		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
 		setContextSize(newContextSize);
@@ -101,7 +102,10 @@ export function useChat() {
 			// Prepare message history
 			const messages: CoreMessage[] = [
 				// { role: 'system', content: mermaidTutorial },
-				{ role: 'system', content: 'When responding with the code - specify programming language in markdown after quotes.' },
+				{
+					role: 'system',
+					content: 'When responding with the code - specify programming language in markdown after quotes.',
+				},
 				...chatHistory,
 				{ role: 'user', content: text },
 			];
@@ -123,7 +127,7 @@ export function useChat() {
 					onError: ({ error }) => handleError(error),
 				});
 
-				for await (let chunk of fullStream) {
+				for await (const chunk of fullStream) {
 					if (abortController.signal.aborted) break;
 
 					setState(

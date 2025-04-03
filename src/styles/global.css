@@ -1,6 +1,6 @@
-@import './markdown.css';
+@import "./markdown.css";
 
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin '@tailwindcss/typography';
 @plugin 'tailwindcss-animate';
 

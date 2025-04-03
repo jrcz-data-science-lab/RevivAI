@@ -9,7 +9,7 @@ function ChatModelSelect() {
 	const [selectedModel, setSelectedModel] = useAtom(selectedChatModelAtom);
 
 	return (
-		<div className='flex gap-2'>
+		<div className="flex gap-2">
 			{Object.entries(languageModels).map(([modelKey, model]) => {
 				return (
 					<TooltipProvider key={modelKey}>
@@ -18,7 +18,7 @@ function ChatModelSelect() {
 								<Badge
 									onClick={() => setSelectedModel(modelKey as LanguageModelKey)}
 									variant={selectedModel === modelKey ? 'default' : 'secondary'}
-									className='cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform'
+									className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform"
 								>
 									{modelKey}
 								</Badge>

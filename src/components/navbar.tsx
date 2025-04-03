@@ -23,10 +23,10 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 	const { theme, toggle } = useTheme();
 
 	return (
-		<div className='flex w-full justify-center'>
-			<div className='w-full flex gap-2'>
+		<div className="flex w-full justify-center">
+			<div className="w-full flex gap-2">
 				{showBackButton && (
-					<Button className='text-neutral-400' variant='ghost' round onClick={() => window.history.back()}>
+					<Button className="text-neutral-400" variant="ghost" round onClick={() => window.history.back()}>
 						<ArrowLeft />
 						<span>Back</span>
 					</Button>
@@ -34,21 +34,21 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 			</div>
 
 			{showTabs && (
-				<Tabs value={value} onValueChange={(value) => onTabChange && onTabChange(value as TabName)}>
-					<TabsList className='rounded-full'>
-						<TabsTrigger value='chat' className='w-20 rounded-full'>
+				<Tabs value={value} onValueChange={(value) => onTabChange?.(value as TabName)}>
+					<TabsList className="rounded-full">
+						<TabsTrigger value="chat" className="w-20 rounded-full">
 							Chat
 						</TabsTrigger>
-						<TabsTrigger value='writer' className='w-20 rounded-full'>
+						<TabsTrigger value="writer" className="w-20 rounded-full">
 							Writer
 						</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			)}
 
-			<div className='w-full flex gap-2 justify-end'>
+			<div className="w-full flex gap-2 justify-end">
 				{showThemeToggle && (
-					<Button variant='ghost' size='icon' round onClick={toggle}>
+					<Button variant="ghost" size="icon" round onClick={toggle}>
 						{theme === 'dark' ? <Sun /> : <Moon />}
 					</Button>
 				)}

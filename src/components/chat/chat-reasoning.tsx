@@ -20,15 +20,15 @@ function ChatReasoning({ open, content }: ChatReasoningProps) {
 			<div className={cn('flex items-center justify-between -mr-2', isOpen && 'mb-3')}>
 				<span className={cn('text-sm inline-block opacity-30', open && 'animate-pulse')}>Reasoning</span>
 				<CollapsibleTrigger asChild>
-					<Button variant='ghost' size='sm'>
+					<Button variant="ghost" size="sm">
 						<ChevronRight className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-90')} />
-						<span className='sr-only'>Toggle</span>
+						<span className="sr-only">Toggle</span>
 					</Button>
 				</CollapsibleTrigger>
 			</div>
 
 			<CollapsibleContent>
-				<Suspense fallback={<p className='prose dark:prose-invert'>{content}</p>}>
+				<Suspense fallback={<p className="prose dark:prose-invert">{content}</p>}>
 					<ChatMarkdown>{content.trim()}</ChatMarkdown>
 				</Suspense>
 			</CollapsibleContent>

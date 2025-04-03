@@ -28,3 +28,6 @@ stats.html
 
 # Affinity Designer lock files
 *.afdesign~lock~
+
+# Temporary submitted files
+_temp/

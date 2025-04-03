@@ -30,31 +30,23 @@ export function Chat() {
 
 	return (
 		<div ref={chatContainerRef} className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
-			<div className='flex justify-center items-center'>
-				<div className='z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1'>
+			<div className="flex justify-center items-center">
+				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (
-						<div className='mb-12 mx-7'>
+						<div className="mb-12 mx-7">
 							<ChatWelcome />
 						</div>
 					)}
 
 					{chatActive && (
-						<div className='flex flex-col gap-12 pt-48 pb-[1200vh] px-3 max-sm:px-4'>
+						<div className="flex flex-col gap-12 pt-48 pb-[1200vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
 
 								const isLast = index === chat.messages.length - 1;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return (
-									<ChatMessage
-										key={message.id}
-										message={message}
-										isActive={isLast}
-										isWriting={isWriting}
-										onDelete={chat.deleteMessage}
-									/>
-								);
+								return <ChatMessage key={message.id} message={message} isActive={isLast} isWriting={isWriting} onDelete={chat.deleteMessage} />;
 							})}
 						</div>
 					)}
@@ -63,7 +55,7 @@ export function Chat() {
 							initial={{ opacity: 0, translateY: 16 }}
 							animate={{ opacity: 1, translateY: 0 }}
 							transition={{ duration: 0.6, type: 'spring' }}
-							className='max-w-prose w-full pb-8'
+							className="max-w-prose w-full pb-8"
 						>
 							<AnimatePresence>{chat.errorMessage && <ChatError errorMessage={chat.errorMessage} />}</AnimatePresence>
 

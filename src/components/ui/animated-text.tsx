@@ -17,13 +17,17 @@ export function AnimatedText({ as: Element = 'p', split = 'words', delay = 0, sp
 	return (
 		<Element className={cn('flex gap-0.5 w-full flex-wrap', split === 'words' && 'gap-1', className)} {...props}>
 			{parts.map((part, i) => (
-				<span className='overflow-hidden' key={i}>
+				<span className="overflow-hidden" key={i}>
 					<motion.span
-						className='inline-block min-w-fit'
+						className="inline-block min-w-fit"
 						initial={{ translateY: 64 }}
 						animate={{ translateY: 0 }}
 						exit={{ opacity: 0 }}
-						transition={{ duration: speed, type: 'spring', delay: delay + i * 0.02 }}
+						transition={{
+							duration: speed,
+							type: 'spring',
+							delay: delay + i * 0.02,
+						}}
 					>
 						{part}
 					</motion.span>

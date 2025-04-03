@@ -35,13 +35,16 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 		return () => abortCtrl.abort();
 	}, []);
 
-	const submitMessage = useCallback((value: string) => {
-		value = value.trim();
-		if (!value) return;
+	const submitMessage = useCallback(
+		(value: string) => {
+			value = value.trim();
+			if (!value) return;
 
-		setInput('');
-		setTimeout(() => onSubmit(value));
-	}, [onSubmit]);
+			setInput('');
+			setTimeout(() => onSubmit(value));
+		},
+		[onSubmit],
+	);
 
 	const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
@@ -53,10 +56,10 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 	};
 
 	return (
-		<div className='flex flex-col gap-3 w-full h-auto'>
-			<div id='chat-input' className='relative w-full h-auto'>
+		<div className="flex flex-col gap-3 w-full h-auto">
+			<div id="chat-input" className="relative w-full h-auto">
 				<Button
-					size='icon'
+					size="icon"
 					variant={isStreaming ? 'outline' : 'link'}
 					onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
 					className={cn('absolute bottom-1.5 right-1.5')}
@@ -65,15 +68,15 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 				</Button>
 				<Textarea
 					ref={inputRef}
-					placeholder='Type your message here.'
+					placeholder="Type your message here."
 					value={input}
 					onKeyDown={handleKeydown}
 					onChange={(event) => setInput(event.target.value)}
 				/>
 			</div>
 
-			<div className='flex justify-between align-center'>
-				<p className='text-xs text-muted-foreground px-1'>
+			<div className="flex justify-between align-center">
+				<p className="text-xs text-muted-foreground px-1">
 					Currently, context size is <b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}.
 				</p>
 
