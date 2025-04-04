@@ -1,9 +1,10 @@
 ---
 import AppContainer from '@/components/app';
 import { UploadCode } from '@/components/upload-code';
+import { FileUploadForm } from '@/components/upload/upload-form';
 import AppLayout from '@/layouts/app-layout.astro';
 ---
 
 <AppLayout>
-	<UploadCode client:load />
+	<FileUploadForm client:load />
 </AppLayout>

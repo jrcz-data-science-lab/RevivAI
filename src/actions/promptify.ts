@@ -12,27 +12,20 @@ export const promptify = defineAction({
 		files: z.array(z.instanceof(File)),
 	}),
 	handler: async ({ files }) => {
-		// Generate unique ID
 		const submissionID = crypto.randomUUID();
 
-		// Create a temporary directory for the submission
 		const tempDir = path.join(workingDir, '_temp', submissionID);
-
-		// Define the output file path
 		const outputFile = path.join(tempDir, `${submissionID}.md`);
 
 		try {
-
 			// Create temporary directory
 			await mkdir(tempDir, { recursive: true });
 
 			// Save files to the temporary directory
 			let savedFilePaths = await Promise.all(
 				files.map(async (file, index) => {
-					// Sanitize the filename to prevent path traversal
 					const filePath = path.join(tempDir, file.name);
 
-					// Skip files in node_modules
 					if (filePath.includes('node_modules/')) return null;
 
 					// Verify the path is still within our temp directory (prevent path traversal)
@@ -42,9 +35,7 @@ export const promptify = defineAction({
 
 					// Handle subdirectories in the file name if needed
 					const fileDir = path.dirname(filePath);
-					if (fileDir !== tempDir) {
-						await mkdir(fileDir, { recursive: true });
-					}
+					if (fileDir !== tempDir) await mkdir(fileDir, { recursive: true });
 
 					const arrayBuffer = await file.arrayBuffer();
 					const buffer = Buffer.from(arrayBuffer);
@@ -54,7 +45,6 @@ export const promptify = defineAction({
 				}),
 			);
 
-			// Filter out null values (files that were skipped)
 			savedFilePaths = savedFilePaths.filter((filePath) => filePath !== null);
 
 			const result = await runCli([tempDir], workingDir, {
