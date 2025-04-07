@@ -75,7 +75,7 @@ export function FileUploadForm() {
 
 			<Dropzone onFilesDrop={handleDrop} loading={loading} />
 
-			<motion.div initial={{ opacity: 0 }} animate={{ opacity: files.length > 0 ? 1 : 0 }} transition={{ delay: 0.5, duration: 0.6 }} className="mt-16">
+			<motion.div initial={{ opacity: 0 }} animate={{ opacity: files.length > 0 ? 1 : 0 }} transition={{ duration: 0.3 }} className="mt-16">
 				<AnimatedText as="h1" className="text-xl font-bold font-serif mb-4">
 					2. Confirm your selected files.
 				</AnimatedText>

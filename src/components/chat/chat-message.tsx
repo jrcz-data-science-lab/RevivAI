@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../hooks/useChat';
+import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
 import { cn } from '../../lib/utils';
 import { lazy, memo, Suspense } from 'react';
 import { motion } from 'motion/react';
@@ -11,7 +11,7 @@ const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {
 	onDelete?: (id: string) => void;
-	message: ChatMessage;
+	message: ChatMessageType;
 	isActive: boolean;
 	isWriting: boolean;
 }
@@ -68,7 +68,7 @@ function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProp
 					<Copy />
 				</Button>
 
-				<Button size="icon" variant="ghost" onClick={() => onDelete && onDelete(message.id)} className="w-8 h-8 hover:text-destructive">
+				<Button size="icon" variant="ghost" onClick={() => onDelete?.(message.id)} className="w-8 h-8 hover:text-destructive">
 					<Trash />
 				</Button>
 			</div>

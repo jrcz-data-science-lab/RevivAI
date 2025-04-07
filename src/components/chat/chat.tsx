@@ -11,6 +11,7 @@ export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 	const chat = useChat();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: Runs only when the current message changes
 	useEffect(() => {
 		if (!chatContainerRef.current) return;
 		if (!chat.currentMessage) return;
@@ -29,7 +30,7 @@ export function Chat() {
 	const chatActive = chat.messages.length > 0;
 
 	return (
-		<div ref={chatContainerRef} className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
+		<div ref={chatContainerRef} className={cn('flex flex-col w-screen overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (
@@ -39,7 +40,7 @@ export function Chat() {
 					)}
 
 					{chatActive && (
-						<div className="flex flex-col gap-12 pt-48 pb-[1200vh] px-3 max-sm:px-4">
+						<div className="flex flex-col gap-12 pt-48 pb-[100vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
 
@@ -50,6 +51,13 @@ export function Chat() {
 							})}
 						</div>
 					)}
+
+					<div className="z-40 fixed top-0 left-0 w-full">
+						<div className="absolute w-full h-16 bg-gradient-to-b from-background to-transparent" />
+						<div className="absolute w-full h-24 bg-gradient-to-b from-background to-transparent" />
+						<div className="absolute w-full h-32 bg-gradient-to-b from-background to-transparent" />
+					</div>
+
 					<div className={cn('w-full h-auto bg-background px-4', chatActive && 'flex flex-col items-center absolute bottom-0 left-0')}>
 						<motion.div
 							initial={{ opacity: 0, translateY: 16 }}
