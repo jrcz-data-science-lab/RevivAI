@@ -30,7 +30,7 @@ export function Chat() {
 	const chatActive = chat.messages.length > 0;
 
 	return (
-		<div ref={chatContainerRef} className={cn('flex flex-col w-screen overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
+		<div ref={chatContainerRef} className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (

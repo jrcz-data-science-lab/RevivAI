@@ -3,21 +3,22 @@ import Navbar from './navbar';
 import { Toaster } from 'sonner';
 import { Chat } from './chat/chat';
 import { useState } from 'react';
+import { Writer } from './writer/writer';
 
 export default function App() {
-	const [currentTab, setCurrentTab] = useState<'chat' | 'writer'>('chat');
+	const [currentTab, setCurrentTab] = useState<'chat' | 'writer'>('writer');
 	const { theme } = useTheme();
 
 	return (
-		<div className="relative flex flex-col items-center justify-center mx-auto min-h-screen overflow-x-hidden bg-background">
+		<div className="relative flex items-center justify-center min-w-screen min-h-screen overflow-x-hidden bg-background">
 			<div className="w-full h-full">
 				<div className="z-50 fixed top-4 left-0 px-4 flex w-full justify-space-between">
 					<Navbar value={currentTab} onTabChange={setCurrentTab} showSettings={currentTab === 'chat'} />
 				</div>
 
 				<Toaster theme={theme} position="bottom-left" />
-				
-				{currentTab === 'chat' ? <Chat /> : <div className='fixed bottom-0 left-0 bg-amber-300 h-[calc(100vh-64px)] w-full'>sdfsdf</div>}
+
+				{currentTab === 'chat' ? <Chat /> : <Writer />}
 			</div>
 		</div>
 	);
