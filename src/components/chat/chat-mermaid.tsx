@@ -4,10 +4,10 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { cn } from '../../lib/utils';
 
 // Initialize Mermaid with default settings
-mermaid.initialize({ 
-	startOnLoad: true, 
-	theme: 'neutral', 
-	darkMode: true 
+mermaid.initialize({
+	startOnLoad: true,
+	theme: 'neutral',
+	darkMode: true,
 });
 
 interface ChatMermaidProps {
