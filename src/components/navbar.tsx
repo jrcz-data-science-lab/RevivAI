@@ -26,9 +26,8 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
 				{showBackButton && (
-					<Button className="text-neutral-400" variant="ghost" round onClick={() => window.history.back()}>
+					<Button className="text-neutral-400" variant="ghost" size="icon" round onClick={() => window.history.back()}>
 						<ArrowLeft />
-						<span>Back</span>
 					</Button>
 				)}
 			</div>

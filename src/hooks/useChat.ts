@@ -50,7 +50,6 @@ export function useChat() {
 	}, []);
 
 	// Recalculate context size when messages change
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Should be triggered only when messages added / removed
 	useEffect(() => {
 		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
 		setContextSize(newContextSize);

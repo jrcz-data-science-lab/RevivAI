@@ -37,11 +37,11 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 
 	const submitMessage = useCallback(
 		(value: string) => {
-			value = value.trim();
-			if (!value) return;
+			const trimmed = value.trim();
+			if (!trimmed) return;
 
 			setInput('');
-			setTimeout(() => onSubmit(value));
+			setTimeout(() => onSubmit(trimmed));
 		},
 		[onSubmit],
 	);

@@ -11,7 +11,6 @@ export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 	const chat = useChat();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Runs only when the current message changes
 	useEffect(() => {
 		if (!chatContainerRef.current) return;
 		if (!chat.currentMessage) return;

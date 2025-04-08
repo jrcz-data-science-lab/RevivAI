@@ -3,7 +3,12 @@ import mermaid from 'mermaid';
 import { useDebounce } from '../../hooks/useDebounce';
 import { cn } from '../../lib/utils';
 
-mermaid.initialize({ startOnLoad: true, theme: 'neutral', darkMode: true });
+// Initialize Mermaid with default settings
+mermaid.initialize({ 
+	startOnLoad: true, 
+	theme: 'neutral', 
+	darkMode: true 
+});
 
 interface ChatMermaidProps {
 	children: string;
@@ -25,5 +30,6 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 		if (code) renderMermaid(code);
 	}, [code]);
 
-	return <div className={cn(`flex min-h-32`, rendered && 'justify-center items-center')} dangerouslySetInnerHTML={{ __html: rendered ?? children }} />;
+	// biome-ignore lint/security/noDangerouslySetInnerHtml: Sets HTML from Mermaid library
+	return <div className={cn('flex min-h-32', rendered && 'justify-center items-center')} dangerouslySetInnerHTML={{ __html: rendered ?? children }} />;
 }
