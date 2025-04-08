@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { FileText, LibraryBig, Plus, Settings } from 'lucide-react';
@@ -83,24 +83,30 @@ export function Writer() {
 
 							<div className="flex-1 overflow-y-auto px-6">
 								<div className="flex flex-col">
-									{chapters.map((chapter) => {
-										const active = chapter.id === selectedChapterId;
+									<AnimatePresence>
+										{chapters.map((chapter) => {
+											const active = chapter.id === selectedChapterId;
 
-										return (
-											<button
-												type="button"
-												key={chapter.id}
-												onClick={() => setSelectedChapterId(chapter.id)}
-												className={cn(
-													'flex gap-2 py-1.5 items-center cursor-pointer transition-all',
-													active ? 'text-foreground translate-x-1' : 'text-muted-foreground hover:translate-x-1',
-												)}
-											>
-												<FileText className="w-4 h-4" />
-												<span>{chapter.title}</span>
-											</button>
-										);
-									})}
+											return (
+												<motion.button
+													type="button"
+													key={chapter.id}
+													onClick={() => setSelectedChapterId(chapter.id)}
+													transition={{ duration: 0.1 }}
+													initial={{ opacity: 0, translateX: -4 }}
+													animate={{ opacity: 1, translateX: 0 }}
+													exit={{ opacity: 0, translateX: -4 }}
+													className={cn(
+														'flex gap-2 py-1.5 items-center cursor-pointer transition-all',
+														active ? 'text-foreground translate-x-1' : 'text-muted-foreground hover:translate-x-1 active:scale-95 active:-translate-x-1',
+													)}
+												>
+													<FileText className="w-4 h-4" />
+													<span>{chapter.title}</span>
+												</motion.button>
+											);
+										})}
+									</AnimatePresence>
 								</div>
 							</div>
 
