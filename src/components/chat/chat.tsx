@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { useChat } from '../../hooks/useChat';
 import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';

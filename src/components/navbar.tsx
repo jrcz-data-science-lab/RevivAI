@@ -1,15 +1,15 @@
-import { ArrowLeft, Moon, Sun } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { DoorClosed, Moon, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
 import Settings from './settings';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
 
-type TabName = 'chat' | 'writer';
+export type TabName = 'chat' | 'writer';
 
 interface NavbarProps {
-	onTabChange?: (tab: TabName) => void;
-	value?: TabName;
+	onTabChange: (tab: TabName) => void;
+	value: TabName;
 	showThemeToggle?: boolean;
 	showSettings?: boolean;
 	showBackButton?: boolean;
@@ -26,9 +26,11 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
 				{showBackButton && (
-					<Button className="text-neutral-400" variant="ghost" size="icon" round onClick={() => window.history.back()}>
-						<ArrowLeft />
-					</Button>
+					<a href="/projects">
+						<Button className="text-neutral-400" variant="ghost" size="icon" round>
+							<DoorClosed />
+						</Button>
+					</a>
 				)}
 			</div>
 

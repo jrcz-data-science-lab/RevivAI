@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import mermaid from 'mermaid';
 import { useDebounce } from '../../hooks/useDebounce';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 // Initialize Mermaid with default settings
 mermaid.initialize({

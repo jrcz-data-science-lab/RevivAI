@@ -3,6 +3,8 @@ import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { ProjectsContainer } from './projects-container.tsx';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx';
+import { cn } from '@/lib/utils.ts';
 
 interface ProjectsListProps {
 	projects: ProjectMetadata[];
@@ -26,7 +28,7 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 				<p className="text-sm opacity-70">Select project you are going to work with. You can always submit new project by clicking button below.</p>
 			</div>
 
-			<div className="border border-muted rounded-md overflow-hidden mb-8">
+			<div className={cn('border border-border rounded-md overflow-hidden mb-8', sortedProjects.length === 0 && 'hidden')}>
 				{sortedProjects.map((project) => {
 					const createdAt = new Date(project.createdAt);
 					const createdAtFormatted = formatDistanceToNow(createdAt, { addSuffix: true, includeSeconds: true });
@@ -34,7 +36,7 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 					return (
 						<div key={project.id} className="relative group flex justify-between items-center pr-2 pl-4 not-last:border-b border-muted transition-all">
 							<a
-								href={`/app?projectId=${project.id}`}
+								href={`/app/${project.id}`}
 								className="opacity-70 group-hover:opacity-100 block w-5/6 py-3 max-w-1/2 cursor-pointer overflow-hidden whitespace-nowrap overflow-ellipsis"
 							>
 								{project.name}

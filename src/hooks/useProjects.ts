@@ -7,7 +7,7 @@ export interface ProjectMetadata {
 	createdAt: string;
 }
 
-const projectsAtom = atomWithStorage<ProjectMetadata[]>('metadata', []);
+const projectsAtom = atomWithStorage<ProjectMetadata[]>('revivai-projects', [{ id: crypto.randomUUID(), name: 'sdfsdf', createdAt: new Date().toISOString() }]);
 
 export function useProjects() {
 	const [projects, setProjects] = useAtom(projectsAtom);

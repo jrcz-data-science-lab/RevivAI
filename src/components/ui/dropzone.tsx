@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { FolderUp, LoaderPinwheel } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 type DropzoneProps = React.ComponentProps<'div'> & {
 	onFilesDrop?: (files: FileList) => void;

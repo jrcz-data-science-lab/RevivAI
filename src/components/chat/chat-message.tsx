@@ -1,5 +1,5 @@
 import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { lazy, memo, Suspense } from 'react';
 import { motion } from 'motion/react';
 import { Copy, LoaderPinwheel, Trash } from 'lucide-react';

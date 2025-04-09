@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useAtom } from 'jotai';
 import { Badge } from '../ui/badge';
 import { selectedChatModelAtom } from '../../hooks/useChat';
-import { type LanguageModelKey, languageModels } from '../../lib/models';
+import { type LanguageModelKey, languageModels } from '@/lib/models';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 function ChatModelSelect() {

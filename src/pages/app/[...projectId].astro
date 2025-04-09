@@ -1,0 +1,19 @@
+---
+import AppContainer from '@/components/app';
+import AppLayout from '@/layouts/app-layout.astro';
+
+// Do not render on the server
+export const prerender = false;
+
+// Selected projectId from the URL
+const projectId = Astro.params.projectId;
+
+// Redirect to projects page if no projectId is provided
+if (!projectId) {
+	return Astro.redirect('/projects');
+}
+---
+
+<AppLayout>
+	<AppContainer client:only projectId={projectId} />
+</AppLayout>

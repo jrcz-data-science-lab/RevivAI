@@ -2,7 +2,7 @@ import { Button } from '../ui/button';
 import { lazy, memo, Suspense, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
