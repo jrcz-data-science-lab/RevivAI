@@ -7,7 +7,7 @@ export interface ProjectMetadata {
 	createdAt: string;
 }
 
-const projectsAtom = atomWithStorage<ProjectMetadata[]>('revivai-projects', [{ id: crypto.randomUUID(), name: 'sdfsdf', createdAt: new Date().toISOString() }]);
+const projectsAtom = atomWithStorage<ProjectMetadata[]>('projects', [{ id: crypto.randomUUID(), name: 'sdfsdf', createdAt: new Date().toISOString() }]);
 
 export function useProjects() {
 	const [projects, setProjects] = useAtom(projectsAtom);
@@ -24,6 +24,8 @@ export function useProjects() {
 		};
 
 		setProjects((projects) => [...projects, newProject]);
+
+		return newProject;
 	};
 
 	/**
@@ -36,5 +38,13 @@ export function useProjects() {
 		});
 	};
 
-	return { createProject, deleteProject, projects };
+	/**
+	 * Check if a project exists.
+	 * @param id The ID of the project to check
+	 */
+	const projectExists = (id: string) => {
+		return projects.some((project) => project.id === id);
+	}
+
+	return { createProject, deleteProject, projects, projectExists };
 }

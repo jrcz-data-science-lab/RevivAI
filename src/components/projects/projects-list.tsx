@@ -2,8 +2,6 @@ import type { ProjectMetadata } from '@/hooks/useProjects';
 import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { ProjectsContainer } from './projects-container.tsx';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx';
 import { cn } from '@/lib/utils.ts';
 
 interface ProjectsListProps {
@@ -22,11 +20,6 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 	});
 
 	return (
-		<ProjectsContainer>
-			<div className="mb-4">
-				<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
-				<p className="text-sm opacity-70">Select project you are going to work with. You can always submit new project by clicking button below.</p>
-			</div>
 
 			<div className={cn('border border-border rounded-md overflow-hidden mb-8', sortedProjects.length === 0 && 'hidden')}>
 				{sortedProjects.map((project) => {
@@ -61,9 +54,5 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 				})}
 			</div>
 
-			<a href="/projects/new">
-				<Button className="block ml-auto">Upload New</Button>
-			</a>
-		</ProjectsContainer>
 	);
 }
