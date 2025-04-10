@@ -2,15 +2,15 @@ import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectsList } from './projects-list.tsx';
-import ProjectsNew from './projects-new.tsx';
+import ProjectsNew, { type ProjectNewFormSchema } from './projects-new.tsx';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
 
-	const newProject = () => {
-		const created = createProject({ name: 'New Project' });
+	const createNewProject = (data: ProjectNewFormSchema) => {
+		const created = createProject({ name: data.projectName });
 		window.location.href = `/app/${created.id}`;
-	}
+	};
 
 	return (
 		<div className="relative w-full flex justify-center items-center max-w-prose overflow-x-hidden px-6 pt-8 mb-16 mx-auto">
@@ -28,7 +28,7 @@ export function Projects() {
 
 				<ProjectsList projects={projects} deleteProject={deleteProject} />
 
-				<ProjectsNew createProject={newProject} />
+				<ProjectsNew onCreate={createNewProject} />
 			</motion.div>
 		</div>
 	);
