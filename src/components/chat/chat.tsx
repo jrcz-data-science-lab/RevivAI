@@ -45,7 +45,7 @@ export function Chat() {
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (
-						<div className="mb-12 mx-7">
+						<div className="mb-12 mx-6">
 							<ChatWelcome />
 						</div>
 					)}

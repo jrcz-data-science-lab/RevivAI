@@ -1,5 +1,5 @@
 interface ImportMetaEnv {
-	readonly PUBLIC_OLLAMA_API: string;
+	readonly PUBLIC_OLLAMA_API_URL: string;
 }
 
 interface ImportMeta {

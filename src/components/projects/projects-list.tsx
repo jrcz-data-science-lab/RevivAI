@@ -45,7 +45,7 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 							<div className="relative group flex justify-between items-center pr-2 pl-4 transition-all min-h-12">
 								<a
 									href={`/app/${project.id}`}
-									className="opacity-70 group-hover:opacity-100 block w-5/6 py-3 max-w-sm cursor-pointer overflow-hidden whitespace-nowrap overflow-ellipsis"
+									className="text-muted-foreground group-hover:text-foreground block w-5/6 py-3 max-w-sm cursor-pointer overflow-hidden whitespace-nowrap overflow-ellipsis transition-colors"
 								>
 									{project.name}
 								</a>
