@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { UploadForm } from '../upload/upload-form';
 
 interface ProjectsNewProps {
 	onCreate: (data: ProjectNewFormSchema) => void;
@@ -40,7 +41,7 @@ function ProjectsNew({ onCreate }: ProjectsNewProps) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button className="block ml-auto">New Project</Button>
+				<Button className="block" size='lg'>New Project</Button>
 			</DialogTrigger>
 
 			<DialogContent>

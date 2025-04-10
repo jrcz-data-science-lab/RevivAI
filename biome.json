@@ -8,7 +8,7 @@
 	"files": {
 		"ignoreUnknown": false,
 		"ignore": [
-			"animate.css"
+			"styles/animate.css"
 		]
 	},
 	"formatter": {

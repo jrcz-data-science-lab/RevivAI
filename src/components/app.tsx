@@ -22,15 +22,17 @@ export default function App({ projectId }: AppProps) {
 	// If no project ID is provided or the project does not exist, show a message
 	if (!projectId || !projectExists(projectId)) {
 		return (
-			<motion.div 
+			<motion.div
 				initial={{ opacity: 0, translateY: 16 }}
 				animate={{ opacity: 1, translateY: 0 }}
-				transition={{ duration: 0.1, delay: 0.6 }}
+				transition={{ duration: 0.1, delay: 1 }}
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
 				<div className="text-muted-foreground w-full text-center">This project doesn't exist.</div>
 				<a href="/projects">
-					<Button size='sm' variant='outline'>Back to projects</Button>
+					<Button size="sm" variant="outline">
+						Back to projects
+					</Button>
 				</a>
 			</motion.div>
 		);

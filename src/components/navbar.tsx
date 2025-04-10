@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
 import Settings from './settings';
 import { useTheme } from '@/hooks/useTheme';
+import { Upload } from './upload/upload';
 
 export type TabName = 'chat' | 'writer';
 
@@ -14,13 +15,14 @@ interface NavbarProps {
 	showSettings?: boolean;
 	showBackButton?: boolean;
 	showTabs?: boolean;
+	showUpload?: boolean;
 }
 
 /**
  * Navbar component for the app
  * @param {NavbarProps} props Props for the Navbar component
  */
-function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showThemeToggle = true }: NavbarProps) {
+function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showUpload = true, showThemeToggle = true }: NavbarProps) {
 	const theme = useTheme();
 
 	return (
@@ -28,7 +30,7 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 			<div className="w-full flex gap-2">
 				{showBackButton && (
 					<a href="/projects">
-						<Button className="text-neutral-400" variant="ghost" size="icon" round title='Back to projects'>
+						<Button className="text-neutral-400" variant="ghost" size="icon" round title="Back to projects">
 							<DoorClosed />
 						</Button>
 					</a>
@@ -49,15 +51,13 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 			)}
 
 			<div className="w-full flex gap-2 justify-end">
-				<Button variant="ghost" size="icon" round title='Upload code files'>
-					<FolderUp />
-				</Button>
-
 				{showThemeToggle && (
-					<Button variant="ghost" size="icon" round onClick={theme.toggle} title='Toggle theme'>
+					<Button variant="ghost" size="icon" round onClick={theme.toggle} title="Toggle theme">
 						{theme.theme === 'dark' ? <Sun /> : <Moon />}
 					</Button>
 				)}
+
+				{showUpload && <Upload />}
 
 				{showSettings && <Settings />}
 			</div>

@@ -12,7 +12,7 @@ type FileWithContent = {
 	type: string;
 };
 
-export function FileUploadForm() {
+export function UploadForm() {
 	const [files, setFiles] = useState<FileWithContent[]>([]);
 	const [loading, setLoading] = useState(false);
 
@@ -66,27 +66,19 @@ export function FileUploadForm() {
 	};
 
 	return (
-		<div className="space-y-4 mt-8 mb-16">
-			<AnimatedText as="h1" className="text-xl font-bold font-serif">
-				1. Select your code files.
-			</AnimatedText>
-
-			<p className="pb-6 opacity-80">Click on the area below to select folder with your projects code files. You can select multiple files at once.</p>
-
+		<div className="space-y-4">
 			<Dropzone onFilesDrop={handleDrop} loading={loading} />
 
-			<motion.div initial={{ opacity: 0 }} animate={{ opacity: files.length > 0 ? 1 : 0 }} transition={{ duration: 0.3 }} className="mt-16">
-				<AnimatedText as="h1" className="text-xl font-bold font-serif mb-4">
-					2. Confirm your selected files.
-				</AnimatedText>
+			{/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: files.length > 0 ? 1 : 0 }} transition={{ duration: 0.3 }} className="mt-4">
 
-				<div className="space-y-4 mb-4">
+				<div className="space-y-4">
 					<div className="flex items-center justify-between">
-						<h2 className="text-md font-serif">Uploaded files ({files.length})</h2>
+						<h2 className="text-sm">Uploaded files ({files.length})</h2>
 						<Button variant="outline" size="sm" onClick={clearFiles}>
 							Clear
 						</Button>
 					</div>
+					
 					<UploadContent files={files} />
 				</div>
 
@@ -94,7 +86,7 @@ export function FileUploadForm() {
 					Upload
 					<UploadCloud className="mr-1 scale-125" />
 				</Button>
-			</motion.div>
+			</motion.div> */}
 		</div>
 	);
 }

@@ -83,7 +83,7 @@ function FileComponent({ node, depth = 0 }: { node: FileNode; depth?: number }) 
 		<div className="overflow-hidden opacity-80">
 			<div className="flex items-center w-full p-2 text-left" style={{ paddingLeft: `${depth * 1}rem` }}>
 				<File className="h-4 w-4 ml-3 mr-2" />
-				<span className="font-light truncate">{node.name}</span>
+				<span className="font-light truncate text-sm">{node.name}</span>
 			</div>
 		</div>
 	);
@@ -115,7 +115,7 @@ function FolderComponent({ node, depth = 0 }: { node: FolderNode; depth?: number
 				style={{ paddingLeft: `${depth * 1}rem` }}
 			>
 				<Folder className="h-4 w-4 ml-3 mr-2" />
-				<span className="font-medium">{node.name}</span>
+				<span className="font-medium text-sm">{node.name}</span>
 				<span className="ml-auto">
 					<ChevronRight className={cn('h-4 w-4 transition-transform', expanded && 'rotate-90')} />
 				</span>
