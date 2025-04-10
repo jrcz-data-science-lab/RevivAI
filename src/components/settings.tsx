@@ -7,7 +7,7 @@ function Settings() {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button variant="ghost" round size="icon">
+				<Button variant="ghost" round size="icon" title='Settings'>
 					<SlidersHorizontal />
 				</Button>
 			</DialogTrigger>

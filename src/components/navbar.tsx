@@ -1,4 +1,4 @@
-import { DoorClosed, Moon, Sun } from 'lucide-react';
+import { DoorClosed, FolderUp, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
@@ -18,16 +18,17 @@ interface NavbarProps {
 
 /**
  * Navbar component for the app
+ * @param {NavbarProps} props Props for the Navbar component
  */
 function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showThemeToggle = true }: NavbarProps) {
-	const { theme, toggle } = useTheme();
+	const theme = useTheme();
 
 	return (
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
 				{showBackButton && (
 					<a href="/projects">
-						<Button className="text-neutral-400" variant="ghost" size="icon" round>
+						<Button className="text-neutral-400" variant="ghost" size="icon" round title='Back to projects'>
 							<DoorClosed />
 						</Button>
 					</a>
@@ -48,9 +49,13 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 			)}
 
 			<div className="w-full flex gap-2 justify-end">
+				<Button variant="ghost" size="icon" round title='Upload code files'>
+					<FolderUp />
+				</Button>
+
 				{showThemeToggle && (
-					<Button variant="ghost" size="icon" round onClick={toggle}>
-						{theme === 'dark' ? <Sun /> : <Moon />}
+					<Button variant="ghost" size="icon" round onClick={theme.toggle} title='Toggle theme'>
+						{theme.theme === 'dark' ? <Sun /> : <Moon />}
 					</Button>
 				)}
 

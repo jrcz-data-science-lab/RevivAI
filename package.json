@@ -49,6 +49,7 @@
 		"motion": "^12.4.3",
 		"ollama": "^0.5.13",
 		"ollama-ai-provider": "^1.2.0",
+		"openai": "^4.93.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.0.0",

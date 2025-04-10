@@ -12,14 +12,13 @@ const ChatMarkdown = lazy(() => import('./chat-markdown'));
 interface ChatMessageProps {
 	onDelete?: (id: string) => void;
 	message: ChatMessageType;
-	isActive: boolean;
 	isWriting: boolean;
 }
 
 /**
  * Chat message component
  */
-function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProps) {
+function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 	const hasReasoning = message.reasoning.trim() !== '';
 	const hasAnswer = message.answer.trim() !== '';
 
@@ -31,16 +30,17 @@ function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProp
 		<motion.div
 			initial={{ opacity: 0, translateY: 16 }}
 			animate={{
-				opacity: isActive ? 1 : 0.7,
-				scale: isActive ? 1 : 0.95,
+				opacity: 1,
+				scale: 1,
 				translateY: 0,
 			}}
-			transition={{ duration: 0.3, type: isActive ? 'spring' : 'tween' }}
+			transition={{ duration: 0.3, type: 'tween' }}
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>
 			<div className="relative flex flex-col gap-2">
-				<h3 className="relative text-2xl font-black font-serif break-words whitespace-pre-wrap">
+				<h3 className="relative text-xl font-black font-serif break-words whitespace-pre-wrap">
 					{message.prompt}
+
 					<motion.div
 						className="absolute -left-10 bottom-0.5 opacity-60"
 						initial={{ opacity: 0 }}
@@ -54,7 +54,7 @@ function ChatMessage({ message, isActive, isWriting, onDelete }: ChatMessageProp
 					</motion.div>
 				</h3>
 
-				<Separator className="mt-2 mb-4" />
+				<Separator className="separator mt-1 mb-3" />
 
 				{hasReasoning && <ChatReasoning open={hasReasoning && !hasAnswer} content={message.reasoning} />}
 

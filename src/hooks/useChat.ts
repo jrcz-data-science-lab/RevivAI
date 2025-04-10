@@ -26,6 +26,14 @@ export const selectedChatModelAtom = atomWithStorage<LanguageModelKey>('selected
 // Context size
 export const contextSizeAtom = atom(0);
 
+// Chat state
+export const chatStateAtom = atom<ChatState>({
+	messages: [],
+	isStreaming: false,
+	errorMessage: null,
+	currentMessage: null,
+});
+
 /**
  * Chat hook for interacting with the AI models
  */
@@ -34,17 +42,12 @@ export function useChat() {
 
 	const selectedModel = useAtomValue(selectedChatModelAtom);
 	const [_, setContextSize] = useAtom(contextSizeAtom);
-
-	const [state, setState] = useState<ChatState>({
-		messages: [],
-		isStreaming: false,
-		errorMessage: null,
-		currentMessage: null,
-	});
+	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
 	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
+			setState((prev) => ({ ...prev, isStreaming: false }));
 			abortControllerRef.current?.abort();
 		};
 	}, []);

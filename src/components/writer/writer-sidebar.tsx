@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 import { FileText, LibraryBig, Plus, Settings, Trash } from 'lucide-react';
 
 interface WriterSidebarProps {
-	chapters: Chapter[];
+	chapters: Chapter[] | undefined;
 	setChapters: React.Dispatch<React.SetStateAction<Chapter[]>>;
 	selectedChapterId: string | undefined;
 	setSelectedChapterId: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -40,43 +40,45 @@ export function WriterSidebar({ chapters, setChapters, selectedChapterId, setSel
 					<div className="px-6 pt-6 pb-1.5 uppercase text-muted-foreground text-xs flex-none">Chapters</div>
 
 					<div className="flex-1 overflow-y-auto px-6">
-						<AnimatePresence initial={false}>
-							<Reorder.Group axis="y" values={chapters} onReorder={setChapters} layoutScroll className="flex flex-col pb-8 overflow-hidden">
-								{chapters.map((chapter) => {
-									const active = chapter.id === selectedChapterId;
+						{Array.isArray(chapters) && (
+							<AnimatePresence initial={false}>
+								<Reorder.Group axis="y" values={chapters} onReorder={setChapters} layoutScroll className="flex flex-col pb-8 overflow-hidden">
+									{chapters.map((chapter) => {
+										const active = chapter.id === selectedChapterId;
 
-									return (
-										<Reorder.Item
-											key={chapter.id}
-											value={chapter}
-											transition={{ duration: 0.1 }}
-											initial={{ opacity: 0, maxHeight: 0 }}
-											animate={{ opacity: 1, maxHeight: 32 }}
-											exit={{ opacity: 0, maxHeight: 0 }}
-											className="relative flex h-8 gap-2 items-center group overflow-hidden"
-										>
-											<button
-												type="button"
-												onClick={() => setSelectedChapterId(chapter.id)}
-												className={cn(
-													'flex min-h-8 gap-2 items-center transition-all duration-100',
-													active ? 'text-foreground pl-1' : 'text-muted-foreground hover:pl-1 cursor-pointer',
-												)}
+										return (
+											<Reorder.Item
+												key={chapter.id}
+												value={chapter}
+												transition={{ duration: 0.1 }}
+												initial={{ opacity: 0, maxHeight: 0 }}
+												animate={{ opacity: 1, maxHeight: 32 }}
+												exit={{ opacity: 0, maxHeight: 0 }}
+												className="relative flex h-8 gap-2 items-center group overflow-hidden"
 											>
-												<FileText className="h-4" />
-												<span className="w-full">{chapter.title}</span>
-											</button>
-
-											<div className="flex items-center h-8 absolute top-0 right-0 opacity-0 transition-all group-hover:opacity-100">
-												<button type="button" onClick={() => removeChapter(chapter.id)}>
-													<Trash className="h-4 hover:text-destructive cursor-pointer" />
+												<button
+													type="button"
+													onClick={() => setSelectedChapterId(chapter.id)}
+													className={cn(
+														'flex min-h-8 gap-2 items-center transition-all duration-100',
+														active ? 'text-foreground pl-1' : 'text-muted-foreground hover:pl-1 cursor-pointer',
+													)}
+												>
+													<FileText className="h-4" />
+													<span className="w-full">{chapter.title}</span>
 												</button>
-											</div>
-										</Reorder.Item>
-									);
-								})}
-							</Reorder.Group>
-						</AnimatePresence>
+
+												<div className="flex items-center h-8 absolute top-0 right-0 opacity-0 transition-all group-hover:opacity-100">
+													<button type="button" onClick={() => removeChapter(chapter.id)}>
+														<Trash className="h-4 hover:text-destructive cursor-pointer" />
+													</button>
+												</div>
+											</Reorder.Item>
+										);
+									})}
+								</Reorder.Group>
+							</AnimatePresence>
+						)}
 					</div>
 
 					<div className="flex-none p-3 bg-muted">

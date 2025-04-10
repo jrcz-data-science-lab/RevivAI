@@ -11,18 +11,30 @@ export function Chat() {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 	const chat = useChat();
 
+	const scrollToLastMessage = (behavior: ScrollBehavior) => {
+		if (!chatContainerRef.current) return;
+
+		// Select last message
+		const messageElement = chatContainerRef.current?.querySelector('.message:last-child .separator');
+		if (!messageElement) return;
+
+		// Scroll to last message
+		const offset = window.innerHeight / 4;
+		const top = messageElement.getBoundingClientRect().bottom + chatContainerRef.current.scrollTop - offset;
+		chatContainerRef.current.scrollTo({ top, behavior });
+	};
+
+	// Scroll to last message on mount
+	useEffect(() => {
+		scrollToLastMessage('instant');
+	}, []);
+
+	// Scroll to last message on new message
 	useEffect(() => {
 		if (!chatContainerRef.current) return;
 		if (!chat.currentMessage) return;
 
-		// Select last message
-		const messageElement = chatContainerRef.current?.querySelector('.message:last-child h3');
-		if (!messageElement) return;
-
-		// Scroll to last message
-		const offset = window.innerHeight / 3;
-		const top = messageElement.getBoundingClientRect().bottom + chatContainerRef.current.scrollTop - offset;
-		chatContainerRef.current.scrollTo({ top, behavior: 'smooth' });
+		scrollToLastMessage('smooth');
 	}, [chatContainerRef, chat.currentMessage?.id]);
 
 	// Check if there are any messages in chat
@@ -39,14 +51,12 @@ export function Chat() {
 					)}
 
 					{chatActive && (
-						<div className="flex flex-col gap-12 pt-48 pb-[100vh] px-3 max-sm:px-4">
+						<div className="flex flex-col gap-12 pt-48 min-h-screen pb-[80vh] px-3 max-sm:px-4">
 							{chat.messages.map((message, index) => {
 								if (!message) return null;
-
-								const isLast = index === chat.messages.length - 1;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return <ChatMessage key={message.id} message={message} isActive={isLast} isWriting={isWriting} onDelete={chat.deleteMessage} />;
+								return <ChatMessage key={message.id} message={message} isWriting={isWriting} onDelete={chat.deleteMessage} />;
 							})}
 						</div>
 					)}

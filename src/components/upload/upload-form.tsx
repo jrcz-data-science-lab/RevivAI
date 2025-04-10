@@ -66,7 +66,7 @@ export function FileUploadForm() {
 	};
 
 	return (
-		<div className="space-y-4  mt-8 mb-16">
+		<div className="space-y-4 mt-8 mb-16">
 			<AnimatedText as="h1" className="text-xl font-bold font-serif">
 				1. Select your code files.
 			</AnimatedText>

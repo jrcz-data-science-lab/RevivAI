@@ -24,7 +24,7 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 	return (
 		<ProjectsContainer>
 			<div className="mb-4">
-				<h1 className="font-serif font-black text-2xl mb-4">Welcome back!</h1>
+				<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
 				<p className="text-sm opacity-70">Select project you are going to work with. You can always submit new project by clicking button below.</p>
 			</div>
 
