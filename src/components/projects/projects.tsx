@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectsList } from './projects-list.tsx';
+import ProjectsNew from './projects-new.tsx';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
@@ -27,9 +28,7 @@ export function Projects() {
 
 				<ProjectsList projects={projects} deleteProject={deleteProject} />
 
-				<Button className="block ml-auto" onClick={newProject}>
-					New Project
-				</Button>
+				<ProjectsNew createProject={newProject} />
 			</motion.div>
 		</div>
 	);

@@ -13,13 +13,6 @@ export interface Codebase {
 	content: string;
 }
 
-export interface ChatMessage {
-	id: string;
-	createdAt: string;
-	question: string;
-	answer: string;
-}
-
 /**
  * Creates a new Dexie database instance for the given project ID.
  * @param projectId The ID of the project
@@ -32,7 +25,6 @@ export function createDatabase(projectId: string) {
 	const db = new Dexie(key) as Dexie & {
 		chapters: EntityTable<Chapter, 'id'>;
 		codebases: EntityTable<Codebase, 'id'>;
-		chatMessages: EntityTable<ChatMessage, 'id'>;
 	};
 
 	// Schema declaration:
