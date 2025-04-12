@@ -27,6 +27,7 @@ export function Chat() {
 	// Scroll to last message on mount
 	useEffect(() => {
 		scrollToLastMessage('instant');
+		return () => chat.abort();
 	}, []);
 
 	// Scroll to last message on new message

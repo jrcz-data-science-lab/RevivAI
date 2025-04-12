@@ -21,7 +21,7 @@ export interface ChatState {
 }
 
 // Selected chat model
-export const selectedChatModelAtom = atomWithStorage<LanguageModelKey>('selectedChatModel', 'default');
+export const selectedChatModelAtom = atomWithStorage<LanguageModelKey>('selected-chat-model', 'default');
 
 // Context size
 export const contextSizeAtom = atom(0);
