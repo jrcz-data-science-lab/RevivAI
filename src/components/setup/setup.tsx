@@ -11,7 +11,7 @@ import { SetupBanner } from './setup-banner';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
 import { LoaderCircle } from 'lucide-react';
-import { useLLMProvider, type LLMProvider, type LLMProviderData } from '@/hooks/useLLMProvider';
+import { useLLMProvider, type LLMProvider, type LLMProviderData } from '@/hooks/useLLM';
 import { SetupForm } from './setup-form';
 import { createOpenAIClient, testOpenAIClient } from '@/lib/openai';
 

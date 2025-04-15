@@ -4,19 +4,20 @@ import { Textarea } from '../../components/ui/textarea';
 import { CircleStop, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTokensCount } from '../../hooks/useTokensCount';
-import ChatModelSelect from './chat-model-select';
 import { contextSizeAtom } from '../../hooks/useChat';
 import { useAtomValue } from 'jotai';
+import { Badge } from '../ui/badge';
 
 const formatter = new Intl.NumberFormat('en', { notation: 'standard' });
 
 interface ChatInputProps {
 	onSubmit: (value: string) => void;
 	onAbort: () => void;
+	onClear: () => void;
 	isStreaming: boolean;
 }
 
-export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
+export function ChatInput({ onSubmit, onAbort, isStreaming, onClear }: ChatInputProps) {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [input, setInput] = useState('');
 
@@ -41,10 +42,14 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 			if (!trimmed) return;
 
 			setInput('');
-			setTimeout(() => onSubmit(trimmed));
+			onSubmit(trimmed);
 		},
 		[onSubmit],
 	);
+
+	const clearChat = useCallback(() => {
+		setInput('');
+	}, []);
 
 	const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
@@ -80,7 +85,9 @@ export function ChatInput({ onSubmit, onAbort, isStreaming }: ChatInputProps) {
 					Currently, context size is <b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}.
 				</p>
 
-				<ChatModelSelect />
+				<Badge onClick={onClear} variant="secondary" className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform">
+					Clear Chat
+				</Badge>
 			</div>
 		</div>
 	);

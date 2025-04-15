@@ -1,10 +1,10 @@
+import type { ChatCompletionMessageParam } from 'openai/resources';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
 import { produce } from 'immer';
 import { atomWithStorage } from 'jotai/utils';
-import { type CoreMessage, streamText } from 'ai';
-import { type LanguageModelKey, languageModels } from '../lib/models';
 import { countTokens } from '../lib/countTokens';
+import { useLLM } from './useLLM';
 
 export interface ChatMessage {
 	id: string;
@@ -19,9 +19,6 @@ export interface ChatState {
 	errorMessage: string | null;
 	currentMessage: ChatMessage | null;
 }
-
-// Selected chat model
-export const selectedChatModelAtom = atomWithStorage<LanguageModelKey>('selected-chat-model', 'default');
 
 // Context size
 export const contextSizeAtom = atom(0);
@@ -38,9 +35,9 @@ export const chatStateAtom = atom<ChatState>({
  * Chat hook for interacting with the AI models
  */
 export function useChat() {
+	const llm = useLLM({ baseUrl: import.meta.env.PUBLIC_OLLAMA_API_URL, apiKey: 'ollama', model: 'llama3.2' });
 	const abortControllerRef = useRef<AbortController | null>(null);
 
-	const selectedModel = useAtomValue(selectedChatModelAtom);
 	const [_, setContextSize] = useAtom(contextSizeAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
@@ -61,11 +58,21 @@ export function useChat() {
 	/**
 	 * Abort the current streaming request
 	 */
-	const abort = useCallback(() => {
-		abortControllerRef.current?.abort();
-		abortControllerRef.current = null;
-		setState((prev) => ({ ...prev, isStreaming: false }));
-	}, []);
+	const abort = async () => {
+		const stopStreaming = () => {
+			abortControllerRef.current?.abort();
+			abortControllerRef.current = null;
+			setState((prev) => ({ ...prev, isStreaming: false }));
+		}
+
+		// Sleep for a bit to allow the abort to take effect
+		if (abortControllerRef.current) {
+			stopStreaming();
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		} else {
+			stopStreaming();
+		}
+	}
 
 	/**
 	 * Prompt the AI with a message
@@ -73,7 +80,7 @@ export function useChat() {
 	const prompt = useCallback(
 		async (text: string) => {
 			// Cleanup previous streams
-			abort();
+			await abort();
 
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
@@ -96,13 +103,13 @@ export function useChat() {
 			);
 
 			// Convert chat history to CoreMessage using properly captured messages
-			const chatHistory: CoreMessage[] = currentMessages.flatMap((msg) => [
+			const chatHistory: ChatCompletionMessageParam[] = currentMessages.flatMap((msg) => [
 				{ role: 'user', content: msg.prompt },
 				{ role: 'assistant', content: msg.answer },
 			]);
 
 			// Prepare message history
-			const messages: CoreMessage[] = [
+			const messages: ChatCompletionMessageParam[] = [
 				// { role: 'system', content: mermaidTutorial },
 				{
 					role: 'system',
@@ -116,38 +123,20 @@ export function useChat() {
 			setContextSize((prev) => prev + countTokens(text));
 
 			try {
-				// Setup abort controller
-				const abortController = new AbortController();
-				abortControllerRef.current = abortController;
+				const stream = await llm.stream(messages);
+				abortControllerRef.current = stream.controller;
 
-				const { fullStream } = streamText({
-					model: languageModels[selectedModel].model,
-					abortSignal: abortController.signal,
-					messages,
-					maxTokens: 60_000,
-					temperature: 0.3,
-					onError: ({ error }) => handleError(error),
-				});
+				for await (const chunk of stream) {
+					if (!abortControllerRef.current || abortControllerRef.current.signal.aborted) break;
 
-				for await (const chunk of fullStream) {
-					if (abortController.signal.aborted) break;
+					const content = chunk.choices[0].delta.content;
+					if (!content) continue;
 
 					setState(
 						produce((draft) => {
 							if (!draft.currentMessage) return;
 							draft.isStreaming = true;
-
-							switch (chunk.type) {
-								case 'reasoning':
-									draft.currentMessage.reasoning += chunk.textDelta;
-									break;
-								case 'text-delta':
-									draft.currentMessage.answer += chunk.textDelta;
-									break;
-								case 'error':
-									handleError(chunk.error as Error);
-									break;
-							}
+							draft.currentMessage.answer += content;
 						}),
 					);
 				}
@@ -155,6 +144,7 @@ export function useChat() {
 				// Finalize message
 				setState(
 					produce((draft) => {
+						if (!abortControllerRef.current || abortControllerRef.current.signal.aborted) return;
 						if (draft.currentMessage) draft.messages.push(draft.currentMessage);
 						draft.currentMessage = null;
 						draft.isStreaming = false;
@@ -164,7 +154,7 @@ export function useChat() {
 				handleError(error);
 			}
 		},
-		[abort, setContextSize, state.messages, state.currentMessage, selectedModel], // Added state dependencies to avoid stale closures
+		[abort, setContextSize, state.messages, state.currentMessage], // Added state dependencies to avoid stale closures
 	);
 
 	/**
@@ -198,6 +188,14 @@ export function useChat() {
 		);
 	}, []);
 
+	/**
+	 * Clear chat
+	 */
+	const deleteAllMessages = useCallback(() => {
+		abort();
+		setState((prev) => ({ ...prev, messages: [], currentMessage: null, isStreaming: false }));
+	}, []);
+
 	// Collect all messages
 	const messages = [...state.messages, state.currentMessage].filter(Boolean) as ChatMessage[];
 
@@ -206,6 +204,7 @@ export function useChat() {
 		currentMessage: state.currentMessage,
 		isStreaming: state.isStreaming,
 		errorMessage: state.errorMessage,
+		deleteAllMessages,
 		deleteMessage,
 		prompt,
 		abort,

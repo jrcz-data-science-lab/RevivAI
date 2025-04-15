@@ -27,7 +27,7 @@ export function Chat() {
 	// Scroll to last message on mount
 	useEffect(() => {
 		scrollToLastMessage('instant');
-		return () => chat.abort();
+		return () => {chat.abort()};
 	}, []);
 
 	// Scroll to last message on new message
@@ -77,7 +77,12 @@ export function Chat() {
 						>
 							<AnimatePresence>{chat.errorMessage && <ChatError errorMessage={chat.errorMessage} />}</AnimatePresence>
 
-							<ChatInput onSubmit={(text) => chat.prompt(text)} onAbort={() => chat.abort()} isStreaming={chat.isStreaming} />
+							<ChatInput 
+								onSubmit={(text) => chat.prompt(text)} 
+								onAbort={() => chat.abort()} 
+								onClear={() => chat.deleteAllMessages()}
+								isStreaming={chat.isStreaming} 
+								/>
 						</motion.div>
 					</div>
 				</div>

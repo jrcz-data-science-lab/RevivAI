@@ -9,17 +9,20 @@ import { z } from 'zod';
  * @return The OpenAI client
  */
 export function createOpenAIClient(baseUrl: string, apiKey: string) {
-    const openai = new OpenAI({
-        baseURL: baseUrl,
-        apiKey: apiKey,
-        dangerouslyAllowBrowser: true,
-        defaultHeaders: {
-            "HTTP-Referer": import.meta.env.PUBLIC_WEBSITE_URL,
-            "X-Title": "RevivAI",
-        }
-    });
+	const openai = new OpenAI({
+		baseURL: baseUrl,
+		apiKey: apiKey,
+		dangerouslyAllowBrowser: true,
+		defaultHeaders: {
+			Origin: import.meta.env.DEV ? window.location.origin : import.meta.env.PUBLIC_WEBSITE_URL,
 
-    return openai;
+			// "HTTP-Referer": import.meta.env.PUBLIC_WEBSITE_URL,
+			// "X-Title": "RevivAI",
+		},
+		// Note: CORS is enforced by the server. If you still get CORS errors, consider using a backend proxy.
+	});
+
+	return openai;
 }
 
 const testSchema = z.object({ test: z.boolean() });
@@ -31,18 +34,18 @@ const testSchema = z.object({ test: z.boolean() });
  * @return The result of the test
  */
 export async function testOpenAIClient(client: OpenAI, model: string) {
-    try {
-        const completion  = await client.beta.chat.completions.parse({
-            model: model,
-            messages: [{ role: 'user', content: 'Respond with true in a test field. Use structured output. ' }],
-            response_format: zodResponseFormat(testSchema, 'testSchema'),
-        });
+	try {
+		const completion = await client.beta.chat.completions.parse({
+			model: model,
+			messages: [{ role: 'user', content: 'Respond with true in a test field. Use structured output. ' }],
+			response_format: zodResponseFormat(testSchema, 'testSchema'),
+		});
 
-        const response = completion.choices[0]?.message?.parsed;
-        if (!response?.test) return { success: false, error: 'Structured output is not supported by the models' };
+		const response = completion.choices[0]?.message?.parsed;
+		if (!response?.test) return { success: false, error: 'Structured output is not supported by the models' };
 
-        return { success: true, error: null };
-    } catch (error) {
-        return { success: false, error: error };
-    }
+		return { success: true, error: null };
+	} catch (error) {
+		return { success: false, error: error };
+	}
 }

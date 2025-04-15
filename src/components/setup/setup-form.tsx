@@ -1,4 +1,4 @@
-import type { LLMProviderData } from '@/hooks/useLLMProvider';
+import type { LLMProviderData } from '@/hooks/useLLM';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
