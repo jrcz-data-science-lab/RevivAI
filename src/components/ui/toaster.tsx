@@ -1,8 +1,12 @@
+import { useTheme } from '@/hooks/useTheme';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 
 const Toaster = ({ ...props }: ToasterProps) => {
+	const { theme } = useTheme();
+
 	return (
 		<Sonner
+			theme={theme === 'dark' ? 'dark' : 'light'}
 			className="toaster group"
 			toastOptions={{
 				classNames: {

@@ -64,7 +64,7 @@ export function UploadCode() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4 max-w-6xl w-full p-8 pb-16">
+		<form onSubmit={handleSubmit} className="space-y-4 w-full">
 			<div className="flex flex-col items-center p-8 border-2 border-dashed rounded-lg border-input bg-muted/30">
 				<input
 					type="file"

@@ -10,6 +10,7 @@ import { UploadForm } from './upload-form';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { FolderUp, Github } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { UploadCode } from '../upload-code';
 
 // Schema for form validation
 const formSchema = z.object({
@@ -39,12 +40,11 @@ export function Upload() {
 	};
 
 	const onSubmit = (data: UploadFormSchema) => {
-		console.log(data);
 		setIsOpen(false);
 	};
 
 	return (
-		<Dialog defaultOpen={true} onOpenChange={setIsOpen}>
+		<Dialog defaultOpen={false} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button variant="ghost" size="icon" round title="Upload code files">
 					<FolderUp />
@@ -90,7 +90,8 @@ export function Upload() {
 
 							<TabsContent value="files" className="space-y-4 mt-4">
 								<FormItem>
-									<UploadForm />
+									<UploadCode />
+									{/* <UploadForm /> */}
 								</FormItem>
 							</TabsContent>
 						</Tabs>

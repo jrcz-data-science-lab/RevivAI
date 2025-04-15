@@ -3,7 +3,7 @@ import { Card } from '../ui/card';
 
 export function SetupBanner() {
 		return (
-			<Card className="relative p-6 text-sm shadow-none space-y-2 bg-violet-600/10 border-violet-400/50  text-violet-800/80 dark:text-violet-200 gap-2 animate-in zoom-in-95">
+			<Card className="relative p-6 mt-4 text-sm shadow-none space-y-2 bg-violet-600/10 border-violet-400/50  text-violet-800/80 dark:text-violet-200 gap-2 animate-in zoom-in-95">
 				<div className="flex items-center absolute -top-4 -left-4 rounded-full bg-violet-500 p-2">
 					<Gift className="-rotate-12 text-white" />
 				</div>

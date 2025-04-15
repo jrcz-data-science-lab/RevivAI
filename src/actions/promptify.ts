@@ -48,11 +48,12 @@ export const promptify = defineAction({
 			savedFilePaths = savedFilePaths.filter((filePath) => filePath !== null);
 
 			const result = await runCli([tempDir], workingDir, {
-				compress: true,
+				quiet: true,
+				compress: false,
 				output: outputFile,
 				style: 'markdown',
+				
 				removeEmptyLines: true,
-				quiet: true,
 				ignore: '**/*.lock,**/*.svg,/**/*.json',
 			});
 

@@ -49,7 +49,7 @@ export default function App({ projectId }: AppProps) {
 		<div className="relative flex items-center justify-center min-w-screen min-h-screen overflow-x-hidden bg-background">
 			<div className="w-full h-full">
 				<div className="z-50 fixed top-4 left-0 px-4 flex w-full justify-space-between">
-					<Navbar value={hash as TabName} onTabChange={setHash} showSettings={hash === 'chat'} />
+					<Navbar value={hash as TabName} onTabChange={setHash} />
 				</div>
 
 				<Toaster theme={theme} position="bottom-left" />

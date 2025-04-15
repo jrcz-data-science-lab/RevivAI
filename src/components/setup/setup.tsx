@@ -192,7 +192,7 @@ export function Setup() {
 					</TabsList>
 				</Tabs>
 
-				<div className="pt-2">{provider.name === 'revivai' ? <SetupBanner /> : renderForm(provider)}</div>
+				<div>{provider.name === 'revivai' ? <SetupBanner /> : renderForm(provider)}</div>
 
 				<div className="flex gap-4 mt-12">
 					<Button className="w-full" variant="outline" disabled={isTesting} onClick={() => test(provider)}>
