@@ -76,26 +76,29 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 }
 
 export function Setup() {
-	const { model } = useModel();
+	const { model, credentials, setCredentials } = useModel();
 
-	const defaultCredentials: LLMCredentials = getDefaultCredentials(PUBLIC_MODEL_PROVIDED ? 'revivai' : 'openrouter');
+	const defaultCredentials: LLMCredentials = getDefaultCredentials(PUBLIC_MODEL_PROVIDED ? 'revivai' : 'openai');
 
 	const [isTesting, setIsTesting] = useState(false);
 	// const [isProviderAccessible, setIsProviderAccessible] = useState(false);
 
-	const [credentials, setCredentials] = useAtom(apiCredentialsAtom);
 	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
 
+	/**
+	 * Change default values on provider change. Saves previous API key.
+	 * @param provider The LLM provider to change the default values for
+	 */
 	const handleProviderChange = (provider: LLMProvider) => {
-		setCredentialsForm(getDefaultCredentials(provider));
+		setCredentialsForm((prev) => ({ ...getDefaultCredentials(provider), apiKey: prev.apiKey }));
 	};
 
 	/**
-	 * Test the LLM provider, try to send a request to the API
+	 * Validate the LLM provider, try to send a request to the API
 	 */
 	const validate = async (credentialsForm: LLMCredentials) => {
 		setIsTesting(true);
-		
+
 		try {
 			const model = createModel(credentialsForm);
 			const { object } = await generateObject({
@@ -109,6 +112,11 @@ export function Setup() {
 				return false;
 			}
 
+			toast.error('Everything works as expected!');
+			setCredentialsForm({ ...credentialsForm });
+			setCredentials({ ...credentialsForm });
+			return true;
+
 		} catch (error) {
 			console.error(error);
 			toast.error('LLM is not responding correctly.', { description: `${error}`, richColors: true });
@@ -117,10 +125,7 @@ export function Setup() {
 			setIsTesting(false);
 		}
 
-		setCredentialsForm({ ...credentialsForm });
-		setCredentials({ ...credentialsForm });
-
-		return true;
+		return false;
 	};
 
 	/**
@@ -173,6 +178,7 @@ export function Setup() {
 						placeholder="sk-..."
 						className="mt-2"
 						value={credentialsForm.apiKey}
+						type='password'
 						onChange={(e) => {
 							setCredentialsForm({ ...credentialsForm, apiKey: e.target.value });
 						}}
@@ -181,7 +187,11 @@ export function Setup() {
 
 				{credentialsForm.provider === 'openai' && (
 					<p className="text-sm text-muted-foreground">
-						You can get OpenAI API Key, by going to <a href="https://platform.openai.com/api-keys" className='underline text-foreground'>OpenAI Developer Portal</a> and generating a new API key.
+						You can get OpenAI API Key, by going to{' '}
+						<a href="https://platform.openai.com/api-keys" className="underline text-foreground">
+							OpenAI Developer Portal
+						</a>{' '}
+						and generating a new API key.
 					</p>
 				)}
 			</div>

@@ -38,7 +38,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 					{message.prompt}
 
 					<motion.div
-						className="absolute -left-10 bottom-0.5 opacity-60"
+						className="absolute -left-10 bottom-0.5 opacity-60 max-md:hidden"
 						initial={{ opacity: 0 }}
 						animate={{
 							scale: isWriting ? 0.8 : 1.1,

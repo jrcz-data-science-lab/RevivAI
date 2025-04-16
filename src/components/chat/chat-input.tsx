@@ -14,10 +14,11 @@ interface ChatInputProps {
 	onSubmit: (value: string) => void;
 	onAbort: () => void;
 	onClear: () => void;
+	modelInfo: string;
 	isStreaming: boolean;
 }
 
-export function ChatInput({ onSubmit, onAbort, isStreaming, onClear }: ChatInputProps) {
+export function ChatInput({ onSubmit, modelInfo, onAbort, isStreaming, onClear }: ChatInputProps) {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [input, setInput] = useState('');
 
@@ -81,9 +82,14 @@ export function ChatInput({ onSubmit, onAbort, isStreaming, onClear }: ChatInput
 			</div>
 
 			<div className="flex justify-between align-center">
-				<p className="text-xs text-muted-foreground px-1">
-					Currently, context size is <b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}.
-				</p>
+				<div className="flex gap-2 text-xs text-muted-foreground px-1">
+					<b>{modelInfo}</b>
+					<span className='text-muted'>/</span>
+
+					<span>
+						<b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}
+					</span>
+				</div>
 
 				<Badge onClick={onClear} variant="secondary" className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform">
 					Clear Chat

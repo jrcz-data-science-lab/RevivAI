@@ -17,8 +17,16 @@ export interface LLMCredentials {
 	model: string;
 }
 
+// Get initial credentials from local storage on first load
+const getInitialCredentials = () => {
+    if (import.meta.env.SSR) return null;
+    const provider = localStorage.getItem('llm-api-credentials');
+    const credentials = provider ? (JSON.parse(provider) as LLMCredentials) : null;
+    return credentials;
+}
+
 // Current LLM provider data
-export const apiCredentialsAtom = atomWithStorage<LLMCredentials | null>('llm-api-credentials', null);
+export const apiCredentialsAtom = atomWithStorage<LLMCredentials | null>('llm-api-credentials', getInitialCredentials());
 
 /**
  * Create an LLM Model client
