@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
-const themeAtom = atomWithStorage<Theme>('theme', 'light');
+const defaultTheme = !import.meta.env.SSR ? (localStorage.getItem('theme') === '"dark"' ? 'dark' : 'light') : 'light';
+
+const themeAtom = atomWithStorage<Theme>('theme', defaultTheme);
 
 /**
  * Hook for managing the theme state

@@ -6,10 +6,15 @@ import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
+import type { LanguageModelV1 } from 'ai';
 
-export function Chat() {
+interface ChatProps {
+	model: LanguageModelV1;
+}
+
+export function Chat({ model }: ChatProps) {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
-	const chat = useChat();
+	const chat = useChat({ model });
 
 	const scrollToLastMessage = (behavior: ScrollBehavior) => {
 		if (!chatContainerRef.current) return;
@@ -27,7 +32,9 @@ export function Chat() {
 	// Scroll to last message on mount
 	useEffect(() => {
 		scrollToLastMessage('instant');
-		return () => {chat.abort()};
+		return () => {
+			chat.abort();
+		};
 	}, []);
 
 	// Scroll to last message on new message
@@ -77,12 +84,12 @@ export function Chat() {
 						>
 							<AnimatePresence>{chat.errorMessage && <ChatError errorMessage={chat.errorMessage} />}</AnimatePresence>
 
-							<ChatInput 
-								onSubmit={(text) => chat.prompt(text)} 
-								onAbort={() => chat.abort()} 
+							<ChatInput
+								onSubmit={(text) => chat.prompt(text)}
+								onAbort={() => chat.abort()}
 								onClear={() => chat.deleteAllMessages()}
-								isStreaming={chat.isStreaming} 
-								/>
+								isStreaming={chat.isStreaming}
+							/>
 						</motion.div>
 					</div>
 				</div>

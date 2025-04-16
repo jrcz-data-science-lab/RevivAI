@@ -1,6 +1,7 @@
-import OpenAI from 'openai';
-import { zodResponseFormat } from 'openai/helpers/zod.mjs';
 import { z } from 'zod';
+
+import { generateObject } from 'ai';
+import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 
 /**
  * Create an OpenAI client
@@ -9,19 +10,14 @@ import { z } from 'zod';
  * @return The OpenAI client
  */
 export function createOpenAIClient(baseUrl: string, apiKey: string) {
-	const openai = new OpenAI({
+	const openai = createOpenAI({
 		baseURL: baseUrl,
 		apiKey: apiKey,
-		dangerouslyAllowBrowser: true,
-		defaultHeaders: {
-			Origin: import.meta.env.DEV ? window.location.origin : import.meta.env.PUBLIC_WEBSITE_URL,
-		},
+		compatibility: 'compatible',
 	});
 
 	return openai;
 }
-
-const testSchema = z.object({ test: z.boolean() });
 
 /**
  * Test the OpenAI client
@@ -29,19 +25,20 @@ const testSchema = z.object({ test: z.boolean() });
  * @param model The model to test
  * @return The result of the test
  */
-export async function testOpenAIClient(client: OpenAI, model: string) {
+export async function testOpenAIClient(client: OpenAIProvider, model: string) {
 	try {
-		const completion = await client.beta.chat.completions.parse({
-			model: model,
-			messages: [{ role: 'user', content: 'Respond with true in a test field. Use structured output. ' }],
-			response_format: zodResponseFormat(testSchema, 'testSchema'),
+
+		const { object } = await generateObject({
+			model: client(model),
+			schema: z.object({ test: z.boolean() }),
+			prompt: 'Set property "test" to "true". Use structured output.',
 		});
 
-		const response = completion.choices[0]?.message?.parsed;
-		if (!response?.test) return { success: false, error: 'Structured output is not supported by the models' };
+		if (!object?.test) return { success: false, error: 'Structured output is not supported by the models' };
 
 		return { success: true, error: null };
 	} catch (error) {
-		return { success: false, error: error };
+		console.error(error);
+		return { success: false, error: new Error('API is not responding correctly') };
 	}
 }

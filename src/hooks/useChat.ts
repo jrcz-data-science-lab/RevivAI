@@ -1,10 +1,14 @@
-import type { ChatCompletionMessageParam } from 'openai/resources';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { atom, useAtom, useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { produce } from 'immer';
 import { atomWithStorage } from 'jotai/utils';
 import { countTokens } from '../lib/countTokens';
-import { useLLM } from './useLLM';
+import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
+import { useModel } from './useModel';
+
+interface UseChatProps {
+	model: LanguageModelV1;
+}
 
 export interface ChatMessage {
 	id: string;
@@ -33,12 +37,10 @@ export const chatStateAtom = atom<ChatState>({
 /**
  * Chat hook for interacting with the AI models
  */
-export function useChat() {
-	const llm = useLLM();
-	
+export function useChat({ model }: UseChatProps) {
 	const abortControllerRef = useRef<AbortController | null>(null);
 
-	const [_, setContextSize] = useAtom(contextSizeAtom);
+	const setContextSize = useSetAtom(contextSizeAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
 	// Cleanup on unmount
@@ -63,7 +65,7 @@ export function useChat() {
 			abortControllerRef.current?.abort();
 			abortControllerRef.current = null;
 			setState((prev) => ({ ...prev, isStreaming: false }));
-		}
+		};
 
 		// Sleep for a bit to allow the abort to take effect
 		if (abortControllerRef.current) {
@@ -72,7 +74,7 @@ export function useChat() {
 		} else {
 			stopStreaming();
 		}
-	}
+	};
 
 	/**
 	 * Prompt the AI with a message
@@ -102,13 +104,13 @@ export function useChat() {
 			);
 
 			// Convert chat history to CoreMessage using properly captured messages
-			const chatHistory: ChatCompletionMessageParam[] = currentMessages.flatMap((msg) => [
+			const chatHistory: CoreMessage[] = currentMessages.flatMap((msg) => [
 				{ role: 'user', content: msg.prompt },
 				{ role: 'assistant', content: msg.answer },
 			]);
 
 			// Prepare message history
-			const messages: ChatCompletionMessageParam[] = [
+			const messages: CoreMessage[] = [
 				{
 					role: 'system',
 					content: 'When responding with the code - specify programming language in markdown after quotes.',
@@ -121,20 +123,22 @@ export function useChat() {
 			setContextSize((prev) => prev + countTokens(text));
 
 			try {
-				const stream = await llm.stream(messages);
-				abortControllerRef.current = stream.controller;
+				const controller = new AbortController();
+				abortControllerRef.current = controller;
 
-				for await (const chunk of stream) {
-					if (!abortControllerRef.current || abortControllerRef.current.signal.aborted) break;
+				const { textStream } = streamText({
+					model: model,
+					messages: messages,
+					abortSignal: controller.signal,
+					onError: ({ error }) => handleError(error),
+				});
 
-					const content = chunk.choices[0].delta.content;
-					if (!content) continue;
-
+				for await (const textPart of textStream) {
 					setState(
 						produce((draft) => {
 							if (!draft.currentMessage) return;
 							draft.isStreaming = true;
-							draft.currentMessage.answer += content;
+							draft.currentMessage.answer += textPart;
 						}),
 					);
 				}
@@ -160,14 +164,13 @@ export function useChat() {
 	 */
 	const handleError = useCallback((error: unknown) => {
 		if ((error as Error)?.name === 'AbortError') return; // Ignore controller aborts
-		console.error(error);
-
-		let errorMessage = 'An error occurred.';
-		if (error instanceof Error) errorMessage = error.message;
-		if (typeof error === 'string') errorMessage = error;
 
 		setState(
 			produce((draft) => {
+				let errorMessage = 'An unknown error occurred';
+				if (error instanceof Error) errorMessage = error.message;
+				if (typeof error === 'string') errorMessage = error;
+
 				draft.isStreaming = false;
 				draft.errorMessage = errorMessage;
 			}),

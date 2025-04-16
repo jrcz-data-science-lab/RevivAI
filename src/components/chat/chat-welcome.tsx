@@ -5,7 +5,7 @@ function ChatWelcome() {
 	return (
 		<div>
 			<AnimatedText as="h1" className="text-xl font-black font-serif mb-4">
-				Curious about your code? Ask about it!
+				Curious how your code works? Ask about it!
 			</AnimatedText>
 			<AnimatedText className="text-sm text-muted-foreground">
 				It could be anything from "How do I create a new table?" to "What is the difference between a LEFT JOIN and a RIGHT JOIN?".

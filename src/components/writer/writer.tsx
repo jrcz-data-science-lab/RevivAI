@@ -5,12 +5,14 @@ import { WriterSidebar } from './writer-sidebar';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { Database } from '@/hooks/useDb';
 import type { Chapter } from '@/lib/db';
+import type { LanguageModelV1 } from 'ai';
 
 interface WriterProps {
 	db: Database;
+	model: LanguageModelV1
 }
 
-export function Writer({ db }: WriterProps) {
+export function Writer({ db, model }: WriterProps) {
 	const chapters = useLiveQuery(async () => {
 		const chapters = await db.chapters.toArray();
 		return chapters.sort((a, b) => a.index - b.index);
