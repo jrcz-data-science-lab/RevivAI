@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from './ui/label';
 
 function Settings() {
+
+	const projectId = window.location.pathname.split('/').at(-1);
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -22,7 +24,7 @@ function Settings() {
 					<div className="space-y-3">
 						<Label>Change Model</Label>
 						<p className="text-sm text-muted-foreground">Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen. </p>
-						<a href="/setup">
+						<a href={`/setup?redirectToProject=${projectId}`}>
 							<Button variant="outline" size="sm">
 								Go to Setup
 							</Button>

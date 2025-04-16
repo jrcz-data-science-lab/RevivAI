@@ -1,21 +1,16 @@
+import { generateObject } from 'ai';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
-import { useState } from 'react';
-import { z } from 'zod';
 import { SetupBanner } from './setup-banner';
 import { Toaster } from '@/components/ui/toaster';
-import { toast } from 'sonner';
 import { LoaderCircle } from 'lucide-react';
-import { createOpenAIClient, testOpenAIClient } from '@/lib/openai';
-import { useAtom } from 'jotai';
-
-import { apiCredentialsAtom, createModel, useModel, type LLMCredentials, type LLMProvider } from '@/hooks/useModel';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateObject } from 'ai';
+import { createModel, useModel, type LLMCredentials, type LLMProvider } from '@/hooks/useModel';
 
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_LLM_API_URL;
 
@@ -76,13 +71,10 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 }
 
 export function Setup() {
-	const { model, credentials, setCredentials } = useModel();
-
 	const defaultCredentials: LLMCredentials = getDefaultCredentials(PUBLIC_MODEL_PROVIDED ? 'revivai' : 'openai');
 
+	const { credentials, setCredentials } = useModel();
 	const [isTesting, setIsTesting] = useState(false);
-	// const [isProviderAccessible, setIsProviderAccessible] = useState(false);
-
 	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
 
 	/**
@@ -138,7 +130,16 @@ export function Setup() {
 		const accessible = await validate(credentialsForm);
 		if (!accessible) return;
 
-		window.location.href = '/projects';
+		// Check if URL has redirectToApp query param.
+		const urlParams = new URLSearchParams(window.location.search);
+		const redirectToProject = urlParams.get('redirectToProject');
+
+		if (redirectToProject) {
+			window.location.replace(`/app/${redirectToProject}`);
+		} else {
+			window.location.replace('/projects');
+		}
+
 	};
 
 	/**

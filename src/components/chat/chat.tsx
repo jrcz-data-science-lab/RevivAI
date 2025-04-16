@@ -85,7 +85,8 @@ export function Chat({ model }: ChatProps) {
 							<AnimatePresence>{chat.errorMessage && <ChatError errorMessage={chat.errorMessage} />}</AnimatePresence>
 
 							<ChatInput
-								modelInfo={model.modelId}
+								modelName={model.modelId}
+								messagesCount={chat.messages.length}
 								onSubmit={(text) => chat.prompt(text)}
 								onAbort={() => chat.abort()}
 								onClear={() => chat.deleteAllMessages()}
