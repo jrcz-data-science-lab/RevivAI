@@ -9,7 +9,6 @@ import { useLLM } from './useLLM';
 export interface ChatMessage {
 	id: string;
 	prompt: string;
-	reasoning: string;
 	answer: string;
 }
 
@@ -35,7 +34,8 @@ export const chatStateAtom = atom<ChatState>({
  * Chat hook for interacting with the AI models
  */
 export function useChat() {
-	const llm = useLLM({ baseUrl: import.meta.env.PUBLIC_OLLAMA_API_URL, apiKey: 'ollama', model: 'llama3.2' });
+	const llm = useLLM();
+	
 	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const [_, setContextSize] = useAtom(contextSizeAtom);
@@ -85,7 +85,6 @@ export function useChat() {
 			const newMessage: ChatMessage = {
 				id: crypto.randomUUID(),
 				prompt: text,
-				reasoning: '',
 				answer: '',
 			};
 
@@ -110,7 +109,6 @@ export function useChat() {
 
 			// Prepare message history
 			const messages: ChatCompletionMessageParam[] = [
-				// { role: 'system', content: mermaidTutorial },
 				{
 					role: 'system',
 					content: 'When responding with the code - specify programming language in markdown after quotes.',
@@ -162,10 +160,9 @@ export function useChat() {
 	 */
 	const handleError = useCallback((error: unknown) => {
 		if ((error as Error)?.name === 'AbortError') return; // Ignore controller aborts
-
 		console.error(error);
 
-		let errorMessage = 'An error occured.';
+		let errorMessage = 'An error occurred.';
 		if (error instanceof Error) errorMessage = error.message;
 		if (typeof error === 'string') errorMessage = error;
 

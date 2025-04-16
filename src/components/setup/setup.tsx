@@ -3,7 +3,6 @@ import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
-import OpenAI from 'openai';
 import { use, useState } from 'react';
 import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod';
@@ -11,144 +10,160 @@ import { SetupBanner } from './setup-banner';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from 'sonner';
 import { LoaderCircle } from 'lucide-react';
-import { useLLMProvider, type LLMProvider, type LLMProviderData } from '@/hooks/useLLM';
 import { SetupForm } from './setup-form';
 import { createOpenAIClient, testOpenAIClient } from '@/lib/openai';
+import { llmCredentialsAtom, type LLMCredentials, type LLMProvider } from '@/hooks/useLLM';
+import { useAtom } from 'jotai';
 
-const testSchema = z.object({
-	test: z.boolean(),
-});
+const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_LLM_API_URL;
+
+/**
+ * Get the default credentials for the selected LLM provider
+ * @param provider The LLM provider to get the credentials for
+ */
+function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
+	switch (provider) {
+		case 'revivai':
+			return {
+				name: 'revivai',
+				baseUrl: import.meta.env.PUBLIC_LLM_API_URL,
+				apiKey: import.meta.env.PUBLIC_LLM_API_KEY,
+				model: import.meta.env.PUBLIC_LLM_API_MODEL,
+				valid: false,
+			};
+
+		case 'openrouter':
+			return {
+				name: 'openrouter',
+				model: 'llama3.2',
+				baseUrl: 'https://openrouter.ai/api/v1',
+				apiKey: '',
+				valid: false,
+			};
+
+		case 'openai':
+			return {
+				name: 'openai',
+				model: 'gpt-4o',
+				baseUrl: 'https://api.openai.com/v1',
+				apiKey: '',
+				valid: false,
+			};
+
+		case 'google':
+			return {
+				name: 'google',
+				model: 'gemini-2.0-flash',
+				baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+				apiKey: '',
+				valid: false,
+			};
+
+		default:
+			return {
+				name: 'custom',
+				baseUrl: '',
+				model: '',
+				apiKey: '',
+				valid: false,
+			};
+	}
+}
 
 export function Setup() {
-	const defaultProviderName: LLMProvider = import.meta.env.PUBLIC_OLLAMA_API_URL ? 'revivai' : 'openrouter';
-
-	const llmProvider = useLLMProvider();
+	const defaultCredentials: LLMCredentials = getDefaultCredentials(PUBLIC_MODEL_PROVIDED ? 'revivai' : 'openrouter');
 
 	const [isTesting, setIsTesting] = useState(false);
-	const [isProviderAccessible, setIsProviderAccessible] = useState(false);
+	// const [isProviderAccessible, setIsProviderAccessible] = useState(false);
 
-	const [provider, setProvider] = useState<LLMProviderData>({
-		name: defaultProviderName,
-		model: 'gpt-4o',
-		baseUrl: 'https://api.openai.com/v1',
-		apiKey: '',
-	});
+	const [credentials, setCredentials] = useAtom(llmCredentialsAtom);
+	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
 
 	const handleProviderChange = (provider: LLMProvider) => {
-		switch (provider) {
-			case 'revivai':
-				setProvider({
-					name: 'revivai',
-					baseUrl: import.meta.env.PUBLIC_OLLAMA_API_URL,
-					apiKey: 'ollama',
-					model: 'llama3.2',
-				});
-				break;
-			case 'openrouter':
-				setProvider((current) => ({
-					...current,
-					name: 'openrouter',
-					model: 'llama3.2',
-					baseUrl: 'https://openrouter.ai/api/v1',
-				}));
-				break;
-			case 'openai':
-					setProvider((current) => ({
-						...current,
-						name: 'openai',
-						model: 'gpt-4o',
-						baseUrl: 'https://api.openai.com/v1',
-					}));
-				break;
-			case 'google':
-				setProvider((current) => ({
-					...current,
-					name: 'google',
-					model: 'gemini-2.0-flash',
-					baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-				}));
-				break;
-			case 'custom':
-				setProvider((current) => ({
-					...current,
-					name: 'custom',
-					baseUrl: '',
-				}));
-				break;
-		}
-	}
+		setCredentialsForm(getDefaultCredentials(provider));
+	};
 
 	/**
-	 * Test the LLM provider
-	 *
+	 * Test the LLM provider, try to send a request to the API
 	 */
-	const test = async (provider: LLMProviderData) => {
+	const validate = async (credentialsForm: LLMCredentials) => {
 		setIsTesting(true);
 
-		const client = createOpenAIClient(provider.baseUrl, provider.apiKey);
-		const { success, error } = await testOpenAIClient(client, provider.model);
+		const client = createOpenAIClient(credentialsForm.baseUrl, credentialsForm.apiKey);
+		const { success, error } = await testOpenAIClient(client, credentialsForm.model);
 
 		setIsTesting(false);
 
 		if (!success) {
 			console.error(error);
 			toast.error('LLM is not responding correctly.', { description: `${error}`, richColors: true });
-			setIsProviderAccessible(false);
+			setCredentialsForm({ ...credentialsForm, valid: false });
 			return false;
-		} 
+		}
 
 		toast.success('Success! LLM is responding correctly.', {});
-		setIsProviderAccessible(true);
+		setCredentialsForm({ ...credentialsForm, valid: true });
+		setCredentials({ ...credentialsForm, valid: true });
+
 		return true;
 	};
 
 	/**
 	 * Submit the form
 	 */
-	const submit = async (provider: LLMProviderData) => {
+	const submit = async (credentialsForm: LLMCredentials) => {
 		if (isTesting) return;
 
 		// Ensure that the provider is tested before proceeding
-		if (!isProviderAccessible) {
-			const accessible = await test(provider);
+		if (!credentialsForm.valid) {
+			const accessible = await validate(credentialsForm);
 			if (!accessible) return;
+
+			window.location.href = '/projects';
 		}
-	}
+	};
 
 	/**
 	 * Render the form for the selected LLM provider
 	 * @param provider The LLM provider data
 	 */
-	const renderForm = (provider: LLMProviderData) => {
+	const renderForm = (credentialsForm: LLMCredentials) => {
 		return (
-			<div className='space-y-4'>
+			<div className="space-y-4">
 				<div>
 					<Label>API URL</Label>
 					<Input
 						placeholder="https://api.openai.com/v1"
 						className="mt-2"
-						value={provider.baseUrl}
+						value={credentialsForm.baseUrl}
 						onChange={(e) => {
-							setIsProviderAccessible(false);
-							setProvider({ ...provider, baseUrl: e.target.value });
+							setCredentialsForm({ ...credentialsForm, baseUrl: e.target.value, valid: false });
 						}}
 					/>
 				</div>
 
 				<div>
 					<Label>Model</Label>
-					<Input placeholder="gpt-4o" className="mt-2" value={provider.model} onChange={(e) => {
-						setIsProviderAccessible(false);
-						setProvider({ ...provider, model: e.target.value });
-					}} />
+					<Input
+						placeholder="gpt-4o"
+						className="mt-2"
+						value={credentialsForm.model}
+						onChange={(e) => {
+							setCredentialsForm({ ...credentialsForm, model: e.target.value, valid: false });
+						}}
+					/>
 				</div>
 
 				<div>
 					<Label className="mt-4">API Key</Label>
-					<Input placeholder="sk-..." className="mt-2" value={provider.apiKey} onChange={(e) => {
-						setIsProviderAccessible(false);
-						setProvider({ ...provider, apiKey: e.target.value });
-					}} />
+					<Input
+						placeholder="sk-..."
+						className="mt-2"
+						value={credentialsForm.apiKey}
+						onChange={(e) => {
+							setCredentialsForm({ ...credentialsForm, apiKey: e.target.value, valid: false });
+						}}
+					/>
 				</div>
 			</div>
 		);
@@ -170,9 +185,9 @@ export function Setup() {
 					</p>
 				</div>
 
-				<Tabs className='flex-col' value={provider.name} onValueChange={(value) => handleProviderChange(value as LLMProvider)}>
-					<TabsList className='max-sm:flex-col max-sm:h-fit max-sm:w-full'>
-						{import.meta.env.PUBLIC_OLLAMA_API_URL && (
+				<Tabs className="flex-col" value={credentialsForm.name} onValueChange={(value) => handleProviderChange(value as LLMProvider)}>
+					<TabsList className="max-sm:flex-col max-sm:h-fit max-sm:w-full">
+						{PUBLIC_MODEL_PROVIDED && (
 							<TabsTrigger value="revivai" className="px-3">
 								RevivAI
 							</TabsTrigger>
@@ -192,15 +207,15 @@ export function Setup() {
 					</TabsList>
 				</Tabs>
 
-				<div>{provider.name === 'revivai' ? <SetupBanner /> : renderForm(provider)}</div>
+				<div>{credentialsForm?.name === 'revivai' ? <SetupBanner /> : renderForm(credentialsForm)}</div>
 
 				<div className="flex gap-4 mt-12">
-					<Button className="w-full" variant="outline" disabled={isTesting} onClick={() => test(provider)}>
+					<Button className="w-full" variant="outline" disabled={isTesting} onClick={() => validate(credentialsForm)}>
 						{isTesting && <LoaderCircle className="animate-spin" />}
 						Test
 					</Button>
 
-					<Button className="w-full" disabled={isTesting} onClick={() => submit(provider)}>
+					<Button className="w-full" disabled={isTesting} onClick={() => submit(credentialsForm)}>
 						Continue
 					</Button>
 				</div>

@@ -15,11 +15,7 @@ export function createOpenAIClient(baseUrl: string, apiKey: string) {
 		dangerouslyAllowBrowser: true,
 		defaultHeaders: {
 			Origin: import.meta.env.DEV ? window.location.origin : import.meta.env.PUBLIC_WEBSITE_URL,
-
-			// "HTTP-Referer": import.meta.env.PUBLIC_WEBSITE_URL,
-			// "X-Title": "RevivAI",
 		},
-		// Note: CORS is enforced by the server. If you still get CORS errors, consider using a backend proxy.
 	});
 
 	return openai;

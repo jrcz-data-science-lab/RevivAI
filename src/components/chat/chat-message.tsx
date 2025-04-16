@@ -4,7 +4,6 @@ import { lazy, memo, Suspense } from 'react';
 import { motion } from 'motion/react';
 import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
 import { Separator } from '../ui/separator';
-import ChatReasoning from './chat-reasoning';
 import { Button } from '../ui/button';
 
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
@@ -19,9 +18,6 @@ interface ChatMessageProps {
  * Chat message component
  */
 function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
-	const hasReasoning = message.reasoning.trim() !== '';
-	const hasAnswer = message.answer.trim() !== '';
-
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(message.answer);
 	};
@@ -55,8 +51,6 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 				</h3>
 
 				<Separator className="separator mt-1 mb-3" />
-
-				{hasReasoning && <ChatReasoning open={hasReasoning && !hasAnswer} content={message.reasoning} />}
 
 				<Suspense fallback={<p className="prose dark:prose-invert">{message.answer}</p>}>
 					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>

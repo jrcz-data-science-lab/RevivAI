@@ -23,7 +23,6 @@ export default defineConfig({
         cors: true
       }
 	},
-
   adapter: node({
     mode: 'standalone',
   }),
