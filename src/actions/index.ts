@@ -1,4 +1,5 @@
-import { promptify } from './promptify';
+import { promptifyFiles } from './promptifyFiles';
+import { promptifyRemote } from './promptifyRemote';
 
 // List all available actions here
-export const server = { promptify };
+export const server = { promptifyFiles, promptifyRemote };

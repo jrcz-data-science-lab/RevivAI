@@ -21,9 +21,12 @@ function Settings() {
 				</DialogHeader>
 
 				<div className="space-y-6 mt-4">
-					<div className="space-y-3">
-						<Label>Change Model</Label>
-						<p className="text-sm text-muted-foreground">Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen. </p>
+					<div className="flex justify-between gap-4 items-center">
+						<div className="max-w-2/3">
+							<Label>Change Model</Label>
+							<p className="text-sm text-muted-foreground">Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen. </p>
+						</div>
+
 						<a href={`/setup?redirectToProject=${projectId}`}>
 							<Button variant="outline" size="sm">
 								Go to Setup
@@ -31,9 +34,12 @@ function Settings() {
 						</a>
 					</div>
 
-					<div className="space-y-3">
-						<Label>Delete Project</Label>
-						<p className="text-sm text-muted-foreground">Delete all information about current project</p>
+					<div className="flex justify-between gap-4 items-center">
+						<div className="max-w-2/3">
+							<Label>Delete Project</Label>
+							<p className="text-sm text-muted-foreground">Delete all information about current project</p>
+						</div>
+
 						<Button variant="destructive" size="sm">
 							Delete Project
 						</Button>

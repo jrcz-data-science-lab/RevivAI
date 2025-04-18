@@ -6,12 +6,22 @@ import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 
 const workingDir = process.cwd();
 
-export const promptify = defineAction({
+export const promptifyFilesSchema = z.object({
+	files: z.array(z.instanceof(File)),
+	compress: z.boolean().default(false).optional(),
+	ignore: z.string().default('').optional(),
+});
+
+/**
+ * This action accepts a form submission with files and options,
+ * processes the files using RepoMix CLI, and returns the generated prompt.
+ */
+export const promptifyFiles = defineAction({
 	accept: 'form',
-	input: z.object({
-		files: z.array(z.instanceof(File)),
-	}),
-	handler: async ({ files }) => {
+	input: promptifyFilesSchema,
+	handler: async ({ files, compress, ignore }) => {
+		console.log('Received files:', files);
+
 		const submissionID = crypto.randomUUID();
 
 		const tempDir = path.join(workingDir, '_temp', submissionID);
@@ -49,12 +59,11 @@ export const promptify = defineAction({
 
 			const result = await runCli([tempDir], workingDir, {
 				quiet: true,
-				compress: false,
+				compress: compress,
 				output: outputFile,
+				ignore: ignore,
 				style: 'markdown',
-				
 				removeEmptyLines: true,
-				ignore: '**/*.lock,**/*.svg,/**/*.json',
 			});
 
 			if (!result) return { success: false, error: 'No output from RepoMix' };
@@ -75,7 +84,6 @@ export const promptify = defineAction({
 			};
 		} finally {
 			rm(tempDir, { recursive: true, force: true });
-			rm(outputFile, { recursive: true, force: true });
 		}
 	},
 });

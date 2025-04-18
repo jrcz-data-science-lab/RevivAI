@@ -1,92 +1,186 @@
 import { useState } from 'react';
-import { Dropzone } from '@/components/ui/dropzone';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { UploadContent } from './upload-content';
-import { AnimatedText } from '../ui/animated-text';
-import { motion } from 'motion/react';
-import { UploadCloud } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { GithubIcon } from '@/components/ui/github-icon';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { FolderUp, LoaderCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { actions } from 'astro:actions';
+import { Checkbox } from '@/components/ui/checkbox';
+import { UploadFiles } from './upload-files';
 
-type FileWithContent = {
-	path: string;
-	content: string;
-	type: string;
-};
+type UploadFormTab = 'remote' | 'files';
 
+type UploadFormSchema = z.infer<typeof formSchema>;
+
+// Schema for form validation
+const formSchema = z.object({
+	type: z.enum(['remote', 'files']),
+	files: z.array(z.instanceof(File)).optional(),
+	url: z.string().url('Please enter a valid repository URL').optional(),
+	compress: z.boolean(),
+	ignore: z.string().optional(),
+	description: z.string().max(500, 'Description is too long'),
+});
+
+/**
+ * Code uploading form
+ */
 export function UploadForm() {
-	const [files, setFiles] = useState<FileWithContent[]>([]);
-	const [loading, setLoading] = useState(false);
+	const form = useForm<UploadFormSchema>({
+		resolver: zodResolver(formSchema),
+		defaultValues: { type: 'files', compress: false, description: '' },
+	});
 
-	const handleDrop = async (fileList: FileList) => {
-		setLoading(true);
-		const fileArray: FileWithContent[] = [];
+	// Tru if form is submitting
+	const isUploading = form.formState.isSubmitting;
 
+	// Handle form submission
+	const onSubmit = async (formData: UploadFormSchema) => {
 		try {
-			for (let i = 0; i < fileList.length; i++) {
-				const file = fileList[i];
-				// Use webkitRelativePath for directory uploads, fallback to name for individual files
-				const path = file.webkitRelativePath || file.name;
+			console.log('Form data:', formData);
 
-				try {
-					const content = await readFileContent(file);
-					fileArray.push({
-						path,
-						content,
-						type: file.type || 'text/plain',
-					});
-				} catch (error) {
-					console.error(`Error reading file ${file.name}:`, error);
-				}
+			if (formData.type === 'remote' && formData.url) {
+				const { data, error } = await actions.promptifyRemote({
+					url: formData.url,
+					compress: formData.compress,
+					ignore: formData.ignore,
+				});
+
+				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
+				console.log(data, error);
 			}
 
-			setFiles(fileArray);
+			if (formData.type === 'files' && formData.files) {
+				const formDataToSend = new FormData();
+				for (const file of formData.files) {
+					formDataToSend.append('files', file, file.webkitRelativePath || file.name);
+				}
+
+				formDataToSend.append('compress', String(formData.compress));
+				formDataToSend.append('ignore', formData.ignore || '');
+				formDataToSend.append('description', formData.description);
+				
+
+				const { data, error } = await actions.promptifyFiles(formDataToSend);
+
+				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
+				console.log(data, error);
+			}
 		} catch (error) {
-			console.error('Error processing files:', error);
-		} finally {
-			setLoading(false);
+			console.error('Error uploading files:', error);
 		}
 	};
 
-	const readFileContent = (file: File): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader();
-			reader.onload = (event) => resolve(event.target?.result as string);
-			reader.onerror = (error) => reject(error);
-
-			if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/') || file.name.endsWith('.zip')) {
-				// For binary files, just note the file type
-				resolve(`[${file.type || 'binary'} file, size: ${(file.size / 1024).toFixed(2)} KB]`);
-			} else {
-				reader.readAsText(file);
-			}
-		});
-	};
-
-	const clearFiles = () => {
-		setFiles([]);
-	};
-
 	return (
-		<div className="space-y-4">
-			<Dropzone onFilesDrop={handleDrop} loading={loading} />
+		<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<Tabs className="w-full" value={form.watch('type')} onValueChange={(value) => !isUploading && form.setValue('type', value as UploadFormTab)}>
+					<FormLabel>Code Source</FormLabel>
+					<TabsList>
+						<TabsTrigger value="files" className="px-3">
+							<FolderUp />
+							Local Files
+						</TabsTrigger>
+						<TabsTrigger value="remote" className="px-3">
+							<GithubIcon />
+							Repository
+						</TabsTrigger>
+					</TabsList>
 
-			{/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: files.length > 0 ? 1 : 0 }} transition={{ duration: 0.3 }} className="mt-4">
+					<TabsContent value="remote" className="space-y-8 mt-8">
+						<FormField
+							control={form.control}
+							name="url"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Repository URL</FormLabel>
+									<FormDescription>Link to the public GitHub repository. The repository must be public and accessible without authentication.</FormDescription>
+									<FormControl>
+										<Input placeholder="https://github.com/username/repository" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</TabsContent>
 
-				<div className="space-y-4">
-					<div className="flex items-center justify-between">
-						<h2 className="text-sm">Uploaded files ({files.length})</h2>
-						<Button variant="outline" size="sm" onClick={clearFiles}>
-							Clear
-						</Button>
-					</div>
-					
-					<UploadContent files={files} />
-				</div>
+					<TabsContent value="files" className="space-y-4 mt-4">
+						<FormField
+							control={form.control}
+							name="files"
+							render={({ field }) => (
+								<FormItem>
+									<UploadFiles
+										onChange={(files) => form.setValue('files', [...files])}
+										message={field.value?.length ? `${field.value.length} files selected` : undefined}
+									/>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</TabsContent>
+				</Tabs>
 
-				<Button size="lg" className="mx-auto flex">
-					Upload
-					<UploadCloud className="mr-1 scale-125" />
+				<FormField
+					control={form.control}
+					name="ignore"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Ignore Patterns</FormLabel>
+							<FormDescription>Comma-separated patterns to ignore.</FormDescription>
+							<FormControl>
+								<Input placeholder="**/*.gif" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="compress"
+					render={({ field }) => (
+						<FormItem className="flex gap-2">
+							<FormControl>
+								<Checkbox checked={field.value} onCheckedChange={field.onChange} />
+							</FormControl>
+
+							<div className="flex flex-col gap-1.5 leading-none">
+								<FormLabel>Compress Code</FormLabel>
+								<FormDescription>
+									Extract key code elements to reduce token count, while maintaining structure. Decreases documentation quality, so use carefully.
+								</FormDescription>
+							</div>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				{/* <FormField
+					control={form.control}
+					name="description"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Code Description</FormLabel>
+							<FormDescription>Describe your code and what it does.</FormDescription>
+							<FormControl>
+								<Textarea placeholder="This code is an API server for meteorology project, that ..." className="min-h-24 resize-none" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/> */}
+
+				<Button type="submit" className="w-full" disabled={isUploading}>
+					{isUploading && <LoaderCircle className="animate-spin" />}
+					Upload Code
 				</Button>
-			</motion.div> */}
-		</div>
+			</form>
+		</Form>
 	);
 }

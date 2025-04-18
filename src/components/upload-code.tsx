@@ -39,7 +39,7 @@ export function UploadCode() {
 				formData.append('files', files[i], files[i].webkitRelativePath || files[i].name);
 			}
 
-			const { data, error } = await actions.promptify(formData);
+			const { data, error } = await actions.promptifyFiles(formData);
 			if (error) {
 				throw new Error(error.message ?? 'Something wrong');
 			}
