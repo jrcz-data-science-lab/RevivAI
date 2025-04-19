@@ -1,8 +1,53 @@
-import { createDatabase } from '@/lib/db';
 import { atom } from 'jotai';
 import { useMemo } from 'react';
+import Dexie, { type EntityTable } from 'dexie';
+import type { PackResult } from 'node_modules/repomix/lib/core/packager';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 export type Database = ReturnType<typeof createDatabase>;
+
+export interface Chapter {
+	id: string;
+	index: number;
+	title: string;
+	content: string;
+}
+
+export type CodebaseType = 'files' | 'remote';
+
+export interface Codebase {
+		id: string;
+		createdAt: Date;
+		ignore: string;
+		prompt: string;
+		type: CodebaseType;
+		repositoryUrl?: string;
+		metadata: PackResult;
+	}
+
+/**
+ * Creates a new Dexie database instance for the given project ID.
+ * @param projectId The ID of the project
+ * @returns A Dexie database instance with the specified schema
+ */
+export function createDatabase(projectId: string) {
+	const key = `revivai-${projectId}`;
+	console.log('Creating database with key:', key);
+
+	const db = new Dexie(key) as Dexie & {
+		chapters: EntityTable<Chapter, 'id'>;
+		codebases: EntityTable<Codebase, 'id'>;
+	};
+
+	// Schema declaration:
+	db.version(1).stores({
+		chapters: '++id, index, title, content',
+		codebases: '++id, createdAt',
+		chatMessages: '++id, createdAt, question, answer',
+	});
+
+	return db;
+}
 
 /**
  * Get database instance for the given project ID
@@ -10,5 +55,9 @@ export type Database = ReturnType<typeof createDatabase>;
  */
 export function useDb(projectId: string) {
 	const db = useMemo(() => createDatabase(projectId), [projectId]);
-	return { db };
+
+	// Current uploaded codebase
+	const codebasePrompt = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
+
+	return { db, codebasePrompt };
 }

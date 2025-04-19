@@ -3,8 +3,7 @@ import { motion } from 'motion/react';
 import { AnimatedText } from '../ui/animated-text';
 import { WriterSidebar } from './writer-sidebar';
 import { useLiveQuery } from 'dexie-react-hooks';
-import type { Database } from '@/hooks/useDb';
-import type { Chapter } from '@/lib/db';
+import type { Chapter, Database } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
 
 interface WriterProps {

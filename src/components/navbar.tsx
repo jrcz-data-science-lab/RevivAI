@@ -9,6 +9,7 @@ import { Upload } from './upload/upload';
 export type TabName = 'chat' | 'writer';
 
 interface NavbarProps {
+	projectId: string
 	onTabChange: (tab: TabName) => void;
 	value: TabName;
 	showThemeToggle?: boolean;
@@ -22,7 +23,16 @@ interface NavbarProps {
  * Navbar component for the app
  * @param {NavbarProps} props Props for the Navbar component
  */
-function Navbar({ onTabChange, value, showBackButton = true, showSettings = true, showTabs = true, showUpload = true, showThemeToggle = true }: NavbarProps) {
+function Navbar({
+	projectId,
+	onTabChange,
+	value,
+	showBackButton = true,
+	showSettings = true,
+	showTabs = true,
+	showUpload = true,
+	showThemeToggle = true,
+}: NavbarProps) {
 	const theme = useTheme();
 
 	return (
@@ -57,9 +67,9 @@ function Navbar({ onTabChange, value, showBackButton = true, showSettings = true
 					</Button>
 				)}
 
-				{showUpload && <Upload />}
+				{showUpload && <Upload projectId={projectId} />}
 
-				{showSettings && <Settings />}
+				{showSettings && <Settings projectId={projectId} />}
 			</div>
 		</div>
 	);

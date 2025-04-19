@@ -7,14 +7,17 @@ import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
 import type { LanguageModelV1 } from 'ai';
+import type { Database } from '@/hooks/useDb';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface ChatProps {
+	db: Database;
 	model: LanguageModelV1;
 }
 
-export function Chat({ model }: ChatProps) {
+export function Chat({ db, model }: ChatProps) {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
-	const chat = useChat({ model });
+	const chat = useChat({ db, model });
 
 	const scrollToLastMessage = (behavior: ScrollBehavior) => {
 		if (!chatContainerRef.current) return;

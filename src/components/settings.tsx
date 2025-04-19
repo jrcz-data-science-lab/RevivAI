@@ -4,9 +4,11 @@ import { SlidersHorizontal } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Label } from './ui/label';
 
-function Settings() {
+interface SettingsProps {
+	projectId: string;
+}
 
-	const projectId = window.location.pathname.split('/').at(-1);
+function Settings({ projectId }: SettingsProps) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>

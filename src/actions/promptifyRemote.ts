@@ -1,8 +1,9 @@
-import { defineAction } from 'astro:actions';
+import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import path from 'node:path';
 import { runCli } from 'repomix';
 import { mkdir, rm, readFile } from 'node:fs/promises';
+import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 
 const workingDir = process.cwd();
 
@@ -11,6 +12,11 @@ export const promptifyRemoteSchema = z.object({
 	compress: z.boolean().default(false).optional(),
 	ignore: z.string().default('').optional(),
 });
+
+export interface PromptifyFilesResult {
+	prompt: string;
+	metadata: PackResult;
+}
 
 /**
  * This action accepts a
@@ -37,24 +43,25 @@ export const promptifyRemote = defineAction({
 				ignore: ignore,
 			});
 
-			if (!result) return { success: false, error: 'No output from RepoMix' };
+			if (!result) throw new Error('No output from RepoMix');
 
 			const fileContent = await readFile(outputFile, 'utf-8');
 
 			return {
-				success: true,
 				prompt: fileContent,
 				metadata: result.packResult,
-				message: `Successfully processed repository "${url}"`,
-			};
+			} as PromptifyFilesResult;
 		} catch (error) {
 			console.error('Error processing repository:', error);
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : 'Unknown error',
-			};
+			throw new ActionError({
+				code: 'BAD_REQUEST',
+				message: (error as Error)?.message ?? 'Error processing repository',
+			});
 		} finally {
 			rm(tempDir, { recursive: true, force: true });
 		}
 	},
 });
+
+// Re-export combined promptify actions
+export * from './promptifyFiles';

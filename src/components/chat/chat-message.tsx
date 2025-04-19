@@ -52,7 +52,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 				<Separator className="separator mt-1 mb-3" />
 
-				<Suspense fallback={<p className="prose dark:prose-invert">{message.answer}</p>}>
+				<Suspense fallback={<p className="prose dark:prose-invert max-w-full">{message.answer}</p>}>
 					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>
 				</Suspense>
 			</div>

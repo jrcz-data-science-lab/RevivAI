@@ -5,8 +5,11 @@ import { atomWithStorage } from 'jotai/utils';
 import { countTokens } from '../lib/countTokens';
 import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
 import { useModel } from './useModel';
+import type { Codebase, Database } from './useDb';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface UseChatProps {
+	db: Database;
 	model: LanguageModelV1;
 }
 
@@ -37,11 +40,22 @@ export const chatStateAtom = atom<ChatState>({
 /**
  * Chat hook for interacting with the AI models
  */
-export function useChat({ model }: UseChatProps) {
+export function useChat({ db, model }: UseChatProps) {
 	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const setContextSize = useSetAtom(contextSizeAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
+
+	const codebase = useLiveQuery(() => {
+		return db.codebases.orderBy('createdAt').last();		
+	}, [db]);
+
+	const codebasePrompt = useMemo(() => codebase?.prompt ?? '', [codebase]);
+
+	const codebaseTokens = useMemo(() => {
+		if (!codebase) return 0;
+		return countTokens(codebase.prompt);
+	}, [codebase]);
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -54,7 +68,7 @@ export function useChat({ model }: UseChatProps) {
 	// Recalculate context size when messages change
 	useEffect(() => {
 		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
-		setContextSize(newContextSize);
+		setContextSize(newContextSize + codebaseTokens);
 	}, [state.messages.length]);
 
 	/**
@@ -110,15 +124,8 @@ export function useChat({ model }: UseChatProps) {
 			]);
 
 			// Prepare message history
-			const messages: CoreMessage[] = [
-				{
-					role: 'system',
-					content: 'When responding with the code - specify programming language in markdown after quotes.',
-				},
-				...chatHistory,
-				{ role: 'user', content: text },
-			];
-
+			const messages: CoreMessage[] = [{ role: 'system', content: codebasePrompt }, ...chatHistory, { role: 'user', content: text }];
+			console.log(messages);
 			// Calculate new context size
 			setContextSize((prev) => prev + countTokens(text));
 
@@ -156,7 +163,7 @@ export function useChat({ model }: UseChatProps) {
 				handleError(error);
 			}
 		},
-		[abort, setContextSize, state.messages, state.currentMessage], // Added state dependencies to avoid stale closures
+		[abort, setContextSize, state.messages, state.currentMessage, codebasePrompt], // Added state dependencies to avoid stale closures
 	);
 
 	/**

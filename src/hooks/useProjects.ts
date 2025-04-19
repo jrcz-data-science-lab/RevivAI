@@ -7,8 +7,13 @@ export interface ProjectMetadata {
 	createdAt: string;
 }
 
-const projectsAtom = atomWithStorage<ProjectMetadata[]>('projects', []);
+// This atom stores the projects in local storage
+export const projectsAtom = atomWithStorage<ProjectMetadata[]>('projects', []);
 
+/**
+ * Custom hook to manage projects.
+ * @returns An object with methods to create, delete, and check if a project exists.
+ */
 export function useProjects() {
 	const [projects, setProjects] = useAtom(projectsAtom);
 
@@ -42,9 +47,9 @@ export function useProjects() {
 	 * Check if a project exists.
 	 * @param id The ID of the project to check
 	 */
-	const projectExists = (id: string) => {
+	const isProjectExists = (id: string) => {
 		return projects.some((project) => project.id === id);
 	}
 
-	return { createProject, deleteProject, projects, projectExists };
+	return { createProject, deleteProject, projects, isProjectExists };
 }

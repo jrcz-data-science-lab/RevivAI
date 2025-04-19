@@ -12,10 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { actions } from 'astro:actions';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UploadFiles } from './upload-files';
+import type { CodebaseType } from '@/hooks/useDb';
+import type { PromptifyFilesResult } from '@/actions/promptifyFiles';
 
-type UploadFormTab = 'remote' | 'files';
-
-type UploadFormSchema = z.infer<typeof formSchema>;
+export type UploadFormSchema = z.infer<typeof formSchema>;
 
 // Schema for form validation
 const formSchema = z.object({
@@ -27,16 +27,20 @@ const formSchema = z.object({
 	description: z.string().max(500, 'Description is too long'),
 });
 
+interface UploadFormProps {
+	onUploadSuccess: (data: PromptifyFilesResult, form: UploadFormSchema) => void;
+}
+
 /**
  * Code uploading form
  */
-export function UploadForm() {
+export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 	const form = useForm<UploadFormSchema>({
 		resolver: zodResolver(formSchema),
 		defaultValues: { type: 'files', compress: false, description: '' },
 	});
 
-	// Tru if form is submitting
+	// True if form is submitting
 	const isUploading = form.formState.isSubmitting;
 
 	// Handle form submission
@@ -52,6 +56,11 @@ export function UploadForm() {
 				});
 
 				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
+				if (data) {
+					onUploadSuccess?.(data, formData);
+					form.reset();
+				}
+				
 				console.log(data, error);
 			}
 
@@ -64,11 +73,15 @@ export function UploadForm() {
 				formDataToSend.append('compress', String(formData.compress));
 				formDataToSend.append('ignore', formData.ignore || '');
 				formDataToSend.append('description', formData.description);
-				
 
 				const { data, error } = await actions.promptifyFiles(formDataToSend);
 
 				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
+				if (data) {
+					onUploadSuccess?.(data, formData);
+					form.reset();
+				}
+				
 				console.log(data, error);
 			}
 		} catch (error) {
@@ -79,7 +92,7 @@ export function UploadForm() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<Tabs className="w-full" value={form.watch('type')} onValueChange={(value) => !isUploading && form.setValue('type', value as UploadFormTab)}>
+				<Tabs className="w-full" value={form.watch('type')} onValueChange={(value) => !isUploading && form.setValue('type', value as CodebaseType)}>
 					<FormLabel>Code Source</FormLabel>
 					<TabsList>
 						<TabsTrigger value="files" className="px-3">

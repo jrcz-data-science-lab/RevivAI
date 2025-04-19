@@ -19,16 +19,20 @@ export default function App({ projectId }: AppProps) {
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);
 	const { model } = useModel();
-	const { projectExists } = useProjects();
+	const { isProjectExists } = useProjects();
 	const { hash, setHash } = useHashRouter('chat');
 
 	// Hide loading spinner
 	useEffect(() => {
-		document.querySelector('#loading-spinner')?.classList.add('opacity-0', 'scale-125');
+		const loadingSpinner = document.querySelector('#loading-spinner');
+		if (!loadingSpinner) return;
+
+		loadingSpinner.classList.add('opacity-0', 'scale-125');
+		setTimeout(() => loadingSpinner.remove(), 1000);
 	}, []);
 
 	// If no project ID is provided or the project does not exist, show a message
-	if (!projectId || !projectExists(projectId)) {
+	if (!projectId || !isProjectExists(projectId)) {
 		return (
 			<motion.div
 				initial={{ opacity: 0, translateY: 16 }}
@@ -66,7 +70,7 @@ export default function App({ projectId }: AppProps) {
 
 	// Return the app screen based on the hash value
 	const getAppScreen = (page: string) => {
-		if (page === 'chat') return <Chat model={model} />;
+		if (page === 'chat') return <Chat db={db} model={model} />;
 		if (page === 'writer') return <Writer db={db} model={model} />;
 		return <div className="text-muted-foreground w-full text-center">This page doesn't exist</div>;
 	};
@@ -75,7 +79,7 @@ export default function App({ projectId }: AppProps) {
 		<div className="relative flex items-center justify-center min-w-screen min-h-screen overflow-x-hidden bg-background">
 			<div className="w-full h-full">
 				<div className="z-50 fixed top-4 left-0 px-4 flex w-full justify-space-between">
-					<Navbar value={hash as TabName} onTabChange={setHash} />
+					<Navbar projectId={projectId} value={hash as TabName} onTabChange={setHash} />
 				</div>
 
 				<Toaster theme={theme} position="bottom-left" />

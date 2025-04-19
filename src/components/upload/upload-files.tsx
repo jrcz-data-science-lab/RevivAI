@@ -2,13 +2,13 @@ import { useRef, useState } from 'react';
 import { FolderUp, LoaderPinwheel } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type DropzoneProps = React.ComponentProps<'div'> & {
+interface UploadFilesProps {
 	onChange: (files: FileList) => void;
 	message?: string;
 	loading?: boolean;
-};
+}
 
-export function UploadFiles({ onChange, message, loading = false, ...props }: DropzoneProps) {
+export function UploadFiles({ onChange, message, loading = false }: UploadFilesProps) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +20,9 @@ export function UploadFiles({ onChange, message, loading = false, ...props }: Dr
 	};
 
 	return (
-		<div
+		<button
+			type="button"
+			onClick={handleClick}
 			className={cn(
 				'relative w-full min-h-38 min-w-80',
 				'flex flex-col justify-center items-center',
@@ -30,17 +32,8 @@ export function UploadFiles({ onChange, message, loading = false, ...props }: Dr
 				'group',
 				loading && 'pointer-events-none',
 			)}
-			onClick={handleClick}
-			{...props}
 		>
-			<input
-				ref={fileInputRef}
-				type="file"
-				multiple={true}
-				onChange={handleChange}
-				className="hidden"
-				{...{ webkitdirectory: '', directory: '' }}
-			/>
+			<input ref={fileInputRef} type="file" multiple={true} onChange={handleChange} className="hidden" {...{ webkitdirectory: '', directory: '' }} />
 
 			{loading ? (
 				<>
@@ -54,6 +47,6 @@ export function UploadFiles({ onChange, message, loading = false, ...props }: Dr
 					<p className="text-xs opacity-50">Select a folder containing your project files</p>
 				</>
 			)}
-		</div>
+		</button>
 	);
 }
