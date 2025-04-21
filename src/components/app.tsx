@@ -5,17 +5,26 @@ import { Chat } from './chat/chat';
 import { Writer } from './writer/writer';
 import { useHashRouter } from '@/hooks/useHashRouter';
 import { useDb } from '@/hooks/useDb';
-import { useProjects } from '@/hooks/useProjects';
+import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
 import { Button } from './ui/button';
 import { motion } from 'motion/react';
 import { useModel } from '@/hooks/useModel';
 import { useEffect } from 'react';
+import { useHydrateAtoms } from 'jotai/utils';
 
 interface AppProps {
 	projectId: string;
 }
 
+/**
+ * Main application component
+ * @param projectId The ID of the current project
+ */
 export default function App({ projectId }: AppProps) {
+
+	// Hydrate the current project ID, specifying initial values
+	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
+
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);
 	const { model } = useModel();

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { produce } from 'immer';
-import { atomWithStorage } from 'jotai/utils';
 import { countTokens } from '../lib/countTokens';
 import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
-import { useModel } from './useModel';
 import type { Codebase, Database } from './useDb';
 import { useLiveQuery } from 'dexie-react-hooks';
+import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
+
 
 interface UseChatProps {
 	db: Database;
@@ -47,15 +47,15 @@ export function useChat({ db, model }: UseChatProps) {
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
 	const codebase = useLiveQuery(() => {
-		return db.codebases.orderBy('createdAt').last();		
+		return db.codebases.orderBy('createdAt').last();
 	}, [db]);
 
 	const codebasePrompt = useMemo(() => codebase?.prompt ?? '', [codebase]);
 
 	const codebaseTokens = useMemo(() => {
 		if (!codebase) return 0;
-		return countTokens(codebase.prompt);
-	}, [codebase]);
+		return codebase.metadata.totalTokens ?? countTokens(codebase.prompt);
+	}, [codebase?.id]);
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -69,7 +69,7 @@ export function useChat({ db, model }: UseChatProps) {
 	useEffect(() => {
 		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
 		setContextSize(newContextSize + codebaseTokens);
-	}, [state.messages.length]);
+	}, [state.messages.length, codebaseTokens, setContextSize]);
 
 	/**
 	 * Abort the current streaming request
@@ -124,8 +124,13 @@ export function useChat({ db, model }: UseChatProps) {
 			]);
 
 			// Prepare message history
-			const messages: CoreMessage[] = [{ role: 'system', content: codebasePrompt }, ...chatHistory, { role: 'user', content: text }];
-			console.log(messages);
+			const messages: CoreMessage[] = [
+				{ role: 'system', content: codebasePrompt },
+				{ role: 'system', content: chatSystemPrompt },
+				...chatHistory,
+				{ role: 'user', content: text },
+			];
+
 			// Calculate new context size
 			setContextSize((prev) => prev + countTokens(text));
 
@@ -200,7 +205,12 @@ export function useChat({ db, model }: UseChatProps) {
 	 */
 	const deleteAllMessages = useCallback(() => {
 		abort();
-		setState((prev) => ({ ...prev, messages: [], currentMessage: null, isStreaming: false }));
+		setState({
+			messages: [],
+			currentMessage: null,
+			isStreaming: false,
+			errorMessage: null,
+		});
 	}, []);
 
 	// Collect all messages

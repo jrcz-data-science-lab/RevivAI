@@ -10,6 +10,6 @@ import MainLayout from './main-layout.astro';
 </MainLayout>
 
 <script is:inline>
-	const isDark = localStorage.getItem('theme') === JSON.stringify('dark');
+	const isDark = localStorage.getItem('theme') === 'dark';
 	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
 </script>

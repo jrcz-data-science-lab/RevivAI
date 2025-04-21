@@ -9,7 +9,6 @@ import { Upload } from './upload/upload';
 export type TabName = 'chat' | 'writer';
 
 interface NavbarProps {
-	projectId: string
 	onTabChange: (tab: TabName) => void;
 	value: TabName;
 	showThemeToggle?: boolean;
@@ -24,7 +23,6 @@ interface NavbarProps {
  * @param {NavbarProps} props Props for the Navbar component
  */
 function Navbar({
-	projectId,
 	onTabChange,
 	value,
 	showBackButton = true,
@@ -34,7 +32,7 @@ function Navbar({
 	showThemeToggle = true,
 }: NavbarProps) {
 	const theme = useTheme();
-
+	
 	return (
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
@@ -67,9 +65,9 @@ function Navbar({
 					</Button>
 				)}
 
-				{showUpload && <Upload projectId={projectId} />}
+				{showUpload && <Upload />}
 
-				{showSettings && <Settings projectId={projectId} />}
+				{showSettings && <Settings />}
 			</div>
 		</div>
 	);

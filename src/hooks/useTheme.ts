@@ -1,12 +1,10 @@
 import { atom, useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import { useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
-const defaultTheme = !import.meta.env.SSR ? (localStorage.getItem('theme') === '"dark"' ? 'dark' : 'light') : 'light';
-
-const themeAtom = atomWithStorage<Theme>('theme', defaultTheme);
+const initialTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+const themeAtom = atom<Theme>(initialTheme);
 
 /**
  * Hook for managing the theme state

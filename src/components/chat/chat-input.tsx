@@ -99,9 +99,11 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 						</span>
 					</div>
 
-					<Badge onClick={onClear} variant="secondary" className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform">
-						Clear Chat
-					</Badge>
+					{messagesCount > 0 && (
+						<Badge onClick={onClear} variant="secondary" className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform">
+							Clear Chat
+						</Badge>
+					)}
 				</div>
 			</div>
 		);

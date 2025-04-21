@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export interface ProjectMetadata {
@@ -6,6 +6,9 @@ export interface ProjectMetadata {
 	name: string;
 	createdAt: string;
 }
+
+// Current project ID
+export const currentProjectIdAtom = atom<string>();
 
 // This atom stores the projects in local storage
 export const projectsAtom = atomWithStorage<ProjectMetadata[]>('projects', []);
