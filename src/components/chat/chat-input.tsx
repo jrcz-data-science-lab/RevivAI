@@ -20,49 +20,37 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStreaming, onClear }: ChatInputProps) {
-		const inputRef = useRef<HTMLTextAreaElement>(null);
-		const [input, setInput] = useState('');
+	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const [input, setInput] = useState('');
 
-		// Display context size
-		const contextSize = useAtomValue(contextSizeAtom);
-		const tokensCount = useTokensCount(input, 150);
-		const totalTokens = useMemo(() => tokensCount + contextSize, [tokensCount, contextSize]);
+	// Display context size
+	const contextSize = useAtomValue(contextSizeAtom);
+	const tokensCount = useTokensCount(input, 150);
+	const totalTokens = tokensCount + contextSize;
 
-		useEffect(() => {
-			const abortCtrl = new AbortController();
+	const submitMessage = useCallback(
+		(value: string) => {
+			const trimmed = value.trim();
+			if (!trimmed) return;
 
-			document.addEventListener('keydown', (event) => {
-				if (event.key !== 'Tab' && !event.metaKey) inputRef.current?.focus();
-			});
-
-			return () => abortCtrl.abort();
-		}, []);
-
-		const submitMessage = useCallback(
-			(value: string) => {
-				const trimmed = value.trim();
-				if (!trimmed) return;
-
-				setInput('');
-				onSubmit(trimmed);
-			},
-			[onSubmit],
-		);
-
-		const clearChat = useCallback(() => {
 			setInput('');
-		}, []);
+			onSubmit(trimmed);
+		},
+		[onSubmit],
+	);
 
-		const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-			if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
+	// Submit on enter key press
+	const handleKeydown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
 
-			if (event.key === 'Enter') {
-				event.preventDefault();
-				submitMessage(input);
-			}
-		};
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			submitMessage(input);
+		}
+	};
 
-		return (
+	return (
+		<form>
 			<div className="flex flex-col gap-3 w-full h-auto">
 				<div id="chat-input" className="relative w-full h-auto">
 					<Button
@@ -106,7 +94,8 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 					)}
 				</div>
 			</div>
-		);
-	}
+		</form>
+	);
+}
 
 export default memo(ChatInput);

@@ -6,16 +6,18 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Card } from '../ui/card';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { UploadForm, type UploadFormSchema } from './upload-form';
-import type { PromptifyFilesResult } from '@/actions/promptifyFiles';
+import type { PromptifyResult } from '@/actions/promptify';
 import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
+import { toast } from 'sonner';
+import { UploadCodebase } from './upload-codebase';
 
 export function Upload() {
 	const projectId = useAtomValue(currentProjectIdAtom) as string;
-	const { db, codebasePrompt } = useDb(projectId);
+	const { db, currentCodebase } = useDb(projectId);
 	const [isOpen, setIsOpen] = useState(false);
 
-	const addCodebase = async (data: PromptifyFilesResult, form: UploadFormSchema) => {
+	const addCodebase = async (data: PromptifyResult, form: UploadFormSchema) => {
 		if (!data) return;
 
 		const codebase: Codebase = {
@@ -23,14 +25,27 @@ export function Upload() {
 			type: form.type,
 			createdAt: new Date(),
 			prompt: data.prompt,
+			compress: form.compress,
 			repositoryUrl: form.type === 'remote' ? form.url : undefined,
 			ignore: form.ignore ?? '',
 			metadata: data.metadata,
 		};
 
+		// Clear previous codebases
+		await db.codebases.clear();
+
+		// Add a new one
 		await db.codebases.add(codebase);
-		setIsOpen(false);
+
+		toast.success('Codebase uploaded successfully!');
 	};
+
+	const removeCodebase = async () => {
+		if (!currentCodebase) return;
+
+		await db.codebases.delete(currentCodebase.id);
+		toast.success('Codebase removed successfully!');
+	}
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -46,17 +61,7 @@ export function Upload() {
 					<DialogDescription>Upload your project files from GitHub or from your local directory.</DialogDescription>
 				</DialogHeader>
 
-				<pre className="break-all">{JSON.stringify(codebasePrompt?.repositoryUrl)}</pre>
-				<UploadForm onUploadSuccess={addCodebase} />
-
-				{/* 					
-					<div>
-						<Card className="relative p-6 text-sm shadow-none space-y-2 bg-violet-600/10 border-violet-400/50  text-violet-800/80 dark:text-violet-200 gap-2 animate-in zoom-in-95">
-							<h2 className="font-black text-xl font-serif">We offer a free LLM to test out RevivAI!</h2>
-							<p>This is a great way to get started and see how RevivAI works. You can switch to a different LLM provider anytime through the settings!</p>
-							<p>Please note that any code you upload will be processed by our LLMs, so don't upload any security-critical code or sensitive information.</p>
-						</Card>
-					</div> */}
+				{currentCodebase ? <UploadCodebase codebase={currentCodebase} onNewCodebase={removeCodebase} /> : <UploadForm onUploadSuccess={addCodebase} />}
 			</DialogContent>
 		</Dialog>
 	);

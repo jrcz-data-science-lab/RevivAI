@@ -1,6 +1,7 @@
 import { memo, type ReactNode } from 'react';
 import ShikiHighlighter, { type Element, isInlineCode } from 'react-shiki';
 import { ChatMermaid } from './chat-mermaid';
+import { useTheme } from '@/hooks/useTheme';
 
 interface CodeHighlightProps {
 	className?: string;
@@ -25,10 +26,17 @@ const CodeHighlight = ({ className, children, node }: CodeHighlightProps) => {
 
 	// Shiki highlighter
 	return (
-		<ShikiHighlighter language={language} delay={300} as={'div'} addDefaultStyles={false} theme={'vitesse-dark'} className={className}>
+		<ShikiHighlighter
+			as={'div'}
+			delay={150}
+			language={language}
+			className={className}
+			addDefaultStyles={false}
+			theme={'vitesse-dark'}
+		>
 			{String(children)}
 		</ShikiHighlighter>
 	);
 };
 
-export default memo(CodeHighlight);
+export default CodeHighlight;

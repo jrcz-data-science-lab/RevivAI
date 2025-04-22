@@ -13,7 +13,6 @@ export function Projects() {
 	};
 
 	return (
-		<div className="relative w-full flex justify-center items-center max-w-prose overflow-x-hidden px-6 pt-8 mb-16 mx-auto">
 			<motion.div
 				initial={{ opacity: 0, translateY: 8 }}
 				animate={{ opacity: 1, translateY: 0 }}
@@ -30,6 +29,5 @@ export function Projects() {
 
 				<ProjectsNew onCreate={createNewProject} />
 			</motion.div>
-		</div>
 	);
 }

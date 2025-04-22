@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { FileText, LibraryBig, Plus, Settings, Trash } from 'lucide-react';
+import { Download, FileText, LibraryBig, Plus, Settings, Trash } from 'lucide-react';
 
 interface WriterSidebarProps {
 	chapters: Chapter[] | undefined;
@@ -25,12 +25,17 @@ export function WriterSidebar({ chapters, setChapters, selectedChapterId, setSel
 				<div className="flex flex-col flex-none text-muted-foreground py-3">
 					<div className="flex flex-col gap-3 px-6">
 						<div className="flex gap-2 items-center text-muted-foreground">
-							<LibraryBig className="w-4 h-4" />
+							<LibraryBig className="size-4" />
 							<span>Templates</span>
 						</div>
 
 						<div className="flex gap-2 items-center text-muted-foreground">
-							<Settings className="w-4 h-4" />
+							<Download className='size-4' />
+							<span>Export</span>
+						</div>
+
+						<div className="flex gap-2 items-center text-muted-foreground">
+							<Settings className="size-4" />
 							<span>Settings</span>
 						</div>
 					</div>

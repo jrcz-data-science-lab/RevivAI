@@ -1,16 +1,16 @@
 import { generateObject } from 'ai';
-import { useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
+import { useState } from 'react';
+import { Toaster } from '@/components/ui/toaster';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { SetupBanner } from './setup-banner';
-import { Toaster } from '@/components/ui/toaster';
 import { LoaderCircle } from 'lucide-react';
 import { createModel, useModel, type LLMCredentials, type LLMProvider } from '@/hooks/useModel';
+import { testSchema } from '@/lib/schemas';
 
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_LLM_API_URL;
 
@@ -72,10 +72,11 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 
 export function Setup() {
 	const defaultCredentials: LLMCredentials = getDefaultCredentials(PUBLIC_MODEL_PROVIDED ? 'revivai' : 'openai');
-
 	const { credentials, setCredentials } = useModel();
+
 	const [isTesting, setIsTesting] = useState(false);
 	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
+
 
 	/**
 	 * Change default values on provider change. Saves previous API key.
@@ -95,7 +96,7 @@ export function Setup() {
 			const model = createModel(credentialsForm);
 			const { object } = await generateObject({
 				model: model,
-				schema: z.object({ test: z.boolean() }),
+				schema: testSchema,
 				prompt: 'Set property "test" to "true". Use structured output.',
 			});
 

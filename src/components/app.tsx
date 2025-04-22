@@ -1,6 +1,6 @@
 import { useTheme } from '@/hooks/useTheme';
 import Navbar, { type TabName } from './navbar';
-import { Toaster } from 'sonner';
+import { Toaster } from './ui/toaster'; 
 import { Chat } from './chat/chat';
 import { Writer } from './writer/writer';
 import { useHashRouter } from '@/hooks/useHashRouter';
@@ -68,7 +68,7 @@ export default function App({ projectId }: AppProps) {
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
 				<div className="text-muted-foreground w-full text-center">LLM provider is not specified.</div>
-				<a href="/setup">
+				<a href={`/setup?redirectToProject=${projectId}`}>
 					<Button size="sm" variant="outline">
 						Setup LLM provider
 					</Button>
@@ -88,10 +88,10 @@ export default function App({ projectId }: AppProps) {
 		<div className="relative flex items-center justify-center min-w-screen min-h-screen overflow-x-hidden bg-background">
 			<div className="w-full h-full">
 				<div className="z-50 fixed top-4 left-0 px-4 flex w-full justify-space-between">
-					<Navbar projectId={projectId} value={hash as TabName} onTabChange={setHash} />
+					<Navbar value={hash as TabName} onTabChange={setHash} />
 				</div>
 
-				<Toaster theme={theme} position="bottom-left" />
+				<Toaster theme={theme} position="bottom-right" />
 
 				{getAppScreen(hash)}
 			</div>

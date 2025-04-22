@@ -8,7 +8,7 @@ function ChatWelcome() {
 				Curious how your code works? Ask about it!
 			</AnimatedText>
 			<AnimatedText className="text-sm text-muted-foreground">
-				It could be anything from "How do I create a new table?" to "What is the difference between a LEFT JOIN and a RIGHT JOIN?".
+				You can ask something like "What does this code do?" or ask to visualize your code with diagrams, flowcharts, and more!
 			</AnimatedText>
 		</div>
 	);

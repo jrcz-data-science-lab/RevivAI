@@ -6,6 +6,8 @@ import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 
+import '@/styles/markdown.css';
+
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {

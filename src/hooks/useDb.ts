@@ -20,6 +20,7 @@ export interface Codebase {
 		createdAt: Date;
 		ignore: string;
 		prompt: string;
+		compress: boolean
 		type: CodebaseType;
 		repositoryUrl?: string;
 		metadata: PackResult;
@@ -57,7 +58,7 @@ export function useDb(projectId: string) {
 	const db = useMemo(() => createDatabase(projectId), [projectId]);
 
 	// Current uploaded codebase
-	const codebasePrompt = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
+	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
 
-	return { db, codebasePrompt };
+	return { db, currentCodebase };
 }

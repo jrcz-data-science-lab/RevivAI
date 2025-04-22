@@ -21,7 +21,7 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 	// Generate a unique ID for the Mermaid diagram
 	const id = useMemo(() => `mermaid-${Math.random().toString(36).substring(2, 15)}`, []);
 
-	const code = useDebounce(children, 300);
+	const code = useDebounce(children, 150);
 	const [diagramSVG, setDiagramSVG] = useState<string | null>(null);
 
 	useEffect(() => {

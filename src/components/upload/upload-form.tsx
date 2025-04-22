@@ -1,98 +1,109 @@
+import type { z } from 'zod';
+import type { CodebaseType } from '@/hooks/useDb';
+import type { PromptifyResult } from '@/actions/promptify';
 import { useState } from 'react';
-import { z } from 'zod';
+import { actions } from 'astro:actions';
+import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
+import { promptifySchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { GithubIcon } from '@/components/ui/github-icon';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { FolderUp, LoaderCircle } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { actions } from 'astro:actions';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UploadFiles } from './upload-files';
-import type { CodebaseType } from '@/hooks/useDb';
-import type { PromptifyFilesResult } from '@/actions/promptifyFiles';
 
-export type UploadFormSchema = z.infer<typeof formSchema>;
-
-// Schema for form validation
-const formSchema = z.object({
-	type: z.enum(['remote', 'files']),
-	files: z.array(z.instanceof(File)).optional(),
-	url: z.string().url('Please enter a valid repository URL').optional(),
-	compress: z.boolean(),
-	ignore: z.string().optional(),
-	description: z.string().max(500, 'Description is too long'),
-});
+export type UploadFormSchema = z.infer<typeof promptifySchema>;
 
 interface UploadFormProps {
-	onUploadSuccess: (data: PromptifyFilesResult, form: UploadFormSchema) => void;
+	onUploadSuccess: (data: PromptifyResult, form: UploadFormSchema) => void;
 }
+
 
 /**
  * Code uploading form
  */
 export function UploadForm({ onUploadSuccess }: UploadFormProps) {
+	const [tab, setTab] = useState<CodebaseType>('files');
+
 	const form = useForm<UploadFormSchema>({
-		resolver: zodResolver(formSchema),
-		defaultValues: { type: 'files', compress: false, description: '' },
+		resolver: zodResolver(tab === 'remote' ? promptifySchema.omit({ files: true }) : promptifySchema.omit({ url: true })),
+		defaultValues: { type: 'files', url: '', files: [], ignore: '', compress: false },
 	});
 
 	// True if form is submitting
 	const isUploading = form.formState.isSubmitting;
 
+	// Handle tab change
+	const onTabChange = (value: CodebaseType) => {
+		form.setValue('type', value);
+		form.setValue('url', '');
+		form.setValue('files', []);
+		setTab(value);
+	};
+
+	/**
+	 * Create FormData object from the form data
+	 * @param data - The form data
+	 * @returns FormData object
+	 */
+	const createFormData = (data: UploadFormSchema) => {
+		const formData = new FormData();
+
+		formData.append('type', data.type);
+		formData.append('compress', String(data.compress));
+		formData.append('ignore', data.ignore || '');
+
+		// Append the type of codebase
+		if (data.type === 'files' && data.files) {
+			for (const file of data.files) {
+				formData.append('files', file, file.webkitRelativePath || file.name);
+			}
+		} else if (data.type === 'remote' && data.url) {
+			formData.append('url', data.url);
+		}
+
+		return formData;
+	};
+
 	// Handle form submission
-	const onSubmit = async (formData: UploadFormSchema) => {
+	const onSubmit = async (input: UploadFormSchema) => {
+		// Show error if no files are selected
+		if (input.type === 'files' && input.files?.length === 0) {
+			form.setError('files', { message: 'Please select at least one file' });
+			return;
+		}
+
 		try {
-			console.log('Form data:', formData);
+			const formData = createFormData(input);
+			const { data, error } = await actions.promptify(formData);
 
-			if (formData.type === 'remote' && formData.url) {
-				const { data, error } = await actions.promptifyRemote({
-					url: formData.url,
-					compress: formData.compress,
-					ignore: formData.ignore,
-				});
-
-				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
-				if (data) {
-					onUploadSuccess?.(data, formData);
-					form.reset();
-				}
-				
-				console.log(data, error);
+			// Handle errors
+			if (error) {
+				form.setError('root', { message: error.message ?? 'Something went wrong' });
+				toast.error('Error uploading repository', { description: `${error}`, richColors: true });
+				return;
 			}
 
-			if (formData.type === 'files' && formData.files) {
-				const formDataToSend = new FormData();
-				for (const file of formData.files) {
-					formDataToSend.append('files', file, file.webkitRelativePath || file.name);
-				}
-
-				formDataToSend.append('compress', String(formData.compress));
-				formDataToSend.append('ignore', formData.ignore || '');
-				formDataToSend.append('description', formData.description);
-
-				const { data, error } = await actions.promptifyFiles(formDataToSend);
-
-				if (error) form.setError('root', { message: error.message ?? 'Something went wrong' });
-				if (data) {
-					onUploadSuccess?.(data, formData);
-					form.reset();
-				}
-				
-				console.log(data, error);
+			// Handle success
+			if (data) {
+				onUploadSuccess?.(data, input);
+				form.reset();
 			}
 		} catch (error) {
-			console.error('Error uploading files:', error);
+			toast.error('Error submitting the form', { description: `${error}`, richColors: true });
+			console.error('Error submitting the form', error);
 		}
 	};
 
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<Tabs className="w-full" value={form.watch('type')} onValueChange={(value) => !isUploading && form.setValue('type', value as CodebaseType)}>
+				<Tabs className="w-full" value={tab} onValueChange={(value) => onTabChange(value as CodebaseType)}>
 					<FormLabel>Code Source</FormLabel>
 					<TabsList>
 						<TabsTrigger value="files" className="px-3">
@@ -104,40 +115,40 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 							Repository
 						</TabsTrigger>
 					</TabsList>
-
-					<TabsContent value="remote" className="space-y-8 mt-8">
-						<FormField
-							control={form.control}
-							name="url"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Repository URL</FormLabel>
-									<FormDescription>Link to the public GitHub repository. The repository must be public and accessible without authentication.</FormDescription>
-									<FormControl>
-										<Input placeholder="https://github.com/username/repository" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</TabsContent>
-
-					<TabsContent value="files" className="space-y-4 mt-4">
-						<FormField
-							control={form.control}
-							name="files"
-							render={({ field }) => (
-								<FormItem>
-									<UploadFiles
-										onChange={(files) => form.setValue('files', [...files])}
-										message={field.value?.length ? `${field.value.length} files selected` : undefined}
-									/>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</TabsContent>
 				</Tabs>
+
+				{tab === 'remote' && (
+					<FormField
+						control={form.control}
+						name="url"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Repository URL</FormLabel>
+								<FormDescription>Link to the public GitHub repository. The repository must be public and accessible without authentication.</FormDescription>
+								<FormControl>
+									<Input placeholder="https://github.com/username/repository" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
+
+				{tab === 'files' && (
+					<FormField
+						control={form.control}
+						name="files"
+						render={({ field }) => (
+							<FormItem>
+								<UploadFiles
+									onChange={(files) => form.setValue('files', [...files])}
+									message={field.value?.length ? `${field.value.length} files selected` : undefined}
+								/>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
 
 				<FormField
 					control={form.control}
@@ -173,21 +184,6 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 						</FormItem>
 					)}
 				/>
-
-				{/* <FormField
-					control={form.control}
-					name="description"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Code Description</FormLabel>
-							<FormDescription>Describe your code and what it does.</FormDescription>
-							<FormControl>
-								<Textarea placeholder="This code is an API server for meteorology project, that ..." className="min-h-24 resize-none" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/> */}
 
 				<Button type="submit" className="w-full" disabled={isUploading}>
 					{isUploading && <LoaderCircle className="animate-spin" />}

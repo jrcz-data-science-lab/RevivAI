@@ -12,7 +12,9 @@ export function UploadFiles({ onChange, message, loading = false }: UploadFilesP
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && onChange) onChange(e.target.files);
+		if (e.target.files && onChange) {
+			onChange(e.target.files);
+		}
 	};
 
 	const handleClick = () => {
