@@ -37,7 +37,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 		>
 			<div className="relative flex flex-col gap-2">
 				<h3 className="relative text-xl font-black font-serif break-words whitespace-pre-wrap">
-					{message.prompt}
+					<span className='max-w-10/12 block'>{message.prompt}</span>
 
 					<motion.div
 						className="absolute -left-10 bottom-0.5 opacity-60 max-md:hidden"
@@ -54,7 +54,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 				<Separator className="separator mt-1 mb-3" />
 
-				<Suspense fallback={<p className="prose dark:prose-invert max-w-full">{message.answer}</p>}>
+				<Suspense fallback={<p className="prose dark:prose-invert text-sm leading-6 max-w-full">{message.answer}</p>}>
 					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>
 				</Suspense>
 			</div>
