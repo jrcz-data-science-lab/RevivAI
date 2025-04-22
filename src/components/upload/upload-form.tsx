@@ -57,6 +57,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 		formData.append('type', data.type);
 		formData.append('compress', String(data.compress));
 		formData.append('ignore', data.ignore || '');
+		formData.append('include', data.include || '');
 
 		// Append the type of codebase
 		if (data.type === 'files' && data.files) {
@@ -159,6 +160,21 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 							<FormDescription>Comma-separated patterns to ignore.</FormDescription>
 							<FormControl>
 								<Input placeholder="**/*.gif" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="include"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Ignore Patterns</FormLabel>
+							<FormDescription>Comma-separated patterns to include.</FormDescription>
+							<FormControl>
+								<Input placeholder="src/**" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

@@ -19,6 +19,7 @@ export interface Codebase {
 		id: string;
 		createdAt: Date;
 		ignore: string;
+		include: string;
 		prompt: string;
 		compress: boolean
 		type: CodebaseType;

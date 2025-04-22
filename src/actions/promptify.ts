@@ -50,9 +50,10 @@ function saveFilesToTempDir(files: File[], tempDir: string) {
  * @param outputFile - Path to the output file.
  * @param compress - Whether to compress the output.
  * @param ignore - Files or directories to ignore.
+ * @param include - Files or directories to include.
  * @returns The generated prompt and metadata.
  */
-async function runRepomixForDirectory(dirPath: string, outputFile: string, compress: boolean, ignore: string) {
+async function runRepomixForDirectory(dirPath: string, outputFile: string, compress: boolean, ignore: string, include: string) {
 	const result = await runCli([dirPath], WORKING_DIR, {
 		style: 'markdown',
 		quiet: true,
@@ -60,6 +61,7 @@ async function runRepomixForDirectory(dirPath: string, outputFile: string, compr
 		output: outputFile,
 		removeEmptyLines: true,
 		ignore: ignore,
+		include: include,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -77,9 +79,10 @@ async function runRepomixForDirectory(dirPath: string, outputFile: string, compr
  * @param url - URL of the remote repository.
  * @param compress - Whether to compress the output.
  * @param ignore - Files or directories to ignore.
+ * @param include - Files or directories to include.
  * @returns The generated prompt and metadata.
  */
-async function runRepomixForRemote(outputFile: string, url: string, compress: boolean, ignore: string) {
+async function runRepomixForRemote(outputFile: string, url: string, compress: boolean, ignore: string, include: string) {
 	const result = await runCli([], WORKING_DIR, {
 		style: 'markdown',
 		quiet: true,
@@ -88,6 +91,7 @@ async function runRepomixForRemote(outputFile: string, url: string, compress: bo
 		output: outputFile,
 		removeEmptyLines: true,
 		ignore: ignore,
+		include: include,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -106,7 +110,7 @@ async function runRepomixForRemote(outputFile: string, url: string, compress: bo
 export const promptify = defineAction({
 	accept: 'form',
 	input: promptifySchema,
-	handler: async ({ type, files, url, compress, ignore }) => {
+	handler: async ({ type, files, url, compress, ignore, include }) => {
 		const submissionID = crypto.randomUUID();
 		const tempDir = path.join(WORKING_DIR, '_temp', submissionID);
 
@@ -127,16 +131,16 @@ export const promptify = defineAction({
 			// Run RepoMix for remote repository
 			if (type === 'remote') {
 				const outputFile = path.join(tempDir, `prompt-${submissionID}.md`);
-				return await runRepomixForRemote(outputFile, url as string, compress, ignore ?? '');
+				return await runRepomixForRemote(outputFile, url as string, compress, ignore ?? '', include ?? '');
 			}
 
 			// Create a unique temporary directory for this submission
 			let savedFilePaths = await saveFilesToTempDir(files as File[], tempDir);
 			savedFilePaths = savedFilePaths.filter((filePath) => filePath !== null);
-			
+
 			// Run RepoMix for local files
 			const outputFile = path.join(tempDir, `prompt-${submissionID}.md`);
-			return await runRepomixForDirectory(tempDir, outputFile, compress, ignore ?? '');
+			return await runRepomixForDirectory(tempDir, outputFile, compress, ignore ?? '', include ?? '');
 		} catch (error) {
 			throw new ActionError({
 				code: 'BAD_REQUEST',

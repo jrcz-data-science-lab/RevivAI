@@ -37,20 +37,20 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 		>
 			<div className="relative flex flex-col gap-2">
 				<h3 className="relative text-xl font-black font-serif break-words whitespace-pre-wrap">
-					<span className='max-w-10/12 block'>{message.prompt}</span>
-
-					<motion.div
-						className="absolute -left-10 bottom-0.5 opacity-60 max-md:hidden"
-						initial={{ opacity: 0 }}
-						animate={{
-							scale: isWriting ? 0.8 : 1.1,
-							opacity: isWriting ? 1 : 0,
-						}}
-						transition={{ duration: isWriting ? 0.3 : 0.6, type: 'spring' }}
-					>
-						<LoaderPinwheel className="animate-spin" />
-					</motion.div>
+					<span className="max-w-10/12 block">{message.prompt}</span>
 				</h3>
+
+				<motion.div
+					className={cn('absolute -left-10 opacity-60 max-md:hidden', message.answer === '' ? 'top-0.5' : 'bottom-0.5')}
+					initial={{ opacity: 0 }}
+					animate={{
+						scale: isWriting ? 0.8 : 1.1,
+						opacity: isWriting ? 1 : 0,
+					}}
+					transition={{ duration: isWriting ? 0.3 : 0.6, type: 'spring' }}
+				>
+					<LoaderPinwheel className="animate-spin" />
+				</motion.div>
 
 				<Separator className="separator mt-1 mb-3" />
 

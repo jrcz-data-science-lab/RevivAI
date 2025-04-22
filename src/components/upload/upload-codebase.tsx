@@ -14,13 +14,25 @@ interface UploadCodebaseProps {
 export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps) {
 	const createdAtFormatted = formatDistanceToNow(codebase.createdAt, { addSuffix: true, includeSeconds: true });
 
+	const getTotalTokensColor = (tokensCount: number) => {
+		if (tokensCount > 100_000) return 'text-destructive';
+		if (tokensCount > 60_000) return 'text-amber-500';
+		return '';
+	}
+
+	const getFileTokensColor = (tokensCount: number) => {
+		if (tokensCount > 20_000) return 'text-destructive';
+		if (tokensCount > 10_000) return 'text-amber-500';
+		return 'text-muted-foreground';
+	};
+
 	// Sort the files by token count
     const largestFiles = useMemo(() => Object.entries(codebase.metadata.fileTokenCounts)
         .sort(([, a], [, b]) => b - a), [codebase]);
 
 	return (
 		<div className="animate-in fade-in">
-			<div className="relative border rounded-xl p-4 mb-4 space-y-6">
+			<div className="relative border rounded-xl p-4 mb-4 space-y-8">
 				<div className="text-xs text-muted-foreground absolute top-4 right-4">{createdAtFormatted}</div>
 
 				<div>
@@ -28,10 +40,10 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 					<span className="text-sm text-muted-foreground">{codebase.type === 'files' ? 'Uploaded files' : codebase.repositoryUrl}</span>
 				</div>
 
-				<div className="grid grid-cols-3 gap-4">
+				<div className="grid grid-cols-3 gap-6">
 					<div>
 						<h3 className="text-xs text-muted-foreground">Tokens Count</h3>
-						<div className={cn(codebase.metadata.totalTokens > 100_000 && 'text-destructive')}>{codebase.metadata.totalTokens.toLocaleString()}</div>
+						<div className={getTotalTokensColor(codebase.metadata.totalTokens)}>{codebase.metadata.totalTokens.toLocaleString()}</div>
 					</div>
 
 					<div>
@@ -45,6 +57,11 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 					</div>
 
 					<div>
+						<h3 className="text-xs text-muted-foreground">Include Patterns</h3>
+						<div>{codebase.include || 'Not specified'}</div>
+					</div>
+
+					<div>
 						<h3 className="text-xs text-muted-foreground">Ignore Patterns</h3>
 						<div>{codebase.ignore || 'Not specified'}</div>
 					</div>
@@ -55,16 +72,16 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 					<ScrollArea className="relative h-48">
 						{largestFiles.map(([file, tokensCount]) => (
 							<div key={file} className="flex justify-between text-xs font-mono items-center border-b py-1.5">
-								<span className="max-w-1/2 truncate block" title={file}>
+								<span className="max-w-xs truncate" title={file}>
 									{file}
 								</span>
-								<span className="text-muted-foreground flex-shrink-0 pl-2">{tokensCount.toLocaleString()} tokens</span>
+								<span className={cn('flex-shrink-0 pl-2', getFileTokensColor(tokensCount))}>{tokensCount.toLocaleString()} tokens</span>
 							</div>
 						))}
 					</ScrollArea>
 				</div>
 			</div>
-			<Button type="submit" className='w-full' size="sm" variant="outline" onClick={onNewCodebase}>
+			<Button type="submit" className="w-full" size="sm" variant="outline" onClick={onNewCodebase}>
 				Upload New Codebase
 			</Button>
 		</div>

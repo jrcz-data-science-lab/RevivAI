@@ -28,6 +28,7 @@ export function Upload() {
 			compress: form.compress,
 			repositoryUrl: form.type === 'remote' ? form.url : undefined,
 			ignore: form.ignore ?? '',
+			include: form.include ?? '',
 			metadata: data.metadata,
 		};
 
