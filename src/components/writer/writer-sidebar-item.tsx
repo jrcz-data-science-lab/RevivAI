@@ -1,9 +1,9 @@
+import type { ElementType } from 'react';
 import { cn } from '@/lib/utils';
-import type { JSX } from 'astro/jsx-runtime';
-import { FileText, Trash } from 'lucide-react';
+import { Trash } from 'lucide-react';
 
 interface WriterSidebarItemProps {
-	icon: JSX.Element;
+	icon: ElementType;
 	title: string;
 	active?: boolean;
 	onClick?: () => void;
@@ -21,7 +21,7 @@ export function WriterSidebarItem({ icon: Icon, title, active, onClick, onDelete
 					active ? 'text-foreground pl-1' : 'text-muted-foreground hover:pl-1 active:pl-0.5 cursor-pointer',
 				)}
 			>
-				<Icon className={cn('size-5', active ? 'text-foreground' : 'text-muted-foreground')} />
+				<Icon />
 				<span className="w-full text-sm">{title}</span>
 			</button>
 

@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { AnimatedText } from '../ui/animated-text';
 import { WriterSidebar } from './writer-sidebar';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { Chapter, Database } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
-import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
 import { WriterEditor } from './writer-editor';
 import { WriterExport } from './writer-export';
 import { WriterTemplates } from './writer-templates';
+import { Plus } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface WriterProps {
 	db: Database;
@@ -34,7 +31,7 @@ export function Writer({ db, model }: WriterProps) {
 		if (id === 'settings') return <div>Settings</div>;
 		
 		const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
-		return <WriterEditor chapter={chapter} />;
+		if (chapter) return <WriterEditor chapter={chapter} />;
 	};
 
 	const addChapter = async () => {
@@ -51,7 +48,7 @@ export function Writer({ db, model }: WriterProps) {
 		await db.chapters.add({
 			id: id,
 			index: lastChapterIndex + 1,
-			title: `Chapter ${chapters?.length + 1}`,
+			title: `Chapter ${chapters?.length}`,
 			content: '',
 		});
 
@@ -82,14 +79,22 @@ export function Writer({ db, model }: WriterProps) {
 	return (
 		<div className="flex flex-col overflow-hidden h-screen w-screen">
 			<div className="flex">
-				<WriterSidebar
-					chapters={chapters}
-					activeItemId={activeItemId}
-					onSelect={setActiveItemId}
-					onReorder={reorderChapters}
-					onAddChapter={addChapter}
-					onRemoveChapter={removeChapter}
-				/>
+				<div className="relative z-40 bg-muted border-r flex flex-col w-full h-screen max-w-64">
+					<WriterSidebar
+						chapters={chapters}
+						activeItemId={activeItemId}
+						onSelect={setActiveItemId}
+						onReorder={reorderChapters}
+						onRemoveChapter={removeChapter}
+					/>
+
+					<div className="p-3 bg-muted absolute bottom-0 left-0 w-full flex items-center justify-center">
+						<Button variant="outline" className="w-full" size="lg" onClick={addChapter}>
+							<Plus className="h-4 w-4 mr-2" />
+							New Chapter
+						</Button>
+					</div>
+				</div>
 
 				<motion.div
 					initial={{ opacity: 0, translateY: 8 }}
@@ -104,10 +109,8 @@ export function Writer({ db, model }: WriterProps) {
 						<div className="absolute w-full h-8 bg-gradient-to-b from-background to-transparent" />
 					</div>
 
-					<div className="flex flex-col w-full justify-center space-y-6">
-						<div className="my-16">
-							{renderActiveItem(activeItemId)}
-						</div>
+					<div className="flex flex-col w-full justify-center space-y-6 pr-38">
+						<div className="my-16">{renderActiveItem(activeItemId)}</div>
 					</div>
 				</motion.div>
 			</div>
