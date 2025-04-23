@@ -10,7 +10,15 @@ interface AnimatedTextProps extends Omit<React.ComponentProps<'h1'>, 'as'> {
 	delay?: number;
 }
 
-export function AnimatedText({ as: Element = 'p', split = 'words', delay = 0, speed = 0.6, className, children, ...props }: AnimatedTextProps) {
+export function AnimatedText({
+	as: Element = 'p',
+	split = 'words',
+	delay = 0,
+	speed = 0.6,
+	className,
+	children,
+	...props
+}: AnimatedTextProps) {
 	if (typeof children !== 'string') return <></>;
 	const parts = split === 'words' ? children.split(' ') : children.split('');
 

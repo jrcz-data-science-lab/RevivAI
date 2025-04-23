@@ -9,4 +9,4 @@ export const promptifySchema = z.object({
 	compress: z.boolean(),
 });
 
-export const testSchema = z.object({ test: z.boolean() })
+export const testSchema = z.object({ test: z.boolean() });

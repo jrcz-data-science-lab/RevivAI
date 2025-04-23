@@ -35,7 +35,9 @@ export function Chat({ db, model }: ChatProps) {
 	// Scroll to last message on mount
 	useEffect(() => {
 		scrollToLastMessage('instant');
-		return () => { chat.abort() };
+		return () => {
+			chat.abort();
+		};
 	}, []);
 
 	// Scroll to last message on new message
@@ -50,7 +52,10 @@ export function Chat({ db, model }: ChatProps) {
 	const chatActive = chat.messages.length > 0;
 
 	return (
-		<div ref={chatContainerRef} className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}>
+		<div
+			ref={chatContainerRef}
+			className={cn('flex flex-col w-full overflow-x-hidden max-h-screen', chatActive && 'min-h-screen')}
+		>
 			<div className="flex justify-center items-center">
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (
@@ -65,7 +70,9 @@ export function Chat({ db, model }: ChatProps) {
 								if (!message) return null;
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
-								return <ChatMessage key={message.id} message={message} isWriting={isWriting} onDelete={chat.deleteMessage} />;
+								return (
+									<ChatMessage key={message.id} message={message} isWriting={isWriting} onDelete={chat.deleteMessage} />
+								);
 							})}
 						</div>
 					)}
@@ -76,7 +83,12 @@ export function Chat({ db, model }: ChatProps) {
 						<div className="absolute w-full h-32 bg-gradient-to-b from-background to-transparent" />
 					</div>
 
-					<div className={cn('w-full h-auto bg-background px-4', chatActive && 'flex flex-col items-center absolute bottom-0 left-0')}>
+					<div
+						className={cn(
+							'w-full h-auto bg-background px-4',
+							chatActive && 'flex flex-col items-center absolute bottom-0 left-0',
+						)}
+					>
 						<motion.div
 							initial={{ opacity: 0, translateY: 16 }}
 							animate={{ opacity: 1, translateY: 0 }}

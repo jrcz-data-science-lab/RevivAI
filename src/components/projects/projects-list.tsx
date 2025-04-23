@@ -16,7 +16,7 @@ interface ProjectsListProps {
  */
 export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 	if (projects.length === 0) return;
-	
+
 	// Sort projects by createdAt date
 	const sortedProjects = useMemo(() => {
 		return projects.sort((a, b) => {
@@ -27,7 +27,9 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 	}, [projects]);
 
 	return (
-		<div className={cn('border border-border rounded-md overflow-hidden mb-8', sortedProjects.length === 0 && 'hidden')}>
+		<div
+			className={cn('border border-border rounded-md overflow-hidden mb-8', sortedProjects.length === 0 && 'hidden')}
+		>
 			<AnimatePresence initial={false}>
 				{sortedProjects.map((project) => {
 					const createdAt = new Date(project.createdAt);

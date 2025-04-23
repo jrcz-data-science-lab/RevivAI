@@ -32,7 +32,7 @@ function Navbar({
 	showThemeToggle = true,
 }: NavbarProps) {
 	const theme = useTheme();
-	
+
 	return (
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">

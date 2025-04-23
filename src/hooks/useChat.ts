@@ -8,7 +8,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
 import { atomWithStorage } from 'jotai/utils';
 
-
 interface UseChatProps {
 	db: Database;
 	model: LanguageModelV1;

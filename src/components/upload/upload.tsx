@@ -46,7 +46,7 @@ export function Upload() {
 
 		await db.codebases.delete(currentCodebase.id);
 		toast.success('Codebase removed successfully!');
-	}
+	};
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -62,7 +62,11 @@ export function Upload() {
 					<DialogDescription>Upload your project files from GitHub or from your local directory.</DialogDescription>
 				</DialogHeader>
 
-				{currentCodebase ? <UploadCodebase codebase={currentCodebase} onNewCodebase={removeCodebase} /> : <UploadForm onUploadSuccess={addCodebase} />}
+				{currentCodebase ? (
+					<UploadCodebase codebase={currentCodebase} onNewCodebase={removeCodebase} />
+				) : (
+					<UploadForm onUploadSuccess={addCodebase} />
+				)}
 			</DialogContent>
 		</Dialog>
 	);

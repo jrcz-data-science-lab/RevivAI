@@ -7,10 +7,9 @@ import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
-
 function Settings() {
 	const projectId = useAtomValue(currentProjectIdAtom);
-	
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -28,7 +27,9 @@ function Settings() {
 					<div className="flex justify-between gap-4 items-center">
 						<div className="max-w-2/3">
 							<Label>Language</Label>
-							<p className="text-sm text-muted-foreground">Used by LLM to write chat responses and documentation in a specified language.</p>
+							<p className="text-sm text-muted-foreground">
+								Used by LLM to write chat responses and documentation in a specified language.
+							</p>
 						</div>
 
 						<Select value="english" onValueChange={(value) => console.log(value)}>
@@ -52,7 +53,9 @@ function Settings() {
 					<div className="flex justify-between gap-4 items-center">
 						<div className="max-w-2/3">
 							<Label>Change Model</Label>
-							<p className="text-sm text-muted-foreground">Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen. </p>
+							<p className="text-sm text-muted-foreground">
+								Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen.{' '}
+							</p>
 						</div>
 
 						<a href={`/setup?redirectToProject=${projectId}`}>

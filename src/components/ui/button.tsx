@@ -11,7 +11,14 @@ type ButtonProps = React.ComponentProps<'button'> & {
 	asChild?: boolean;
 };
 
-export function Button({ className, variant = 'default', size = 'default', round = false, asChild = false, ...props }: ButtonProps) {
+export function Button({
+	className,
+	variant = 'default',
+	size = 'default',
+	round = false,
+	asChild = false,
+	...props
+}: ButtonProps) {
 	const baseClasses =
 		'inline-flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap text-sm font-medium active:scale-95 transition-[color,box-shadow,scale] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 [&_svg]:shrink-0 ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 focus-visible:ring-4 focus-visible:outline-1 aria-invalid:focus-visible:ring-0';
 

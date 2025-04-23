@@ -18,7 +18,7 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 		if (tokensCount > 100_000) return 'text-destructive';
 		if (tokensCount > 60_000) return 'text-amber-500';
 		return '';
-	}
+	};
 
 	const getFileTokensColor = (tokensCount: number) => {
 		if (tokensCount > 20_000) return 'text-destructive';
@@ -27,8 +27,10 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 	};
 
 	// Sort the files by token count
-    const largestFiles = useMemo(() => Object.entries(codebase.metadata.fileTokenCounts)
-        .sort(([, a], [, b]) => b - a), [codebase]);
+	const largestFiles = useMemo(
+		() => Object.entries(codebase.metadata.fileTokenCounts).sort(([, a], [, b]) => b - a),
+		[codebase],
+	);
 
 	return (
 		<div className="animate-in fade-in">
@@ -37,13 +39,17 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 
 				<div>
 					<h2 className="text-md font-bold">Current Codebase</h2>
-					<span className="text-sm text-muted-foreground">{codebase.type === 'files' ? 'Uploaded files' : codebase.repositoryUrl}</span>
+					<span className="text-sm text-muted-foreground">
+						{codebase.type === 'files' ? 'Uploaded files' : codebase.repositoryUrl}
+					</span>
 				</div>
 
 				<div className="grid grid-cols-3 gap-6">
 					<div>
 						<h3 className="text-xs text-muted-foreground">Tokens Count</h3>
-						<div className={getTotalTokensColor(codebase.metadata.totalTokens)}>{codebase.metadata.totalTokens.toLocaleString()}</div>
+						<div className={getTotalTokensColor(codebase.metadata.totalTokens)}>
+							{codebase.metadata.totalTokens.toLocaleString()}
+						</div>
 					</div>
 
 					<div>
@@ -75,7 +81,9 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 								<span className="max-w-xs truncate" title={file}>
 									{file}
 								</span>
-								<span className={cn('flex-shrink-0 pl-2', getFileTokensColor(tokensCount))}>{tokensCount.toLocaleString()} tokens</span>
+								<span className={cn('flex-shrink-0 pl-2', getFileTokensColor(tokensCount))}>
+									{tokensCount.toLocaleString()} tokens
+								</span>
 							</div>
 						))}
 					</ScrollArea>

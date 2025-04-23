@@ -35,7 +35,14 @@ export function UploadFiles({ onChange, message, loading = false }: UploadFilesP
 				loading && 'pointer-events-none',
 			)}
 		>
-			<input ref={fileInputRef} type="file" multiple={true} onChange={handleChange} className="hidden" {...{ webkitdirectory: '', directory: '' }} />
+			<input
+				ref={fileInputRef}
+				type="file"
+				multiple={true}
+				onChange={handleChange}
+				className="hidden"
+				{...{ webkitdirectory: '', directory: '' }}
+			/>
 
 			{loading ? (
 				<>

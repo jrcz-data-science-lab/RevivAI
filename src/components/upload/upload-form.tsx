@@ -23,7 +23,6 @@ interface UploadFormProps {
 	onUploadSuccess: (data: PromptifyResult, form: UploadFormSchema) => void;
 }
 
-
 /**
  * Code uploading form
  */
@@ -31,7 +30,9 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 	const [tab, setTab] = useState<CodebaseType>('files');
 
 	const form = useForm<UploadFormSchema>({
-		resolver: zodResolver(tab === 'remote' ? promptifySchema.omit({ files: true }) : promptifySchema.omit({ url: true })),
+		resolver: zodResolver(
+			tab === 'remote' ? promptifySchema.omit({ files: true }) : promptifySchema.omit({ url: true }),
+		),
 		defaultValues: { type: 'files', url: '', files: [], ignore: '', compress: false },
 	});
 
@@ -125,7 +126,10 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Repository URL</FormLabel>
-								<FormDescription>Link to the public GitHub repository. The repository must be public and accessible without authentication.</FormDescription>
+								<FormDescription>
+									Link to the public GitHub repository. The repository must be public and accessible without
+									authentication.
+								</FormDescription>
 								<FormControl>
 									<Input placeholder="https://github.com/username/repository" {...field} />
 								</FormControl>
@@ -165,7 +169,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 						</FormItem>
 					)}
 				/>
-				
+
 				<FormField
 					control={form.control}
 					name="ignore"
@@ -193,7 +197,8 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 							<div className="flex flex-col gap-1.5 leading-none">
 								<FormLabel>Compress Code</FormLabel>
 								<FormDescription>
-									Extract key code elements to reduce token count, while maintaining structure. Decreases documentation quality, so use carefully.
+									Extract key code elements to reduce token count, while maintaining structure. Decreases documentation
+									quality, so use carefully.
 								</FormDescription>
 							</div>
 							<FormMessage />

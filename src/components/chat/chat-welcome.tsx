@@ -8,7 +8,8 @@ function ChatWelcome() {
 				Curious how your code works? Ask about it!
 			</AnimatedText>
 			<AnimatedText className="text-sm text-muted-foreground">
-				You can ask something like "What does this code do?" or ask to visualize your code with diagrams, flowcharts, and more!
+				You can ask something like "What does this code do?" or ask to visualize your code with diagrams, flowcharts,
+				and more!
 			</AnimatedText>
 		</div>
 	);

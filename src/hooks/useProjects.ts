@@ -52,7 +52,7 @@ export function useProjects() {
 	 */
 	const isProjectExists = (id: string) => {
 		return projects.some((project) => project.id === id);
-	}
+	};
 
 	return { createProject, deleteProject, projects, isProjectExists };
 }

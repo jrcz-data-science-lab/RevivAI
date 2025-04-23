@@ -53,7 +53,13 @@ function saveFilesToTempDir(files: File[], tempDir: string) {
  * @param include - Files or directories to include.
  * @returns The generated prompt and metadata.
  */
-async function runRepomixForDirectory(dirPath: string, outputFile: string, compress: boolean, ignore: string, include: string) {
+async function runRepomixForDirectory(
+	dirPath: string,
+	outputFile: string,
+	compress: boolean,
+	ignore: string,
+	include: string,
+) {
 	const result = await runCli([dirPath], WORKING_DIR, {
 		style: 'markdown',
 		quiet: true,
@@ -82,7 +88,13 @@ async function runRepomixForDirectory(dirPath: string, outputFile: string, compr
  * @param include - Files or directories to include.
  * @returns The generated prompt and metadata.
  */
-async function runRepomixForRemote(outputFile: string, url: string, compress: boolean, ignore: string, include: string) {
+async function runRepomixForRemote(
+	outputFile: string,
+	url: string,
+	compress: boolean,
+	ignore: string,
+	include: string,
+) {
 	const result = await runCli([], WORKING_DIR, {
 		style: 'markdown',
 		quiet: true,

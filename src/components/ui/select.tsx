@@ -34,7 +34,12 @@ function SelectTrigger({ className, children, ...props }: React.ComponentProps<t
 	);
 }
 
-function SelectContent({ className, children, position = 'popper', ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+function SelectContent({
+	className,
+	children,
+	position = 'popper',
+	...props
+}: React.ComponentProps<typeof SelectPrimitive.Content>) {
 	return (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content
@@ -50,7 +55,11 @@ function SelectContent({ className, children, position = 'popper', ...props }: R
 			>
 				<SelectScrollUpButton />
 				<SelectPrimitive.Viewport
-					className={cn('p-1', position === 'popper' && 'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1')}
+					className={cn(
+						'p-1',
+						position === 'popper' &&
+							'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1',
+					)}
 				>
 					{children}
 				</SelectPrimitive.Viewport>
@@ -61,7 +70,13 @@ function SelectContent({ className, children, position = 'popper', ...props }: R
 }
 
 function SelectLabel({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Label>) {
-	return <SelectPrimitive.Label data-slot="select-label" className={cn('px-2 py-1.5 text-sm font-medium', className)} {...props} />;
+	return (
+		<SelectPrimitive.Label
+			data-slot="select-label"
+			className={cn('px-2 py-1.5 text-sm font-medium', className)}
+			{...props}
+		/>
+	);
 }
 
 function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
@@ -85,7 +100,13 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
 }
 
 function SelectSeparator({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Separator>) {
-	return <SelectPrimitive.Separator data-slot="select-separator" className={cn('bg-border pointer-events-none -mx-1 my-1 h-px', className)} {...props} />;
+	return (
+		<SelectPrimitive.Separator
+			data-slot="select-separator"
+			className={cn('bg-border pointer-events-none -mx-1 my-1 h-px', className)}
+			{...props}
+		/>
+	);
 }
 
 function SelectScrollUpButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
@@ -100,7 +121,10 @@ function SelectScrollUpButton({ className, ...props }: React.ComponentProps<type
 	);
 }
 
-function SelectScrollDownButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+function SelectScrollDownButton({
+	className,
+	...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
 	return (
 		<SelectPrimitive.ScrollDownButton
 			data-slot="select-scroll-down-button"

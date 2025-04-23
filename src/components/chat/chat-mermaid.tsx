@@ -43,8 +43,12 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 
 	// If the diagram is rendered, show the SVG image
 	return (
-		<Zoom zoomMargin={16} >
-			<img alt={id} src={`data:image/svg+xml;utf8,${encodeURIComponent(diagramSVG ?? '')}`} className="flex min-h-32 justify-center items-center" />
+		<Zoom zoomMargin={16}>
+			<img
+				alt={id}
+				src={`data:image/svg+xml;utf8,${encodeURIComponent(diagramSVG ?? '')}`}
+				className="flex min-h-32 justify-center items-center"
+			/>
 		</Zoom>
 	);
 }

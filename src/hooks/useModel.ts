@@ -19,14 +19,17 @@ export interface LLMCredentials {
 
 // Get initial credentials from local storage on first load
 const getInitialCredentials = () => {
-    if (import.meta.env.SSR) return null;
-    const provider = localStorage.getItem('llm-api-credentials');
-    const credentials = provider ? (JSON.parse(provider) as LLMCredentials) : null;
-    return credentials;
-}
+	if (import.meta.env.SSR) return null;
+	const provider = localStorage.getItem('llm-api-credentials');
+	const credentials = provider ? (JSON.parse(provider) as LLMCredentials) : null;
+	return credentials;
+};
 
 // Current LLM provider data
-export const apiCredentialsAtom = atomWithStorage<LLMCredentials | null>('llm-api-credentials', getInitialCredentials());
+export const apiCredentialsAtom = atomWithStorage<LLMCredentials | null>(
+	'llm-api-credentials',
+	getInitialCredentials(),
+);
 
 /**
  * Create an LLM Model client
@@ -75,9 +78,9 @@ export function useModel() {
 
 	// Initiate LLM client
 	const model = useMemo(() => {
-        if (!credentials) return null;
-        return createModel(credentials);
-    }, [credentials]);
+		if (!credentials) return null;
+		return createModel(credentials);
+	}, [credentials]);
 
 	return { model, credentials, setCredentials };
 }

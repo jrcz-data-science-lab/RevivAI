@@ -16,16 +16,16 @@ export interface Chapter {
 export type CodebaseType = 'files' | 'remote';
 
 export interface Codebase {
-		id: string;
-		createdAt: Date;
-		ignore: string;
-		include: string;
-		prompt: string;
-		compress: boolean
-		type: CodebaseType;
-		repositoryUrl?: string;
-		metadata: PackResult;
-	}
+	id: string;
+	createdAt: Date;
+	ignore: string;
+	include: string;
+	prompt: string;
+	compress: boolean;
+	type: CodebaseType;
+	repositoryUrl?: string;
+	metadata: PackResult;
+}
 
 /**
  * Creates a new Dexie database instance for the given project ID.

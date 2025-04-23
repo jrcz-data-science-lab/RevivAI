@@ -64,7 +64,12 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 					<Copy />
 				</Button>
 
-				<Button size="icon" variant="ghost" onClick={() => onDelete?.(message.id)} className="w-8 h-8 hover:text-destructive">
+				<Button
+					size="icon"
+					variant="ghost"
+					onClick={() => onDelete?.(message.id)}
+					className="w-8 h-8 hover:text-destructive"
+				>
 					<Trash />
 				</Button>
 			</div>

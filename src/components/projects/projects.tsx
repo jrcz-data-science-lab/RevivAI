@@ -13,21 +13,23 @@ export function Projects() {
 	};
 
 	return (
-			<motion.div
-				initial={{ opacity: 0, translateY: 8 }}
-				animate={{ opacity: 1, translateY: 0 }}
-				exit={{ opacity: 0, translateY: 8 }}
-				transition={{ duration: 0.6, type: 'spring' }}
-				className="flex flex-col p-4 gap-4"
-			>
-				<div className="mb-4">
-					<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
-					<p className="text-sm text-muted-foreground">Select project you are going to work with. You can always submit new project by clicking button below.</p>
-				</div>
+		<motion.div
+			initial={{ opacity: 0, translateY: 8 }}
+			animate={{ opacity: 1, translateY: 0 }}
+			exit={{ opacity: 0, translateY: 8 }}
+			transition={{ duration: 0.6, type: 'spring' }}
+			className="flex flex-col p-4 gap-4 max-w-prose"
+		>
+			<div className="mb-4">
+				<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
+				<p className="text-sm text-muted-foreground">
+					Select project you are going to work with. You can always submit new project by clicking button below.
+				</p>
+			</div>
 
-				<ProjectsList projects={projects} deleteProject={deleteProject} />
+			<ProjectsList projects={projects} deleteProject={deleteProject} />
 
-				<ProjectsNew onCreate={createNewProject} />
-			</motion.div>
+			<ProjectsNew onCreate={createNewProject} />
+		</motion.div>
 	);
 }

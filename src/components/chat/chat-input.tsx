@@ -59,7 +59,11 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 						onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
 						className={cn('absolute bottom-1.5 right-1.5')}
 					>
-						{isStreaming ? <CircleStop /> : <Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />}
+						{isStreaming ? (
+							<CircleStop />
+						) : (
+							<Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />
+						)}
 					</Button>
 					<Textarea
 						ref={inputRef}
@@ -88,7 +92,11 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 					</div>
 
 					{messagesCount > 0 && (
-						<Badge onClick={onClear} variant="secondary" className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform">
+						<Badge
+							onClick={onClear}
+							variant="secondary"
+							className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform"
+						>
 							Clear Chat
 						</Badge>
 					)}

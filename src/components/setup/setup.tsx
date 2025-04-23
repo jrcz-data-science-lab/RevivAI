@@ -77,7 +77,6 @@ export function Setup() {
 	const [isTesting, setIsTesting] = useState(false);
 	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
 
-
 	/**
 	 * Change default values on provider change. Saves previous API key.
 	 * @param provider The LLM provider to change the default values for
@@ -109,7 +108,6 @@ export function Setup() {
 			setCredentialsForm({ ...credentialsForm });
 			setCredentials({ ...credentialsForm });
 			return true;
-
 		} catch (error) {
 			console.error(error);
 			toast.error('LLM is not responding correctly.', { description: `${error}`, richColors: true });
@@ -140,7 +138,6 @@ export function Setup() {
 		} else {
 			window.location.replace('/projects');
 		}
-
 	};
 
 	/**
@@ -180,7 +177,7 @@ export function Setup() {
 						placeholder="sk-..."
 						className="mt-2"
 						value={credentialsForm.apiKey}
-						type='password'
+						type="password"
 						onChange={(e) => {
 							setCredentialsForm({ ...credentialsForm, apiKey: e.target.value });
 						}}
@@ -212,11 +209,16 @@ export function Setup() {
 				<div className="mb-4">
 					<h1 className="font-serif font-black text-xl mb-4">Choose your AI Provider!</h1>
 					<p className="text-sm text-muted-foreground">
-						To start using RevivAI, select your LLM provider. No worries - all LLM API calls are handled locally, so no credentials are sent to a third party.{' '}
+						To start using RevivAI, select your LLM provider. No worries - all LLM API calls are handled locally, so no
+						credentials are sent to a third party.{' '}
 					</p>
 				</div>
 
-				<Tabs className="flex-col" value={credentialsForm.provider} onValueChange={(value) => handleProviderChange(value as LLMProvider)}>
+				<Tabs
+					className="flex-col"
+					value={credentialsForm.provider}
+					onValueChange={(value) => handleProviderChange(value as LLMProvider)}
+				>
 					<TabsList className="max-sm:flex-col max-sm:h-fit max-sm:w-full">
 						{PUBLIC_MODEL_PROVIDED && (
 							<TabsTrigger value="revivai" className="px-3">

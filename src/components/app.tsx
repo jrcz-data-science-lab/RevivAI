@@ -1,6 +1,6 @@
 import { useTheme } from '@/hooks/useTheme';
 import Navbar, { type TabName } from './navbar';
-import { Toaster } from './ui/toaster'; 
+import { Toaster } from './ui/toaster';
 import { Chat } from './chat/chat';
 import { Writer } from './writer/writer';
 import { useHashRouter } from '@/hooks/useHashRouter';
@@ -21,7 +21,6 @@ interface AppProps {
  * @param projectId The ID of the current project
  */
 export default function App({ projectId }: AppProps) {
-
 	// Hydrate the current project ID, specifying initial values
 	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
 

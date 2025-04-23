@@ -17,7 +17,7 @@ export function ChatError({ errorMessage }: ChatErrorProps) {
 			transition={{ duration: 0.6, type: 'spring' }}
 			className="mb-4"
 		>
-			<Alert variant="destructive" className='max-h-[50vh] overflow-y-auto'>
+			<Alert variant="destructive" className="max-h-[50vh] overflow-y-auto">
 				<CircleX className="h-4 w-4" />
 				<AlertTitle>Error sending request to LLM!</AlertTitle>
 				<AlertDescription>{errorMessage}</AlertDescription>
