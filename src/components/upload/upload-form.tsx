@@ -153,6 +153,21 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 				<FormField
 					control={form.control}
+					name="include"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Include Patterns</FormLabel>
+							<FormDescription>Comma-separated patterns to include.</FormDescription>
+							<FormControl>
+								<Input placeholder="src/**" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				
+				<FormField
+					control={form.control}
 					name="ignore"
 					render={({ field }) => (
 						<FormItem>
@@ -160,21 +175,6 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 							<FormDescription>Comma-separated patterns to ignore.</FormDescription>
 							<FormControl>
 								<Input placeholder="**/*.gif" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name="include"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Ignore Patterns</FormLabel>
-							<FormDescription>Comma-separated patterns to include.</FormDescription>
-							<FormControl>
-								<Input placeholder="src/**" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

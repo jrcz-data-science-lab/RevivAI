@@ -26,7 +26,7 @@ export function UploadFiles({ onChange, message, loading = false }: UploadFilesP
 			type="button"
 			onClick={handleClick}
 			className={cn(
-				'relative w-full min-h-38 min-w-80',
+				'relative w-full min-h-32 min-w-80',
 				'flex flex-col justify-center items-center',
 				'border-2 border-dashed rounded-lg',
 				'transition-colors duration-200 cursor-pointer',
@@ -44,7 +44,7 @@ export function UploadFiles({ onChange, message, loading = false }: UploadFilesP
 				</>
 			) : (
 				<>
-					<FolderUp className="mb-2 opacity-50 group-hover:opacity-100 transition-opacity" />
+					<FolderUp className="mb-2 opacity-50 group-hover:opacity-100 transition-opacity size-5" />
 					<p className="text-sm font-medium mb-1">{message ?? 'Upload your code'}</p>
 					<p className="text-xs opacity-50">Select a folder containing your project files</p>
 				</>
