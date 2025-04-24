@@ -15,13 +15,11 @@ export function Upload() {
 	const projectId = useAtomValue(currentProjectIdAtom) as string;
 	const { db, currentCodebase } = useDb(projectId);
 
-	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>()
+	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>();
 	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
 		if (!currentCodebase) return;
-
-
 	}, [currentCodebase]);
 
 	const addCodebase = async (data: PromptifyResult, form: UploadFormSchema) => {

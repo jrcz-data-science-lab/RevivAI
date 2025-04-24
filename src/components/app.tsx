@@ -22,9 +22,7 @@ interface AppProps {
  */
 export default function App({ projectId }: AppProps) {
 	// Hydrate the current project ID, specifying initial values
-	useHydrateAtoms(new Map([
-		[currentProjectIdAtom, projectId] 
-	]));
+	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
 
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);
@@ -51,7 +49,7 @@ export default function App({ projectId }: AppProps) {
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
 				<div className="text-muted-foreground w-full text-center">This project doesn't exist.</div>
-				<a href="/projects">
+				<a href="/">
 					<Button size="sm" variant="outline">
 						Back to projects
 					</Button>

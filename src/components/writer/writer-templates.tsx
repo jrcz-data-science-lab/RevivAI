@@ -20,13 +20,13 @@ export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
 	const onTemplateSelect = (template: WriterTemplatesType) => {
 		setSelectedTemplate(template);
 		setIsModalOpen(true);
-	}
+	};
 
 	const onApplyTemplate = async () => {
 		if (selectedTemplate) onTemplateApply(selectedTemplate);
 		setSelectedTemplate(null);
 		setIsModalOpen(false);
-	}
+	};
 
 	return (
 		<div className="space-y-8">

@@ -4,6 +4,9 @@ import { useProjects } from '@/hooks/useProjects';
 import { ProjectsList } from './projects-list.tsx';
 import ProjectsNew, { type ProjectNewFormSchema } from './projects-new.tsx';
 import Title from '../title.tsx';
+import Logo from '@/assets/logo.webp';
+import Navbar from '../navbar.tsx';
+import { ThemeToggle } from '../theme-toggle.tsx';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
@@ -25,12 +28,12 @@ export function Projects() {
 				<Title />
 			</div>
 
-			<div className="mb-4">
+			{/* <div className="mb-4">
 				<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
 				<p className="text-sm text-muted-foreground">
 					Select project you are going to work with. You can always submit new project by clicking button below.
 				</p>
-			</div>
+			</div> */}
 
 			<ProjectsList projects={projects} deleteProject={deleteProject} />
 

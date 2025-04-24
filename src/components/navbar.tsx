@@ -1,10 +1,10 @@
-import { DoorClosed, FolderUp, Moon, Sun } from 'lucide-react';
+import { DoorClosed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
 import Settings from './settings';
-import { useTheme } from '@/hooks/useTheme';
 import { Upload } from './upload/upload';
+import { ThemeToggle } from './theme-toggle';
 
 export type TabName = 'chat' | 'writer';
 
@@ -31,13 +31,11 @@ function Navbar({
 	showUpload = true,
 	showThemeToggle = true,
 }: NavbarProps) {
-	const theme = useTheme();
-
 	return (
 		<div className="flex w-full justify-center">
 			<div className="w-full flex gap-2">
 				{showBackButton && (
-					<a href="/projects">
+					<a href="/">
 						<Button className="text-neutral-400" variant="ghost" size="icon" round title="Back to projects">
 							<DoorClosed />
 						</Button>
@@ -59,11 +57,7 @@ function Navbar({
 			)}
 
 			<div className="w-full flex gap-2 justify-end">
-				{showThemeToggle && (
-					<Button variant="ghost" size="icon" round onClick={theme.toggle} title="Toggle theme">
-						{theme.theme === 'dark' ? <Sun /> : <Moon />}
-					</Button>
-				)}
+				{showThemeToggle && <ThemeToggle />}
 
 				{showUpload && <Upload />}
 
