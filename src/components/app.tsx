@@ -23,7 +23,7 @@ interface AppProps {
 export default function App({ projectId }: AppProps) {
 	// Hydrate the current project ID, specifying initial values
 	useHydrateAtoms(new Map([
-		[currentProjectIdAtom, projectId]
+		[currentProjectIdAtom, projectId] 
 	]));
 
 	const { theme } = useTheme();
@@ -92,7 +92,7 @@ export default function App({ projectId }: AppProps) {
 					<Navbar value={hash as TabName} onTabChange={setHash} />
 				</div>
 
-				<Toaster theme={theme} position="bottom-right" />
+				<Toaster theme={theme} position="bottom-right" closeButton={true} />
 
 				{getAppScreen(hash)}
 			</div>

@@ -35,7 +35,9 @@ export function Chat({ db, model }: ChatProps) {
 	// Scroll to last message on mount
 	useEffect(() => {
 		scrollToLastMessage('smooth');
-		return () => {chat.abort()};
+		return () => {
+			chat.abort();
+		};
 	}, []);
 
 	// Scroll to last message on new message

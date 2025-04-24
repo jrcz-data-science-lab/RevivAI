@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FolderUp } from 'lucide-react';
 import { useDb, type Codebase } from '@/hooks/useDb';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,15 @@ import { UploadCodebase } from './upload-codebase';
 export function Upload() {
 	const projectId = useAtomValue(currentProjectIdAtom) as string;
 	const { db, currentCodebase } = useDb(projectId);
+
+	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>()
 	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		if (!currentCodebase) return;
+
+
+	}, [currentCodebase]);
 
 	const addCodebase = async (data: PromptifyResult, form: UploadFormSchema) => {
 		if (!data) return;
@@ -55,7 +63,7 @@ export function Upload() {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-w-3xl translate-y-0 top-8">
+			<DialogContent className="max-w-3xl">
 				<DialogHeader className="mb-4">
 					<DialogTitle>Let's upload your code!</DialogTitle>
 					<DialogDescription>Upload your project files from GitHub or from your local directory.</DialogDescription>

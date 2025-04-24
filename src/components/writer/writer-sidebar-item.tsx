@@ -17,12 +17,12 @@ export function WriterSidebarItem({ icon: Icon, title, active, onClick, onDelete
 				type="button"
 				onClick={() => onClick?.()}
 				className={cn(
-					'flex min-h-8 gap-2 items-center transition-all duration-100',
+					'flex w-full min-h-8 gap-2 items-center transition-all duration-100',
 					active ? 'text-foreground pl-1' : 'text-muted-foreground hover:pl-1 active:pl-0.5 cursor-pointer',
 				)}
 			>
-				<Icon />
-				<span className="w-full text-sm">{title}</span>
+				<Icon className="size-4" />
+				<span className="text-sm">{title}</span>
 			</button>
 
 			{typeof onDelete === 'function' && (

@@ -48,6 +48,7 @@
 		"dexie": "^4.0.11",
 		"dexie-react-hooks": "^1.1.7",
 		"dotenv": "^16.4.7",
+		"fflate": "^0.8.2",
 		"immer": "^10.1.1",
 		"jotai": "^2.12.1",
 		"js-tiktoken": "^1.0.19",

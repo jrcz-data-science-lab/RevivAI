@@ -3,12 +3,14 @@ import { motion } from 'motion/react';
 import { WriterSidebar } from './writer-sidebar';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { Chapter, Database } from '@/hooks/useDb';
-import type { LanguageModelV1 } from 'ai';
+import { generateObject, streamObject, type LanguageModelV1 } from 'ai';
 import { WriterEditor } from './writer-editor';
 import { WriterExport } from './writer-export';
-import { WriterTemplates } from './writer-templates';
+import { WriterTemplates, type WriterTemplatesType } from './writer-templates';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
+import { z } from 'zod';
+import { toast } from 'sonner';
 
 interface WriterProps {
 	db: Database;
@@ -18,20 +20,85 @@ interface WriterProps {
 type WriterPages = 'export' | 'templates' | 'settings' | string;
 
 export function Writer({ db, model }: WriterProps) {
+	const [locked, setLocked] = useState(false);
+	const [activeItemId, setActiveItemId] = useState<WriterPages>(localStorage.getItem('active-item-id') ?? 'templates');
+
 	const chapters = useLiveQuery(async () => {
 		const chapters = await db.chapters.toArray();
 		return chapters.sort((a, b) => a.index - b.index);
 	}, [db]);
 
-	const [activeItemId, setActiveItemId] = useState<WriterPages>('templates');
-	
+	useEffect(() => {
+		localStorage.setItem('active-item-id', activeItemId);
+	}, [activeItemId]);
+
+	const onTemplateApply = async (template: WriterTemplatesType) => {
+		const apply = async () => {
+			const codebase = await db.codebases.orderBy('createdAt').last();
+			if (!codebase) return;
+
+			const { elementStream } = await streamObject({
+				model,
+				output: 'array',
+				schema: z.object({
+					title: z.string().describe('Chapter title (Examples: "Introduction", "Installation", "Usage")'),
+					content: z
+						.string()
+						.describe(
+							'Chapter description. Explain the content of the chapter in detail. What should be included in the chapter? ',
+						),
+				}),
+				messages: [
+					{ role: 'system', content: codebase.prompt },
+					{
+						role: 'user',
+						content:
+							'Analyze this codebase, and provide list of possible documentation chapters for this repository. No more than 10 chapters.',
+					},
+				],
+			});
+
+			// Collect current chapters
+			const oldChapters = await db.chapters.toArray();
+			const oldChaptersIds = oldChapters.map((chapter) => chapter.id);
+
+			// Create new chapters
+			let counter = 0;
+			for await (const object of elementStream) {
+				await db.chapters.add({
+					id: crypto.randomUUID() as string,
+					index: counter++,
+					title: object.title,
+					content: object.content,
+				});
+			}
+
+			// Remove all old chapters
+			await db.chapters.bulkDelete(oldChaptersIds);
+		};
+
+		toast.promise(apply(), {
+			loading: 'Applying template...',
+			success: () => {
+				setActiveItemId('templates');
+				return 'Template applied successfully!';
+			},
+			error: (error) => {
+				return `Error applying template: ${error}`;
+			},
+		});
+	};
+
 	const renderActiveItem = (id: WriterPages) => {
 		if (id === 'export') return <WriterExport />;
-		if (id === 'templates') return <WriterTemplates />;
+		if (id === 'templates') return <WriterTemplates onTemplateApply={onTemplateApply} />;
 		if (id === 'settings') return <div>Settings</div>;
-		
+
 		const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
 		if (chapter) return <WriterEditor chapter={chapter} />;
+
+		// If no chapter is found, return a default message or component
+		setActiveItemId('templates');
 	};
 
 	const addChapter = async () => {
@@ -109,7 +176,7 @@ export function Writer({ db, model }: WriterProps) {
 						<div className="absolute w-full h-8 bg-gradient-to-b from-background to-transparent" />
 					</div>
 
-					<div className="flex flex-col w-full justify-center space-y-6 pr-38">
+					<div className="flex flex-col w-full justify-center space-y-6 min-xl:pr-38">
 						<div className="my-16">{renderActiveItem(activeItemId)}</div>
 					</div>
 				</motion.div>

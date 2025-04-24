@@ -1,15 +1,31 @@
-import { GraduationCap, Notebook, ScrollText } from 'lucide-react';
+import { Brain, GraduationCap, Notebook, ScrollText } from 'lucide-react';
 import { Card } from '../ui/card';
 import { WriterTemplatesItem } from './writer-templates-item';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { useState } from 'react';
 import { Button } from '../ui/button';
+import type { Database } from '@/hooks/useDb';
+import { generateObject } from 'ai';
 
-export function WriterTemplates() {
-	const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+export type WriterTemplatesType = 'readme' | 'documentation' | 'api-reference' | 'generate';
 
-	const handleTemplateSelect = (template: string) => {
+interface WriterTemplatesProps {
+	onTemplateApply: (template: WriterTemplatesType) => void;
+}
+
+export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedTemplate, setSelectedTemplate] = useState<WriterTemplatesType | null>(null);
+
+	const onTemplateSelect = (template: WriterTemplatesType) => {
 		setSelectedTemplate(template);
+		setIsModalOpen(true);
+	}
+
+	const onApplyTemplate = async () => {
+		if (selectedTemplate) onTemplateApply(selectedTemplate);
+		setSelectedTemplate(null);
+		setIsModalOpen(false);
 	}
 
 	return (
@@ -21,40 +37,49 @@ export function WriterTemplates() {
 				</p>
 			</div>
 
-			<div className="grid grid-cols-2 gap-4 w-full">
+			<div className="grid grid-cols-2 gap-4 items-start w-full">
 				<WriterTemplatesItem
 					icon={ScrollText}
 					color="emerald"
 					title="README.md"
-					onClick={() => handleTemplateSelect('readme')}
+					onClick={() => onTemplateSelect('readme')}
 					description="Markdown file for your repository. Perfect for open-source or small personal projects."
 				/>
 				<WriterTemplatesItem
 					icon={GraduationCap}
 					color="amber"
 					title="Documentation"
-					onClick={() => handleTemplateSelect('documentation')}
+					onClick={() => onTemplateSelect('documentation')}
 					description="Comprehensive documentation for your project. Ideal for larger projects or libraries."
 				/>
 				<WriterTemplatesItem
 					icon={Notebook}
 					color="blue"
 					title="API Reference"
-					onClick={() => handleTemplateSelect('api-reference')}
-					description="Detailed API reference for your project. Great for libraries or frameworks."
+					onClick={() => onTemplateSelect('api-reference')}
+					description="Detailed API reference for your project. Great for microservices, REST APIs or frameworks."
+				/>
+				<WriterTemplatesItem
+					icon={Brain}
+					color="gray"
+					title="Generate"
+					onClick={() => onTemplateSelect('generate')}
+					description="Generate documentation structure for your project using AI. Result may vary."
 				/>
 			</div>
 
-			<Dialog open={!!selectedTemplate} onOpenChange={() => setSelectedTemplate(null)}>
+			<Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
 				<DialogContent className="max-w-3xl">
 					<DialogHeader className="mb-4">
-						<DialogTitle>Do you want to use <span>"{selectedTemplate}"</span> template?</DialogTitle>
-						<DialogDescription>All previous content <i>(chapters, exports)</i> will be erased. Are you sure you want to continue?</DialogDescription>
+						<DialogTitle>
+							Do you want to use <span>"{selectedTemplate}"</span> template?
+						</DialogTitle>
+						<DialogDescription>
+							All previous content <i>(chapters, exports)</i> will be erased. Are you sure you want to continue?
+						</DialogDescription>
 					</DialogHeader>
 
-					<Button>
-						Apply Template
-					</Button>
+					<Button onClick={onApplyTemplate}>Apply Template</Button>
 				</DialogContent>
 			</Dialog>
 		</div>

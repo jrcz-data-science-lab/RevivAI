@@ -1,56 +1,140 @@
-# React + TypeScript + Vite
+# IceTube
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+	<img src="https://raw.githubusercontent.com/TheIceTube/IceTube/main/src/sprites/penguin-right.png" alt="Penguin" width="128">
+</p>
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast
-  Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+IceTube is a game that allows players to manage their own media outlet while navigating the challenges of fake news. Players will interact with various characters, collect fish, and publish news articles to maintain relevance in the media landscape.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Manage your own media outlet
+- Interact with various penguin characters
+- Collect fish and publish news articles
+- Experience dynamic gameplay with changing relevance and character moods
+- Engage with a leaderboard to compare scores with other players
 
-```js
-export default tseslint.config({
-	extends: [
-		// Remove ...tseslint.configs.recommended and replace with this
-		...tseslint.configs.recommendedTypeChecked,
-		// Alternatively, use this for stricter rules
-		...tseslint.configs.strictTypeChecked,
-		// Optionally, add this for stylistic rules
-		...tseslint.configs.stylisticTypeChecked,
-	],
-	languageOptions: {
-		// other options...
-		parserOptions: {
-			project: ['./tsconfig.node.json', './tsconfig.app.json'],
-			tsconfigRootDir: import.meta.dirname,
-		},
-	},
-});
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 14 or higher)
+- npm (Node package manager)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/TheIceTube/IceTube.git
+   cd IceTube
+   ```
+
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:1234` to play the game.
+
+### Building for Production
+
+To build the project for production, run:
+```bash
+npm run build
+```
+This will create an optimized version of the game in the `build` directory.
+
+## Class Diagram
+
+The following diagram visualizes the class relationships within the IceTube project:
+
+```mermaid
+classDiagram
+    class GameState {
+        +paused: boolean
+        +element: HTMLCanvasElement
+        +ctx: CanvasRenderingContext2D
+        +mouseX: number
+        +mouseY: number
+        +mouseDown: boolean
+        +penguins: Array<Penguin | Characters>
+        +entities: Array<Fish | FishingRod>
+        +fish: number
+        +tempo: number
+        +relevance: number
+        +maximumPenguins: number
+        +serverAvailable: boolean
+        +news: NewsBlock[]
+        +newsIndex: number
+        +selectedNewsIndex: number
+    }
+
+    class Penguin {
+        +x: number
+        +y: number
+        +state: string
+        +direction: string
+        +exists: boolean
+        +mood: string
+        +emotionFrame: number
+        +spawnFrame: number
+        +frame: number
+        +width: number
+        +height: number
+        +setMood(mood: string): void
+        +despawn(): void
+        +draw(): void
+        +update(): void
+    }
+
+    class Characters {
+        +speak(): void
+        +draw(): void
+        +update(): void
+    }
+
+    class Fish {
+        +draw(): void
+        +update(): void
+    }
+
+    class FishingRod {
+        +update(): void
+        +draw(): void
+    }
+
+    GameState --> Penguin
+    GameState --> Characters
+    GameState --> Fish
+    GameState --> FishingRod
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and
-[eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Contributing
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+Contributions are welcome! Please follow these steps to contribute:
 
-export default tseslint.config({
-	plugins: {
-		// Add the react-x and react-dom plugins
-		'react-x': reactX,
-		'react-dom': reactDom,
-	},
-	rules: {
-		// other rules...
-		// Enable its recommended typescript rules
-		...reactX.configs['recommended-typescript'].rules,
-		...reactDom.configs.recommended.rules,
-	},
-});
-```
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Thanks to the contributors and the community for their support and feedback.
+- Special thanks to the developers of the libraries and tools used in this project.
+
+---
+
+Feel free to reach out if you have any questions or suggestions! Enjoy playing IceTube!
