@@ -1,8 +1,12 @@
 ---
 import AppLayout from '@/layouts/app-layout.astro';
 import { Projects as ProjectsApp } from '@/components/projects/projects';
+import Title from '@/components/title';
 ---
 
 <AppLayout>
-	<ProjectsApp client:load />
+	<div class="flex flex-col gap-8">
+		<Title client:only />
+		<ProjectsApp client:load />
+	</div>
 </AppLayout>

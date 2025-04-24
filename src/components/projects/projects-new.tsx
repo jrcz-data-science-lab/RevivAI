@@ -14,35 +14,21 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { UploadForm } from '../upload/upload-form';
+import { newProjectFormSchema } from '@/lib/schemas';
 
 interface ProjectsNewProps {
 	onCreate: (data: ProjectNewFormSchema) => void;
 }
 
-export type ProjectNewFormSchema = z.infer<typeof formSchema>;
-
-// Schema for form validation
-const formSchema = z.object({
-	projectName: z
-		.string()
-		.trim()
-		.min(2, {
-			message: 'Project name must be at least 2 characters.',
-		})
-		.max(30, {
-			message: 'Project name must be at most 30 characters.',
-		}),
-});
+export type ProjectNewFormSchema = z.infer<typeof newProjectFormSchema>;
 
 /**
  * Create a new project form
  */
 function ProjectsNew({ onCreate }: ProjectsNewProps) {
 	const form = useForm<ProjectNewFormSchema>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			projectName: '',
-		},
+		resolver: zodResolver(newProjectFormSchema),
+		defaultValues: { projectName: '' },
 	});
 
 	return (

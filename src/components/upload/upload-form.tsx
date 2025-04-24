@@ -20,6 +20,7 @@ import { UploadFiles } from './upload-files';
 export type UploadFormSchema = z.infer<typeof promptifySchema>;
 
 interface UploadFormProps {
+	initialValues?: UploadFormSchema;
 	onUploadSuccess: (data: PromptifyResult, form: UploadFormSchema) => void;
 }
 

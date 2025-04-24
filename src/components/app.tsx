@@ -22,7 +22,9 @@ interface AppProps {
  */
 export default function App({ projectId }: AppProps) {
 	// Hydrate the current project ID, specifying initial values
-	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
+	useHydrateAtoms(new Map([
+		[currentProjectIdAtom, projectId]
+	]));
 
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);

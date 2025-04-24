@@ -4,7 +4,6 @@ import { useDb, type Codebase } from '@/hooks/useDb';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Card } from '../ui/card';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { UploadForm, type UploadFormSchema } from './upload-form';
 import type { PromptifyResult } from '@/actions/promptify';
 import { useAtomValue } from 'jotai';
@@ -45,7 +44,7 @@ export function Upload() {
 		if (!currentCodebase) return;
 
 		await db.codebases.delete(currentCodebase.id);
-		toast.success('Codebase removed successfully!');
+		toast.success('Previous codebase removed!');
 	};
 
 	return (

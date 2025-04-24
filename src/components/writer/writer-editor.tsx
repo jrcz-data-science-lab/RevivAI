@@ -15,7 +15,7 @@ export function WriterEditor({ chapter }: WriterEditorProps) {
 				<Label htmlFor="chapter-title" className="text-sm font-semibold">
 					Title
 				</Label>
-				<Input id="chapter-title" placeholder="Chapter title" />
+				<Input id="chapter-title" placeholder="Chapter title" defaultValue={chapter.title} />
 			</div>
 
 			<div className="flex flex-col gap-2">

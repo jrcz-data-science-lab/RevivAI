@@ -19,3 +19,7 @@
 	right: 0 !important;
 	color: rgb(84, 84, 84) !important;
 }
+
+.markdown table tr, .markdown table thead {
+	border-color: var(--border) !important;
+}

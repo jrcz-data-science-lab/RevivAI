@@ -7,6 +7,7 @@ import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 
 import '@/styles/markdown.css';
+import { Skeleton } from '../ui/skeleton';
 
 const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
@@ -15,6 +16,9 @@ interface ChatMessageProps {
 	message: ChatMessageType;
 	isWriting: boolean;
 }
+
+// TODO: Disable initial animation of messages on mount
+// TODO: Light mode for chat messages
 
 /**
  * Chat message component
@@ -26,12 +30,8 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, translateY: 16 }}
-			animate={{
-				opacity: 1,
-				scale: 1,
-				translateY: 0,
-			}}
+			initial={isWriting ? { opacity: 0, scale: 1.1, translateY: 16 } : {}}
+			animate={{ opacity: 1, scale: 1, translateY: 0 }}
 			transition={{ duration: 0.3, type: 'tween' }}
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>
@@ -43,10 +43,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 				<motion.div
 					className={cn('absolute -left-10 opacity-60 max-md:hidden', message.answer === '' ? 'top-0.5' : 'bottom-0.5')}
 					initial={{ opacity: 0 }}
-					animate={{
-						scale: isWriting ? 0.8 : 1.1,
-						opacity: isWriting ? 1 : 0,
-					}}
+					animate={isWriting ? { opacity: 1, scale: 0.8 } : { opacity: 0, scale: 1.1 }}
 					transition={{ duration: isWriting ? 0.3 : 0.6, type: 'spring' }}
 				>
 					<LoaderPinwheel className="animate-spin" />
@@ -54,8 +51,8 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 				<Separator className="separator mt-1 mb-3" />
 
-				<Suspense fallback={<p className="prose dark:prose-invert text-sm leading-6 max-w-full">{message.answer}</p>}>
-					<ChatMarkdown>{message.answer.trim()}</ChatMarkdown>
+				<Suspense fallback={<Skeleton className="w-full h-20" />}>
+					<ChatMarkdown>{message.answer}</ChatMarkdown>
 				</Suspense>
 			</div>
 

@@ -30,7 +30,7 @@ export interface ChatState {
 export const contextSizeAtom = atom(0);
 
 // Chat state
-export const chatStateAtom = atomWithStorage<ChatState>('chat-info', {
+export const chatStateAtom = atomWithStorage<ChatState>('chat', {
 	messages: [],
 	isStreaming: false,
 	errorMessage: null,
