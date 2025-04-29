@@ -94,7 +94,7 @@ export function Writer({ db, model }: WriterProps) {
 		if (id === 'settings') return <div>Settings</div>;
 
 		const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
-		if (chapter) return <WriterEditor chapter={chapter} />;
+		if (chapter) return <WriterEditor chapter={chapter} onChange={(chapter) => updateChapter(chapter.id, chapter)} />;
 
 		// If no chapter is found, return a default message or component
 		setActiveItemId('templates');
@@ -120,6 +120,15 @@ export function Writer({ db, model }: WriterProps) {
 		});
 
 		setActiveItemId(id);
+	};
+
+	const updateChapter = async (id: string, data: Partial<Chapter>) => {
+		const chapter = await db.chapters.get(id);
+		if (!chapter) return;
+		await db.chapters.update(id, {
+			...chapter,
+			...data,
+		});
 	};
 
 	const removeChapter = async (id: string) => {

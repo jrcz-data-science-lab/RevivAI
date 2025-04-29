@@ -21,8 +21,12 @@ export function WriterSidebarItem({ icon: Icon, title, active, onClick, onDelete
 					active ? 'text-foreground pl-1' : 'text-muted-foreground hover:pl-1 active:pl-0.5 cursor-pointer',
 				)}
 			>
-				<Icon className="size-4" />
-				<span className="text-sm">{title}</span>
+				<Icon className="size-4 min-w-4" />
+				<span
+					className="text-sm whitespace-nowrap overflow-hidden text-ellipsis inline-block max-w-40"
+				>
+					{title}
+				</span>
 			</button>
 
 			{typeof onDelete === 'function' && (
