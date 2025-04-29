@@ -1,8 +1,12 @@
 ---
 import AppLayout from '@/layouts/app-layout.astro';
 import { Setup as SetupApp } from '@/components/setup/setup.tsx';
+import { ThemeToggle } from '@/components/theme-toggle';
 ---
 
 <AppLayout>
+	<div class="z-50 fixed top-4 left-0 px-4 flex w-full justify-end">
+		<ThemeToggle client:only />
+	</div>
 	<SetupApp client:only />
 </AppLayout>

@@ -1,8 +1,12 @@
 @import "tailwindcss";
+
+/* Animation Tailwind Plugin, adapted for v4 */
 @import "./animate.css";
 
+/* Tailwind Typography Plugin */
 @plugin '@tailwindcss/typography';
 
+/* Custom variant for dark mode using :is selector */
 @custom-variant dark (&:is(.dark *));
 
 :root {

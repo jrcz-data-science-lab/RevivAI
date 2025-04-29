@@ -1,10 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { visualizer } from 'rollup-plugin-visualizer';
 import react from '@astrojs/react';
 import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
-
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://astro.build/config
 export default defineConfig({

@@ -51,6 +51,9 @@ export function Writer({ db, model }: WriterProps) {
 							'Analyze this codebase, and provide list of possible documentation chapters for this repository. No more than 10 chapters.',
 					},
 				],
+				onError: (error) => {
+					throw new Error(`Error generating template: ${error}`);
+				}
 			});
 
 			// Collect current chapters
@@ -64,7 +67,8 @@ export function Writer({ db, model }: WriterProps) {
 					id: crypto.randomUUID() as string,
 					index: counter++,
 					title: object.title,
-					content: object.content,
+					description: object.content,
+					content: '',
 				});
 			}
 
@@ -111,6 +115,7 @@ export function Writer({ db, model }: WriterProps) {
 			id: id,
 			index: lastChapterIndex + 1,
 			title: `Chapter ${chapters?.length}`,
+			description: '',
 			content: '',
 		});
 
@@ -119,7 +124,6 @@ export function Writer({ db, model }: WriterProps) {
 
 	const removeChapter = async (id: string) => {
 		await db.chapters.delete(id);
-		// if (selectedChapterId === id) setSelectedChapterId(chapters[0]?.id ?? undefined);
 	};
 
 	const reorderChapters = async (newChapters: Chapter[]) => {
@@ -159,10 +163,11 @@ export function Writer({ db, model }: WriterProps) {
 				</div>
 
 				<motion.div
-					initial={{ opacity: 0, translateY: 8 }}
-					animate={{ opacity: 1, translateY: 0 }}
-					exit={{ opacity: 0, translateY: 8 }}
-					transition={{ duration: 0.6, type: 'spring' }}
+					key={activeItemId}
+					initial={{ opacity: 0, translateX: 8 }}
+					animate={{ opacity: 1, translateX: 0 }}
+					exit={{ opacity: 0, translateX: 8 }}
+					transition={{ duration: 0.1 }}
 					className="relative z-20 h-screen pt-16 px-8 w-full overflow-x-hidden overflow-y-scroll"
 				>
 					<div className="fixed top-0 left-0 w-full">

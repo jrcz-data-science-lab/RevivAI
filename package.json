@@ -22,6 +22,7 @@
 		"@astrojs/node": "^9.2.1",
 		"@astrojs/react": "^4.2.5",
 		"@hookform/resolvers": "^5.0.1",
+		"@mdxeditor/editor": "^3.31.1",
 		"@openrouter/ai-sdk-provider": "^0.4.5",
 		"@radix-ui/react-accordion": "^1.2.3",
 		"@radix-ui/react-checkbox": "^1.1.5",

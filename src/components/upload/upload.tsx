@@ -18,10 +18,6 @@ export function Upload() {
 	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>();
 	const [isOpen, setIsOpen] = useState(false);
 
-	useEffect(() => {
-		if (!currentCodebase) return;
-	}, [currentCodebase]);
-
 	const addCodebase = async (data: PromptifyResult, form: UploadFormSchema) => {
 		if (!data) return;
 

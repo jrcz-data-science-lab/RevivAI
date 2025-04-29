@@ -1,140 +1,87 @@
-# IceTube
+# RevivAI
 
-<p align="center">
-	<img src="https://raw.githubusercontent.com/TheIceTube/IceTube/main/src/sprites/penguin-right.png" alt="Penguin" width="128">
-</p>
+RevivAI is an AI-powered code documentation assistant designed to help developers understand and document their codebases effectively. It leverages advanced language models to analyze code and generate meaningful documentation, making it easier for teams to maintain and share knowledge about their projects.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Setup Instructions](#setup-instructions)
+- [Usage Examples](#usage-examples)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Overview
 
-IceTube is a game that allows players to manage their own media outlet while navigating the challenges of fake news. Players will interact with various characters, collect fish, and publish news articles to maintain relevance in the media landscape.
+RevivAI provides a user-friendly interface for interacting with AI models to generate documentation from codebases. It supports both local file uploads and remote repositories, allowing users to easily document their projects regardless of their source.
 
 ## Features
 
-- Manage your own media outlet
-- Interact with various penguin characters
-- Collect fish and publish news articles
-- Experience dynamic gameplay with changing relevance and character moods
-- Engage with a leaderboard to compare scores with other players
+- **AI-Powered Documentation**: Automatically generate documentation from codebases using advanced language models.
+- **Local and Remote Support**: Upload code files directly or link to public GitHub repositories.
+- **Customizable Settings**: Configure LLM provider settings and adjust documentation parameters.
+- **User-Friendly Interface**: Intuitive UI for managing projects and viewing generated documentation.
+- **Real-Time Chat Interface**: Interact with the AI in a chat format to ask questions about the code.
 
-## Getting Started
+## Setup Instructions
 
-### Prerequisites
+To set up RevivAI locally, follow these steps:
 
-- Node.js (version 14 or higher)
-- npm (Node package manager)
-
-### Installation
-
-1. Clone the repository:
+1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/TheIceTube/IceTube.git
-   cd IceTube
+   git clone https://github.com/yourusername/revivai.git
+   cd revivai
    ```
 
-2. Install the dependencies:
+2. **Install Dependencies**:
+   Ensure you have [Node.js](https://nodejs.org/) installed, then run:
    ```bash
    npm install
    ```
 
-3. Start the development server:
+3. **Environment Variables**:
+   Create a `.env` file in the root directory and add the following variables:
+   ```env
+   PUBLIC_LLM_API_URL=your_llm_api_url
+   PUBLIC_LLM_API_KEY=your_llm_api_key
+   PUBLIC_LLM_API_MODEL=your_llm_model
+   ```
+
+4. **Run the Application**:
+   Start the development server:
    ```bash
    npm run dev
    ```
 
-4. Open your browser and navigate to `http://localhost:1234` to play the game.
+5. **Access the Application**:
+   Open your browser and navigate to `http://localhost:3000`.
 
-### Building for Production
+## Usage Examples
 
-To build the project for production, run:
-```bash
-npm run build
-```
-This will create an optimized version of the game in the `build` directory.
+### Uploading a Codebase
 
-## Class Diagram
+To upload a codebase, click on the "Upload" button in the navbar. You can choose to upload files from your local machine or provide a URL to a public GitHub repository.
 
-The following diagram visualizes the class relationships within the IceTube project:
+### Interacting with the AI
 
-```mermaid
-classDiagram
-    class GameState {
-        +paused: boolean
-        +element: HTMLCanvasElement
-        +ctx: CanvasRenderingContext2D
-        +mouseX: number
-        +mouseY: number
-        +mouseDown: boolean
-        +penguins: Array<Penguin | Characters>
-        +entities: Array<Fish | FishingRod>
-        +fish: number
-        +tempo: number
-        +relevance: number
-        +maximumPenguins: number
-        +serverAvailable: boolean
-        +news: NewsBlock[]
-        +newsIndex: number
-        +selectedNewsIndex: number
-    }
+Once your codebase is uploaded, you can start a chat with the AI. Type your questions in the chat input, such as:
+- "What does this function do?"
+- "Can you explain the structure of this codebase?"
 
-    class Penguin {
-        +x: number
-        +y: number
-        +state: string
-        +direction: string
-        +exists: boolean
-        +mood: string
-        +emotionFrame: number
-        +spawnFrame: number
-        +frame: number
-        +width: number
-        +height: number
-        +setMood(mood: string): void
-        +despawn(): void
-        +draw(): void
-        +update(): void
-    }
+### Generating Documentation
 
-    class Characters {
-        +speak(): void
-        +draw(): void
-        +update(): void
-    }
-
-    class Fish {
-        +draw(): void
-        +update(): void
-    }
-
-    class FishingRod {
-        +update(): void
-        +draw(): void
-    }
-
-    GameState --> Penguin
-    GameState --> Characters
-    GameState --> Fish
-    GameState --> FishingRod
-```
+After analyzing your code, RevivAI will generate documentation based on the provided codebase. You can view and export this documentation for your project.
 
 ## Contributing
 
 Contributions are welcome! Please follow these steps to contribute:
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit them (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
 5. Open a pull request.
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Thanks to the contributors and the community for their support and feedback.
-- Special thanks to the developers of the libraries and tools used in this project.
-
----
-
-Feel free to reach out if you have any questions or suggestions! Enjoy playing IceTube!

@@ -10,6 +10,7 @@ export interface Chapter {
 	id: string;
 	index: number;
 	title: string;
+	description: string;
 	content: string;
 }
 
