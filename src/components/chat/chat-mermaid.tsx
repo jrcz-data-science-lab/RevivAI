@@ -27,7 +27,7 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 	useEffect(() => {
 		const renderMermaid = async (code: string) => {
 			const valid = await mermaid.parse(code, { suppressErrors: true });
-			if (!valid) return;
+			if (!valid) return; 
 
 			const result = await mermaid.render(id, code);
 			setDiagramSVG(result.svg);

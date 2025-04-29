@@ -23,7 +23,6 @@ const variants = {
 	teal: 'dark:text-teal-100 text-teal-800 border-teal-500/80 hover:border-teal-500 bg-teal-500/5',
 	blue: 'dark:text-blue-100 text-blue-800 border-blue-500/80 hover:border-blue-500 bg-blue-500/5',
 	gray: 'dark:text-gray-100 text-gray-800 border-gray-500/80 hover:border-gray-500 bg-gray-500/5',
-	brown: 'dark:text-brown-100 text-brown-800 border-brown-500/80 hover:border-brown-500 bg-brown-500/5',
 	lime: 'dark:text-lime-100 text-lime-800 border-lime-500/80 hover:border-lime-500 bg-lime-500/5',
 };
 

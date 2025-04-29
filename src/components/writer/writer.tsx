@@ -1,16 +1,17 @@
+import type { Chapter, Database } from '@/hooks/useDb';
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { WriterSidebar } from './writer-sidebar';
 import { useLiveQuery } from 'dexie-react-hooks';
-import type { Chapter, Database } from '@/hooks/useDb';
 import { generateObject, streamObject, type LanguageModelV1 } from 'ai';
 import { WriterEditor } from './writer-editor';
 import { WriterExport } from './writer-export';
 import { WriterTemplates, type WriterTemplatesType } from './writer-templates';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
-import { z } from 'zod';
 import { toast } from 'sonner';
+import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw'
+import { chapterSchema } from '@/lib/schemas';
 
 interface WriterProps {
 	db: Database;
@@ -37,18 +38,12 @@ export function Writer({ db, model }: WriterProps) {
 			const codebase = await db.codebases.orderBy('createdAt').last();
 			if (!codebase) return;
 
-			const { elementStream } = await streamObject({
+			const { elementStream } = streamObject({
 				model,
 				output: 'array',
-				schema: z.object({
-					title: z.string().describe('Chapter title (Examples: "Introduction", "Installation", "Usage")'),
-					content: z
-						.string()
-						.describe(
-							'Chapter description. Explain the content of the chapter in detail. What should be included in the chapter? ',
-						),
-				}),
+				schema: chapterSchema,
 				messages: [
+					{ role: 'system', content: WriterGenerateStructure },
 					{ role: 'system', content: codebase.prompt },
 					{
 						role: 'user',

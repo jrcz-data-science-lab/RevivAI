@@ -51,7 +51,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 				<Separator className="separator mt-1 mb-3" />
 
-				<Suspense fallback={<Skeleton className="w-full h-20" />}>
+				<Suspense>
 					<ChatMarkdown>{message.answer}</ChatMarkdown>
 				</Suspense>
 			</div>

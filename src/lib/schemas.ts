@@ -25,3 +25,9 @@ export const newProjectFormSchema = z.object({
 			message: 'Project name must be at most 30 characters.',
 		}),
 });
+
+// Chapter LLM request schema
+export const chapterSchema = z.object({
+	title: z.string().max(50).describe('Chapter title (Examples: "Introduction", "Installation", "Usage")'),
+	content: z.string().max(1500).describe('Chapter description and sub-headings (H2/H3/H4) with the description.'),
+});

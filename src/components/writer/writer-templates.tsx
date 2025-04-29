@@ -40,7 +40,7 @@ export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
 			<div className="grid grid-cols-2 gap-4 items-start w-full">
 				<WriterTemplatesItem
 					icon={ScrollText}
-					color="emerald"
+					color="lime"
 					title="README.md"
 					onClick={() => onTemplateSelect('readme')}
 					description="Markdown file for your repository. Perfect for open-source or small personal projects."
@@ -54,7 +54,7 @@ export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
 				/>
 				<WriterTemplatesItem
 					icon={Notebook}
-					color="blue"
+					color="violet"
 					title="API Reference"
 					onClick={() => onTemplateSelect('api-reference')}
 					description="Detailed API reference for your project. Great for microservices, REST APIs or frameworks."
@@ -62,9 +62,9 @@ export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
 				<WriterTemplatesItem
 					icon={Brain}
 					color="gray"
-					title="Generate"
+					title="Generate Template"
 					onClick={() => onTemplateSelect('generate')}
-					description="Generate documentation structure for your project using AI. Result may vary."
+					description="Use AI to generate documentation structure for your project. Result may vary!"
 				/>
 			</div>
 
