@@ -3,8 +3,6 @@ import { Download, FileText, LibraryBig, Settings } from 'lucide-react';
 import { WriterSidebarItem } from './writer-sidebar-item';
 import type { Chapter } from '@/hooks/useDb';
 
-// TODO: Fix Vertical Scroll overflow for chapters.
-
 interface WriterSidebarProps {
 	activeItemId: string | undefined;
 	chapters: Chapter[] | undefined;

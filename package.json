@@ -1,5 +1,5 @@
 {
-	"name": "revivai-ui",
+	"name": "revivai",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -71,6 +71,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"babel-plugin-react-compiler": "^19.1.0-rc.1",
+		"react-compiler-runtime": "^19.1.0-rc.1",
 		"rollup-plugin-visualizer": "^5.14.0"
 	}
 }

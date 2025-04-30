@@ -18,11 +18,16 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 	const onContentChange = (value: string) => {
 		if (!onChange) return;
 
-		const firstHeading = value.match(/# (.*)/)?.[1]?.trim();
+		const trimmedValue = value.trim();
+		const firstHeadingRaw = trimmedValue.match(/^\s*#(.*)$/m)?.[1];
+		const firstHeading = firstHeadingRaw
+			? firstHeadingRaw.trim().replace(/\s+/g, ' ')
+			: undefined;
 
+		console.log(`/${firstHeading}/`)
 		onChange({
 			...chapter,
-			title: firstHeading ? firstHeading : chapter.title,
+			title: firstHeading ? firstHeading.trim() : chapter.title,
 			description: value,
 		});
 	}

@@ -5,24 +5,29 @@ import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
-  devToolbar: { enabled: false },
+	integrations: [
+		react({
+			babel: {
+        // Enable React Compiler
+				plugins: ['babel-plugin-react-compiler'],
+			},
+		}),
+	],
+	devToolbar: { enabled: false },
 
-  vite: {
-      plugins: [
-          tailwindcss(),
-          visualizer(),
-      ],
-      worker: {
-          format: 'es',
-      },
-      server: {
-        cors: true
-      }
+	vite: {
+		plugins: [tailwindcss(), visualizer()],
+		worker: {
+			format: 'es',
+		},
+		server: {
+			cors: true,
+		},
 	},
-  adapter: node({
-    mode: 'standalone',
-  }),
+	adapter: node({
+		mode: 'standalone',
+	}),
 });

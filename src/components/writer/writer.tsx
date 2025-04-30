@@ -1,166 +1,50 @@
-import type { Chapter, Database } from '@/hooks/useDb';
-import { useEffect, useState } from 'react';
+import type { Database } from '@/hooks/useDb';
 import { motion } from 'motion/react';
-import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Button } from '../ui/button';
 import { WriterSidebar } from './writer-sidebar';
 import { WriterEditor } from './writer-editor';
 import { WriterExport } from './writer-export';
-import { chapterSchema } from '@/lib/schemas';
-import { streamObject, type LanguageModelV1 } from 'ai';
-import { WriterTemplates, type WriterTemplatesType } from './writer-templates';
-import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw';
-import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
+import type { LanguageModelV1 } from 'ai';
+import { WriterTemplates } from './writer-templates';
+import { useWriter, type WriterPages } from '@/hooks/useWriter';
 
 interface WriterProps {
 	db: Database;
 	model: LanguageModelV1;
 }
 
-type WriterPages = 'export' | 'templates' | 'settings' | string;
-
 export function Writer({ db, model }: WriterProps) {
-	const [locked, setLocked] = useState(false);
-	const [activeItemId, setActiveItemId] = useState<WriterPages>(localStorage.getItem('active-item-id') ?? 'templates');
-
-	const chapters = useLiveQuery(async () => {
-		const chapters = await db.chapters.toArray();
-		return chapters.sort((a, b) => a.index - b.index);
-	}, [db]);
-
-	useEffect(() => {
-		localStorage.setItem('active-item-id', activeItemId);
-	}, [activeItemId]);
-
-	const onTemplateApply = async (template: WriterTemplatesType) => {
-		if (template === 'readme') {
-			await applyReadmeTemplate(db);
-			return;
-		}
-
-		console.log('Applying template:', template);
-
-		const apply = async () => {
-			const codebase = await db.codebases.orderBy('createdAt').last();
-			if (!codebase) return;
-
-			const { elementStream } = streamObject({
-				model,
-				output: 'array',
-				schema: chapterSchema,
-				messages: [
-					{ role: 'system', content: WriterGenerateStructure },
-					{ role: 'system', content: codebase.prompt },
-					{
-						role: 'user',
-						content:
-							'Analyze this codebase, and provide list of possible documentation chapters for this repository. No more than 10 chapters.',
-					},
-				],
-				onError: (error) => {
-					console.error('Error generating template:', error);
-					throw new Error(`Error generating template: ${error}`);
-				},
-			});
-
-			// Collect current chapters
-			const oldChapters = await db.chapters.toArray();
-			const oldChaptersIds = oldChapters.map((chapter) => chapter.id);
-
-			console.log(1234);
-
-			// Create new chapters
-			let counter = 0;
-			for await (const object of elementStream) {
-				console.log('Generated object:', object);
-				await db.chapters.add({
-					id: crypto.randomUUID() as string,
-					index: counter++,
-					title: object.title,
-					description: object.content,
-					content: '',
-				});
-			}
-
-			// Remove all old chapters
-			await db.chapters.bulkDelete(oldChaptersIds);
-		};
-
-		toast.promise(apply(), {
-			loading: 'Applying template...',
-			success: () => {
-				setActiveItemId('templates');
-				return 'Template applied successfully!';
-			},
-			error: (error) => {
-				return `Error applying template: ${error}`;
-			},
-		});
-	};
+	const {
+		chapters,
+		activeItemId,
+		selectItem,
+		removeChapter,
+		reorderChapters,
+		addChapter,
+		applyTemplate,
+		updateChapter,
+	} = useWriter({ db, model });
 
 	const renderActiveItem = (id: WriterPages) => {
 		if (id === 'export') return <WriterExport />;
-		if (id === 'templates') return <WriterTemplates onTemplateApply={onTemplateApply} />;
+		if (id === 'templates') return <WriterTemplates onTemplateApply={applyTemplate} />;
 		if (id === 'settings') return <div>Settings</div>;
 
-		const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
-		if (chapter) return <WriterEditor chapter={chapter} onChange={(chapter) => updateChapter(chapter.id, chapter)} />;
-
-		// If no chapter is found, return a default message or component
-		setActiveItemId('templates');
-	};
-
-	const addChapter = async () => {
-		const id = crypto.randomUUID() as string;
-		console.log('Adding chapter with id:', db);
-
-		// Find the last chapter based on the index
-
-		const lastChapterIndex: number =
-			chapters?.reduce((maxIndex, chapter) => {
-				return Math.max(maxIndex, chapter.index);
-			}, -1) ?? 0;
-
-		await db.chapters.add({
-			id: id,
-			index: lastChapterIndex + 1,
-			title: `Chapter ${chapters?.length}`,
-			description: '',
-			content: '',
-		});
-
-		setActiveItemId(id);
-	};
-
-	const updateChapter = async (id: string, data: Partial<Chapter>) => {
-		const chapter = await db.chapters.get(id);
-		if (!chapter) return;
-		await db.chapters.update(id, {
-			...chapter,
-			...data,
-		});
-	};
-
-	const removeChapter = async (id: string) => {
-		await db.chapters.delete(id);
-	};
-
-	const reorderChapters = async (newChapters: Chapter[]) => {
-		const chapters = newChapters.map((chapter, index) => ({
-			...chapter,
-			index: index,
-		}));
-
-		await db.chapters.bulkUpdate(
-			chapters.map((chapter, index) => {
-				return {
-					key: chapter.id,
-					changes: { index },
-				};
-			}),
-		);
+		// If chapters loaded
+		if (Array.isArray(chapters)) {
+			const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
+			if (!chapter) {
+				const chapterToSelect = chapters?.at(0)?.id ?? 'templates';
+				selectItem(chapterToSelect);
+				return;
+			}
+			
+			return <WriterEditor 
+				chapter={chapter} 
+				onChange={(updated) => updateChapter(chapter.id, updated)} 
+			/>;
+		}
 	};
 
 	return (
@@ -170,7 +54,7 @@ export function Writer({ db, model }: WriterProps) {
 					<WriterSidebar
 						chapters={chapters}
 						activeItemId={activeItemId}
-						onSelect={setActiveItemId}
+						onSelect={selectItem}
 						onReorder={reorderChapters}
 						onRemoveChapter={removeChapter}
 					/>

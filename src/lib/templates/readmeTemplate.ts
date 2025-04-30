@@ -14,15 +14,14 @@ Instructions for contributing to the project.
 The license under which the project is distributed.
 `;
 
-
 export async function applyReadmeTemplate(db: Database) {
 	await db.chapters.clear();
 
-    await db.chapters.add({
-        id: crypto.randomUUID() as string,
-        index: 0,
-        title: 'README',
-        description: description,
-        content: '',
-    });
+	await db.chapters.add({
+		id: crypto.randomUUID() as string,
+		index: 0,
+		title: 'README',
+		description: description,
+		content: '',
+	});
 }
