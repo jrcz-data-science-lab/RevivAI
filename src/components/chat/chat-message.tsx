@@ -9,7 +9,8 @@ import { Button } from '../ui/button';
 import '@/styles/markdown.css';
 import { Skeleton } from '../ui/skeleton';
 
-const ChatMarkdown = lazy(() => import('./chat-markdown'));
+import ChatMarkdown from './chat-markdown';
+// const ChatMarkdown = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {
 	onDelete?: (id: string) => void;
@@ -51,9 +52,7 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 				<Separator className="separator mt-1 mb-3" />
 
-				<Suspense>
-					<ChatMarkdown>{message.answer}</ChatMarkdown>
-				</Suspense>
+				<ChatMarkdown>{message.answer}</ChatMarkdown>
 			</div>
 
 			<div className="flex justify-start items-center -mx-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-0 right-0">

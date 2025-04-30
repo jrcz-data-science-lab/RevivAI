@@ -48,13 +48,11 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 				</div> */}
 			</div>
 
-			<div className="w-full max-w-full py-6 border-t border-border">
-				{/* <ChatMarkdown>{content}</ChatMarkdown> */}
+			<div className="py-6 border-t border-border">
 				<MDXEditor
 					onChange={(value) => onContentChange(value)}
 					markdown={chapter.description}
-					className="outline-none"
-					contentEditableClassName="outline-none prose prose-neutral dark:prose-invert"
+					contentEditableClassName="outline-none prose prose-neutral dark:prose-invert w-full max-w-full"
 					plugins={[
 						headingsPlugin(),
 						listsPlugin(),

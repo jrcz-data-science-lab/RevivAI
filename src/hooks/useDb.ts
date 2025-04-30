@@ -52,12 +52,16 @@ export function createDatabase(projectId: string) {
 	return db;
 }
 
+// Global database instance
+let db: Database;
+
 /**
  * Get database instance for the given project ID
  * @param projectId The ID of the project
  */
 export function useDb(projectId: string) {
-	const db = useMemo(() => createDatabase(projectId), [projectId]);
+	// Initialize the database instance if it doesn't exist
+	if (!db) db = createDatabase(projectId);
 
 	// Current uploaded codebase
 	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);

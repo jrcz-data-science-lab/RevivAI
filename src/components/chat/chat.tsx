@@ -27,14 +27,14 @@ export function Chat({ db, model }: ChatProps) {
 		if (!messageElement) return;
 
 		// Scroll to last message
-		const offset = window.innerHeight / 4;
+		const offset = 200;
 		const top = messageElement.getBoundingClientRect().bottom + chatContainerRef.current.scrollTop - offset;
 		chatContainerRef.current.scrollTo({ top, behavior });
 	};
 
 	// Scroll to last message on mount
 	useEffect(() => {
-		scrollToLastMessage('smooth');
+		scrollToLastMessage('instant');
 		return () => {
 			chat.abort();
 		};

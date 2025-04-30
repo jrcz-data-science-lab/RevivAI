@@ -1,17 +1,18 @@
 import type { Chapter, Database } from '@/hooks/useDb';
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { WriterSidebar } from './writer-sidebar';
+import { toast } from 'sonner';
+import { Plus } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { generateObject, streamObject, type LanguageModelV1 } from 'ai';
+import { Button } from '../ui/button';
+import { WriterSidebar } from './writer-sidebar';
 import { WriterEditor } from './writer-editor';
 import { WriterExport } from './writer-export';
-import { WriterTemplates, type WriterTemplatesType } from './writer-templates';
-import { Plus } from 'lucide-react';
-import { Button } from '../ui/button';
-import { toast } from 'sonner';
-import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw'
 import { chapterSchema } from '@/lib/schemas';
+import { streamObject, type LanguageModelV1 } from 'ai';
+import { WriterTemplates, type WriterTemplatesType } from './writer-templates';
+import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw';
+import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 
 interface WriterProps {
 	db: Database;
@@ -34,6 +35,13 @@ export function Writer({ db, model }: WriterProps) {
 	}, [activeItemId]);
 
 	const onTemplateApply = async (template: WriterTemplatesType) => {
+		if (template === 'readme') {
+			await applyReadmeTemplate(db);
+			return;
+		}
+
+		console.log('Applying template:', template);
+
 		const apply = async () => {
 			const codebase = await db.codebases.orderBy('createdAt').last();
 			if (!codebase) return;
@@ -52,17 +60,21 @@ export function Writer({ db, model }: WriterProps) {
 					},
 				],
 				onError: (error) => {
+					console.error('Error generating template:', error);
 					throw new Error(`Error generating template: ${error}`);
-				}
+				},
 			});
 
 			// Collect current chapters
 			const oldChapters = await db.chapters.toArray();
 			const oldChaptersIds = oldChapters.map((chapter) => chapter.id);
 
+			console.log(1234);
+
 			// Create new chapters
 			let counter = 0;
 			for await (const object of elementStream) {
+				console.log('Generated object:', object);
 				await db.chapters.add({
 					id: crypto.randomUUID() as string,
 					index: counter++,
