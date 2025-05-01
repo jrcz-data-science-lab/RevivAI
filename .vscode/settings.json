@@ -11,5 +11,8 @@
 		"signale",
 		"sonner",
 		"tiktoken"
+	],
+	"typescript.preferences.autoImportSpecifierExcludeRegexes": [
+		"@radix-ui",
 	]
 }

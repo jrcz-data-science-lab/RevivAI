@@ -24,6 +24,12 @@ export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onR
 			<div className="flex flex-col flex-none text-muted-foreground py-3">
 				<div className="flex flex-col px-6">
 					<WriterSidebarItem
+						icon={Download}
+						title={'Generate'}
+						active={activeItemId === 'export'}
+						onClick={() => onSelect('export')}
+					/>
+					<WriterSidebarItem
 						icon={LibraryBig}
 						title={'Templates'}
 						active={activeItemId === 'templates'}
