@@ -15,10 +15,10 @@ if (!projectId) {
 }
 ---
 
-<div id="loading-spinner" class="z-50 transition-[opacity,scale] fixed top-1/2 left-1/2 translate-1/2 animate-spin">
-	<LoaderPinwheel className="size-6" />
-</div>
-
 <AppLayout>
+	<div id="loading-spinner" class="z-50 transition-[opacity,scale] fixed top-1/2 left-1/2 translate-1/2 animate-spin">
+		<LoaderPinwheel className="size-6" />
+	</div>
+
 	<AppContainer client:only projectId={projectId} />
 </AppLayout>

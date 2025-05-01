@@ -31,7 +31,7 @@ export function WriterTemplates({ onTemplateApply }: WriterTemplatesProps) {
 	return (
 		<div className="space-y-8">
 			<div>
-				<h1 className="text-xl font-serif font-black">Templates</h1>
+				<h1 className="text-xl font-serif font-black mb-1.5">Templates</h1>
 				<p className="text-md text-muted-foreground">
 					Select a template you going to use for documentation. You can customize the content and structure later.
 				</p>

@@ -1,14 +1,14 @@
 ---
-import MainLayout from './main-layout.astro';
+import BaseLayout from './base-layout.astro';
 ---
 
-<MainLayout>
+<BaseLayout>
 	<div class="relative flex flex-col items-center justify-center mx-auto min-h-screen overflow-x-hidden">
 		<slot />
 	</div>
-</MainLayout>
-
+</BaseLayout>
 <script is:inline>
 	const isDark = localStorage.getItem('theme') !== 'light';
 	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
 </script>
+

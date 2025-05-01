@@ -1,7 +1,10 @@
 ---
 import AppLayout from '@/layouts/app-layout.astro';
-import { Setup as SetupApp } from '@/components/setup/setup.tsx';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Setup as SetupApp } from '@/components/setup/setup.tsx';
+
+// Do not render on the server
+export const prerender = false;
 ---
 
 <AppLayout>

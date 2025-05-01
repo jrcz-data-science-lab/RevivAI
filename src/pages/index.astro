@@ -1,8 +1,10 @@
 ---
 import AppLayout from '@/layouts/app-layout.astro';
 import { Projects as ProjectsApp } from '@/components/projects/projects';
-import Title from '@/components/title';
 import { ThemeToggle } from '@/components/theme-toggle';
+
+// Do not render on the server
+export const prerender = false;
 ---
 
 <AppLayout>

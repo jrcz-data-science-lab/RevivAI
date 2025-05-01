@@ -1,11 +1,9 @@
 import type { LanguageModelV1 } from 'ai';
-import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
-import { useState } from 'react';
 import type { Chapter, Database } from './useDb';
-import { useLiveQuery } from 'dexie-react-hooks';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
 

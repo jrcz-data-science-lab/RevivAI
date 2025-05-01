@@ -14,6 +14,9 @@ interface WriterProps {
 	model: LanguageModelV1;
 }
 
+/**
+ * Writer component that manages the writing interface.
+ */
 export function Writer({ db, model }: WriterProps) {
 	const {
 		chapters,
@@ -26,6 +29,11 @@ export function Writer({ db, model }: WriterProps) {
 		updateChapter,
 	} = useWriter({ db, model });
 
+	/**
+	 * Renders the active item based on the activeItemId.
+	 * @param id - The ID of the active item (or chapter).
+	 * @returns The rendered component for the active item.
+	 */
 	const renderActiveItem = (id: WriterPages) => {
 		if (id === 'export') return <WriterExport />;
 		if (id === 'templates') return <WriterTemplates onTemplateApply={applyTemplate} />;
@@ -39,11 +47,8 @@ export function Writer({ db, model }: WriterProps) {
 				selectItem(chapterToSelect);
 				return;
 			}
-			
-			return <WriterEditor 
-				chapter={chapter} 
-				onChange={(updated) => updateChapter(chapter.id, updated)} 
-			/>;
+
+			return <WriterEditor chapter={chapter} onChange={(updated) => updateChapter(chapter.id, updated)} />;
 		}
 	};
 
@@ -72,7 +77,7 @@ export function Writer({ db, model }: WriterProps) {
 					initial={{ opacity: 0, translateX: 8 }}
 					animate={{ opacity: 1, translateX: 0 }}
 					exit={{ opacity: 0, translateX: 8 }}
-					transition={{ duration: 0.1 }}
+					transition={{ duration: 0.15, ease: 'easeIn' }}
 					className="relative z-20 h-screen pt-16 px-8 w-full overflow-x-hidden overflow-y-scroll"
 				>
 					<div className="fixed top-0 left-0 w-full">
