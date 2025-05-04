@@ -10,9 +10,7 @@ export const prerender = false;
 const projectId = Astro.params.projectId;
 
 // Redirect to projects page if no projectId is provided
-if (!projectId) {
-	return Astro.redirect('/');
-}
+if (!projectId) return Astro.redirect('/');
 ---
 
 <AppLayout>

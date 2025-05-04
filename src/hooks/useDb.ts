@@ -1,8 +1,5 @@
-import { atom } from 'jotai';
-import { useMemo } from 'react';
 import Dexie, { type EntityTable } from 'dexie';
 import type { PackResult } from 'node_modules/repomix/lib/core/packager';
-import { useLiveQuery } from 'dexie-react-hooks';
 
 export type Database = ReturnType<typeof createDatabase>;
 
@@ -10,8 +7,7 @@ export interface Chapter {
 	id: string;
 	index: number;
 	title: string;
-	description: string;
-	content: string;
+	outline: string;
 }
 
 export type CodebaseType = 'files' | 'remote';
@@ -28,6 +24,15 @@ export interface Codebase {
 	metadata: PackResult;
 }
 
+export interface GeneratedFile {
+	id: string;
+	generationId: string;
+	chapterId: string;
+	createdAt: Date;
+	fileName: string;
+	content: string;
+}
+
 /**
  * Creates a new Dexie database instance for the given project ID.
  * @param projectId The ID of the project
@@ -40,13 +45,14 @@ export function createDatabase(projectId: string) {
 	const db = new Dexie(key) as Dexie & {
 		chapters: EntityTable<Chapter, 'id'>;
 		codebases: EntityTable<Codebase, 'id'>;
+		generated: EntityTable<GeneratedFile, 'id'>;
 	};
 
 	// Schema declaration:
 	db.version(1).stores({
-		chapters: '++id, index, title, content',
+		chapters: '++id, index',
 		codebases: '++id, createdAt',
-		chatMessages: '++id, createdAt, question, answer',
+		generated: '++id, chapterId, generationId, fileName',
 	});
 
 	return db;
@@ -60,11 +66,6 @@ let db: Database;
  * @param projectId The ID of the project
  */
 export function useDb(projectId: string) {
-	// Initialize the database instance if it doesn't exist
 	if (!db) db = createDatabase(projectId);
-
-	// Current uploaded codebase
-	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
-
-	return { db, currentCodebase };
+	return { db };
 }

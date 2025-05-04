@@ -1,44 +1,44 @@
-import type { LanguageModelV1 } from 'ai';
+import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Database } from './useDb';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
+import { atomWithStorage } from 'jotai/utils';
+import { useAtom } from 'jotai';
+import { createTOCPrompt } from '@/lib/generate';
 
 export interface UseWriterProps {
 	db: Database;
 	model: LanguageModelV1;
 }
 
-export type WriterPages = 'export' | 'templates' | 'settings' | string;
+// Type of opened items in the sidebar. String is a UUID of user created chapter.
+export type WriterItemId = 'generate' | 'templates' | string;
 
-// Initial active item ID
-const initialActiveItemId = localStorage.getItem('active-item-id') ?? 'templates';
+// Config for documentation generation
+export interface WriterGenerateConfig {
+	entry: 'readme' | 'none';
+	diagrams: 'none' | 'mermaid' | 'svg';
+}
+
+// Last active item ID in the sidebar. Stored in local storage.
+const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templates');
 
 /**
  * Custom hook to manage the writer state and actions.
  */
 export function useWriter({ db, model }: UseWriterProps) {
-	const [locked, setLocked] = useState(false);
-	const [activeItemId, setActiveItemId] = useState<WriterPages>(initialActiveItemId);
+	const [isGenerating, setIsGenerating] = useState(false);
+	const [activeItemId, setActiveItemId] = useAtom(activeItemIdAtom);
 
 	// Fetch chapters from the database, sorted by index
 	const chapters = useLiveQuery(async () => {
 		const records = await db.chapters.toArray();
 		return records.sort((a, b) => a.index - b.index);
 	}, [db]);
-
-	/**
-	 * Set the active item ID and store it in local storage.
-	 * @param id - The ID of the item (or chapter) to set as active.
-	 * @returns A promise that resolves when the item is set as active.
-	 */
-	const selectItem = (id: WriterPages) => {
-		localStorage.setItem('active-item-id', id);
-		setActiveItemId(id);
-	};
 
 	/**
 	 * Add a new chapter to the database.
@@ -53,8 +53,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 			id: id,
 			index: lastChapterIndex + 1,
 			title: `Chapter ${chapters?.length}`,
-			description: '',
-			content: '',
+			outline: '',
 		});
 
 		setActiveItemId(id);
@@ -77,13 +76,13 @@ export function useWriter({ db, model }: UseWriterProps) {
 	const removeChapter = async (id: string) => {
 		// Set active item to closest chapter
 		if (activeItemId === id) {
-			if (!chapters) return selectItem('templates');
+			if (!chapters) return setActiveItemId('templates');
 
 			const currentChapterIndex = chapters?.findIndex((chapter) => chapter.id === id);
 			const nextItemId = chapters?.at(currentChapterIndex + 1)?.id;
 			const previousItemId = chapters?.at(currentChapterIndex - 1)?.id;
 			const firstChapterId = chapters?.at(0)?.id;
-			selectItem(nextItemId ?? previousItemId ?? firstChapterId ?? 'templates');
+			setActiveItemId(nextItemId ?? previousItemId ?? firstChapterId ?? 'templates');
 		}
 
 		await db.chapters.delete(id);
@@ -106,35 +105,96 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * @param template - The template name to apply.
 	 */
 	const applyTemplate = async (template: WriterTemplatesType) => {
+		setIsGenerating(true);
+
+		const abortController = new AbortController();
 		let applyPromise: Promise<void> | null = null;
 
 		if (template === 'readme') applyPromise = applyReadmeTemplate(db);
-		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model);
+		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, abortController.signal);
 
 		if (applyPromise) {
 			toast.promise(applyPromise, {
 				loading: 'Applying template...',
+				closeButton: false,
 				success: () => {
-					selectItem('templates');
-					return 'Template applied successfully!';
+					setActiveItemId('templates');
+					return `Template "${template}" applied successfully!`;
 				},
-
 				error: (error) => {
-					return `Error applying template: ${error}`;
+					console.error('Error applying template:', error);
+					return `Error applying template: ${error?.error?.message || error?.error || error}`;
 				},
+				onDismiss: () => {
+					abortController.abort();
+				},
+				finally: () => {
+					setIsGenerating(false);
+				}
 			});
 		}
 	};
 
+	/**
+	 * Generate documentation based on the chapters and configuration.
+	 * @param config - The configuration for generation.
+	 */
+	const generate = async (config: WriterGenerateConfig) => {
+		const generationId = crypto.randomUUID() as string;
+		setIsGenerating(true);
+
+		try {
+			const [codebase] = await db.codebases.toArray();
+			if (!codebase) {
+				toast.error('No codebase found. Please add a codebase first.');
+				return;
+			}
+
+			for (const chapter of chapters ?? []) {
+				const { text } = await generateText({
+					model,
+					messages: [
+						{
+							role: 'system',
+							content:
+								'You are a documentation generator. Analyze the provided codebase and create extensive content for the documentation pages. Use the provided template for the documentation. RESPOND WITH MARKDOWN ONLY!',
+						},
+						{ role: 'user', content: codebase.prompt },
+						{ role: 'user', content: chapter.outline },
+					],
+				});
+	
+				const fileName = chapter.title.trim().endsWith('.md')
+					? chapter.title.trim()
+					: `${chapter.title.trim()}.md`;
+
+				await db.generated.add({
+					id: crypto.randomUUID() as string,
+					chapterId: chapter.id,
+					generationId: generationId,
+					createdAt: new Date(),
+					fileName,
+					content: text,
+				});
+			}
+	
+	
+			console.log(createTOCPrompt(chapters ?? []));
+		} finally {
+			setIsGenerating(false);
+		}
+	}
+
 	return {
-		selectItem,
-		activeItemId,
+		isGenerating,
 		setActiveItemId,
+		activeItemId,
 		chapters,
 		addChapter,
 		updateChapter,
 		removeChapter,
 		reorderChapters,
+		generate,
 		applyTemplate,
 	};
 }

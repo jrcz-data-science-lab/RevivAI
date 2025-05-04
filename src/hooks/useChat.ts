@@ -46,12 +46,11 @@ export function useChat({ db, model }: UseChatProps) {
 	const setContextSize = useSetAtom(contextSizeAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
-	const codebase = useLiveQuery(() => {
-		return db.codebases.orderBy('createdAt').last();
-	}, [db]);
-
+	// Codebase prompt
+	const codebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
 	const codebasePrompt = useMemo(() => codebase?.prompt ?? '', [codebase]);
 
+	// Tokens count for the codebase
 	const codebaseTokens = useMemo(() => {
 		if (!codebase) return 0;
 		return codebase.metadata.totalTokens ?? countTokens(codebase.prompt);
@@ -125,8 +124,8 @@ export function useChat({ db, model }: UseChatProps) {
 
 			// Prepare message history
 			const messages: CoreMessage[] = [
-				{ role: 'system', content: codebasePrompt },
 				{ role: 'system', content: chatSystemPrompt },
+				{ role: 'system', content: codebasePrompt },
 				...chatHistory,
 				{ role: 'user', content: text },
 			];

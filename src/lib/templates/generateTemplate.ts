@@ -1,24 +1,30 @@
 import type { Database } from '@/hooks/useDb';
-import { streamObject, type LanguageModelV1 } from 'ai';
+import { generateText, streamObject, type LanguageModelV1 } from 'ai';
 import { chapterSchema } from '../schemas';
 import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw';
 
-export async function applyGenerateTemplate(db: Database, model: LanguageModelV1) {
+// IDEA: Run first time, ask llm to generate topics worth documenting. Then run again with the generated topics.
+
+/**
+ * Generates a template for the documentation based on the codebase.
+ * @param db - The database instance.
+ * @param model - The language model instance.
+ * @param abortSignal - The abort signal to cancel the operation.
+ * @returns A promise that resolves when the template is applied.
+ */
+export async function applyGenerateTemplate(db: Database, model: LanguageModelV1, abortSignal: AbortSignal) {
 	const codebase = await db.codebases.orderBy('createdAt').last();
 	if (!codebase) return;
+
 
 	const { elementStream } = streamObject({
 		model,
 		output: 'array',
 		schema: chapterSchema,
+		abortSignal: abortSignal,
 		messages: [
 			{ role: 'system', content: WriterGenerateStructure },
-			{ role: 'system', content: codebase.prompt },
-			{
-				role: 'user',
-				content:
-					'Analyze this codebase, and provide list of possible documentation chapters for this repository. No more than 10 chapters.',
-			},
+			{ role: 'user', content: codebase.prompt },
 		],
 		onError: (error) => {
 			console.error('Error generating template:', error);
@@ -33,16 +39,17 @@ export async function applyGenerateTemplate(db: Database, model: LanguageModelV1
 	// Create new chapters
 	let counter = 0;
 	for await (const object of elementStream) {
-		console.log('Generated object:', object);
+		if (abortSignal.aborted) break;
+
 		await db.chapters.add({
 			id: crypto.randomUUID() as string,
 			index: counter++,
 			title: object.title,
-			description: object.content,
-			content: '',
+			outline: object.outline,
 		});
 	}
 
 	// Remove all old chapters
+	if (abortSignal.aborted) return;
 	await db.chapters.bulkDelete(oldChaptersIds);
 }

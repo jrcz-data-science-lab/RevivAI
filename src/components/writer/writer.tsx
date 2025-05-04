@@ -1,13 +1,13 @@
 import type { Database } from '@/hooks/useDb';
+import type { LanguageModelV1 } from 'ai';
 import { motion } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import { WriterSidebar } from './writer-sidebar';
 import { WriterEditor } from './writer-editor';
-import { WriterExport } from './writer-export';
-import type { LanguageModelV1 } from 'ai';
+import { WriterGenerate } from './writer-generate';
 import { WriterTemplates } from './writer-templates';
-import { useWriter, type WriterPages } from '@/hooks/useWriter';
+import { useWriter, type WriterItemId } from '@/hooks/useWriter';
 
 interface WriterProps {
 	db: Database;
@@ -19,9 +19,11 @@ interface WriterProps {
  */
 export function Writer({ db, model }: WriterProps) {
 	const {
+		isGenerating,
 		chapters,
+		generate,
 		activeItemId,
-		selectItem,
+		setActiveItemId,
 		removeChapter,
 		reorderChapters,
 		addChapter,
@@ -34,17 +36,16 @@ export function Writer({ db, model }: WriterProps) {
 	 * @param id - The ID of the active item (or chapter).
 	 * @returns The rendered component for the active item.
 	 */
-	const renderActiveItem = (id: WriterPages) => {
-		if (id === 'export') return <WriterExport />;
-		if (id === 'templates') return <WriterTemplates onTemplateApply={applyTemplate} />;
-		if (id === 'settings') return <div>Settings</div>;
+	const renderActiveItem = (id: WriterItemId) => {
+		if (id === 'generate') return <WriterGenerate db={db} model={model} isLoading={isGenerating} onGenerate={generate} />;
+		if (id === 'templates') return <WriterTemplates isLoading={isGenerating} onTemplateApply={applyTemplate} />;
 
 		// If chapters loaded
 		if (Array.isArray(chapters)) {
 			const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
 			if (!chapter) {
 				const chapterToSelect = chapters?.at(0)?.id ?? 'templates';
-				selectItem(chapterToSelect);
+				setActiveItemId(chapterToSelect);
 				return;
 			}
 
@@ -59,7 +60,7 @@ export function Writer({ db, model }: WriterProps) {
 					<WriterSidebar
 						chapters={chapters}
 						activeItemId={activeItemId}
-						onSelect={selectItem}
+						onSelect={setActiveItemId}
 						onReorder={reorderChapters}
 						onRemoveChapter={removeChapter}
 					/>

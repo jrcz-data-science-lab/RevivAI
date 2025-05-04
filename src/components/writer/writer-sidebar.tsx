@@ -1,14 +1,15 @@
 import { AnimatePresence, motion, Reorder } from 'motion/react';
-import { Download, FileText, LibraryBig, Settings } from 'lucide-react';
+import { Download, FileText, LibraryBig, Settings, Sparkles } from 'lucide-react';
 import { WriterSidebarItem } from './writer-sidebar-item';
 import type { Chapter } from '@/hooks/useDb';
+import type { WriterItemId } from '@/hooks/useWriter';
 
 interface WriterSidebarProps {
-	activeItemId: string | undefined;
+	activeItemId: WriterItemId | undefined;
 	chapters: Chapter[] | undefined;
-	onSelect: (id: string) => void;
+	onSelect: (id: WriterItemId) => void;
 	onReorder: (newOrder: Chapter[]) => void;
-	onRemoveChapter: (id: string) => void;
+	onRemoveChapter: (id: WriterItemId) => void;
 }
 
 /**
@@ -24,28 +25,16 @@ export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onR
 			<div className="flex flex-col flex-none text-muted-foreground py-3">
 				<div className="flex flex-col px-6">
 					<WriterSidebarItem
-						icon={Download}
+						icon={Sparkles}
 						title={'Generate'}
-						active={activeItemId === 'export'}
-						onClick={() => onSelect('export')}
+						active={activeItemId === 'generate'}
+						onClick={() => onSelect('generate')}
 					/>
 					<WriterSidebarItem
 						icon={LibraryBig}
 						title={'Templates'}
 						active={activeItemId === 'templates'}
 						onClick={() => onSelect('templates')}
-					/>
-					<WriterSidebarItem
-						icon={Download}
-						title={'Export'}
-						active={activeItemId === 'export'}
-						onClick={() => onSelect('export')}
-					/>
-					<WriterSidebarItem
-						icon={Settings}
-						title={'Settings'}
-						active={activeItemId === 'settings'}
-						onClick={() => onSelect('settings')}
 					/>
 				</div>
 			</div>

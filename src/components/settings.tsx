@@ -27,7 +27,7 @@ function Settings() {
 					<div className="flex justify-between gap-4 items-center">
 						<div className="max-w-2/3">
 							<Label>Language</Label>
-							<p className="text-sm text-muted-foreground">
+							<p className="text-muted-foreground">
 								Used by LLM to write chat responses and documentation in a specified language.
 							</p>
 						</div>
@@ -53,7 +53,7 @@ function Settings() {
 					<div className="flex justify-between gap-4 items-center">
 						<div className="max-w-2/3">
 							<Label>Change Model</Label>
-							<p className="text-sm text-muted-foreground">
+							<p className="text-muted-foreground">
 								Change the LLM AI provider, used by RevivAI. Can be done on the starting setup screen.{' '}
 							</p>
 						</div>
@@ -68,7 +68,7 @@ function Settings() {
 					<div className="flex justify-between gap-4 items-center">
 						<div className="max-w-2/3">
 							<Label>Delete Project</Label>
-							<p className="text-sm text-muted-foreground">Delete all information about current project.</p>
+							<p className="text-muted-foreground">Delete all information about current project.</p>
 						</div>
 
 						<Button variant="destructive" size="sm">

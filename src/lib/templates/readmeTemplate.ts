@@ -14,6 +14,11 @@ Instructions for contributing to the project.
 The license under which the project is distributed.
 `;
 
+/**
+ * Applies a README template to the database.
+ * @param db - The database instance.
+ * @returns A promise that resolves when the template is applied.
+ */
 export async function applyReadmeTemplate(db: Database) {
 	await db.chapters.clear();
 
@@ -21,7 +26,6 @@ export async function applyReadmeTemplate(db: Database) {
 		id: crypto.randomUUID() as string,
 		index: 0,
 		title: 'README',
-		description: description,
-		content: '',
+		outline: description,
 	});
 }

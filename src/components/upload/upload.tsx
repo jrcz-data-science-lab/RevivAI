@@ -1,22 +1,25 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { FolderUp } from 'lucide-react';
 import { useDb, type Codebase } from '@/hooks/useDb';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Card } from '../ui/card';
 import { UploadForm, type UploadFormSchema } from './upload-form';
 import type { PromptifyResult } from '@/actions/promptify';
 import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
-import { toast } from 'sonner';
 import { UploadCodebase } from './upload-codebase';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 export function Upload() {
 	const projectId = useAtomValue(currentProjectIdAtom) as string;
-	const { db, currentCodebase } = useDb(projectId);
+	const { db } = useDb(projectId);
 
 	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>();
 	const [isOpen, setIsOpen] = useState(false);
+	
+	// Get current active codebase
+	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
 
 	const addCodebase = async (data: PromptifyResult, form: UploadFormSchema) => {
 		if (!data) return;
