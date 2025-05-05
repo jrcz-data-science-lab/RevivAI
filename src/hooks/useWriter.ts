@@ -9,6 +9,7 @@ import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/generate';
+import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 
 export interface UseWriterProps {
 	db: Database;
@@ -130,7 +131,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 				},
 				finally: () => {
 					setIsGenerating(false);
-				}
+				},
 			});
 		}
 	};
@@ -154,19 +155,13 @@ export function useWriter({ db, model }: UseWriterProps) {
 				const { text } = await generateText({
 					model,
 					messages: [
-						{
-							role: 'system',
-							content:
-								'You are a documentation generator. Analyze the provided codebase and create extensive content for the documentation pages. Use the provided template for the documentation. RESPOND WITH MARKDOWN ONLY!',
-						},
+						{ role: 'system', content: writerSystemPrompt },
 						{ role: 'user', content: codebase.prompt },
 						{ role: 'user', content: chapter.outline },
 					],
 				});
-	
-				const fileName = chapter.title.trim().endsWith('.md')
-					? chapter.title.trim()
-					: `${chapter.title.trim()}.md`;
+
+				const fileName = chapter.title.trim().endsWith('.md') ? chapter.title.trim() : `${chapter.title.trim()}.md`;
 
 				await db.generated.add({
 					id: crypto.randomUUID() as string,
@@ -177,13 +172,12 @@ export function useWriter({ db, model }: UseWriterProps) {
 					content: text,
 				});
 			}
-	
-	
+
 			console.log(createTOCPrompt(chapters ?? []));
 		} finally {
 			setIsGenerating(false);
 		}
-	}
+	};
 
 	return {
 		isGenerating,

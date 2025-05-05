@@ -125,12 +125,10 @@ export function useChat({ db, model }: UseChatProps) {
 			// Prepare message history
 			const messages: CoreMessage[] = [
 				{ role: 'system', content: chatSystemPrompt },
-				{ role: 'system', content: codebasePrompt },
+				{ role: 'user', content: codebasePrompt },
 				...chatHistory,
 				{ role: 'user', content: text },
 			];
-
-			console.log('Prompting AI with messages:', messages);
 
 			// Calculate new context size
 			setContextSize((prev) => prev + countTokens(text));

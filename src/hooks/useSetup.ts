@@ -13,9 +13,9 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 		case 'revivai':
 			return {
 				provider: 'revivai',
-				baseUrl: import.meta.env.PUBLIC_LLM_API_URL,
-				apiKey: import.meta.env.PUBLIC_LLM_API_KEY,
-				model: import.meta.env.PUBLIC_LLM_API_MODEL,
+				baseUrl: import.meta.env.PUBLIC_OLLAMA_API_URL,
+				apiKey: 'ollama',
+				model: import.meta.env.PUBLIC_OLLAMA_API_MODEL,
 			};
 
 		case 'openrouter':
@@ -37,7 +37,7 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 		case 'openai':
 			return {
 				provider: 'openai',
-				model: 'gpt-4.1',
+				model: 'gpt-4o-mini',
 				baseUrl: 'https://api.openai.com/v1',
 				apiKey: '',
 			};
@@ -65,7 +65,7 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
  */
 export function useSetup() {
 	const defaultCredentials: LLMCredentials = getDefaultCredentials(
-		import.meta.env.PUBLIC_LLM_API_URL ? 'revivai' : 'openai',
+		import.meta.env.PUBLIC_OLLAMA_API_URL ? 'revivai' : 'openai',
 	);
 	const { credentials, setCredentials } = useModel();
 
@@ -88,6 +88,8 @@ export function useSetup() {
 
 		try {
 			const model = createModel(credentialsForm);
+			console.log(model);
+
 			const { object } = await generateObject({
 				model: model,
 				schema: testSchema,

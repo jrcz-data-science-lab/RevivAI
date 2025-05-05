@@ -5,6 +5,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { createOllama } from 'ollama-ai-provider';
 
 // LLM provider types
 export type LLMProvider = 'revivai' | 'openrouter' | 'anthropic' | 'openai' | 'google' | 'custom';
@@ -59,7 +60,13 @@ export function createModel(credentials: LLMCredentials) {
 				apiKey: credentials?.apiKey,
 			})(credentials.model);
 
-		// RevivAI, OpenAI and Custom providers
+		// Ollama for RevivAI
+		case 'revivai':
+			return createOllama({
+				baseURL: import.meta.env.PUBLIC_OLLAMA_API_URL,
+			})(import.meta.env.PUBLIC_OLLAMA_API_MODEL);
+
+		// OpenAI and Custom OpenAI Like providers
 		default:
 			return createOpenAI({
 				baseURL: credentials?.baseUrl,

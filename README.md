@@ -42,9 +42,8 @@ To set up RevivAI locally, follow these steps:
 3. **Environment Variables**:
    Create a `.env` file in the root directory and add the following variables:
    ```env
-   PUBLIC_LLM_API_URL=your_llm_api_url
-   PUBLIC_LLM_API_KEY=your_llm_api_key
-   PUBLIC_LLM_API_MODEL=your_llm_model
+   PUBLIC_OLLAMA_API_URL=your_llm_api_url
+   PUBLIC_OLLAMA_API_MODEL=your_llm_model
    ```
 
 4. **Run the Application**:

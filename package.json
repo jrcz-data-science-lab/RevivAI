@@ -57,6 +57,7 @@
 		"lucide-react": "^0.475.0",
 		"mermaid": "^11.4.1",
 		"motion": "^12.4.3",
+		"ollama-ai-provider": "^1.2.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-hook-form": "^7.55.0",

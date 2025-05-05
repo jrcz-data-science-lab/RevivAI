@@ -9,7 +9,7 @@ import { SetupBanner } from './setup-banner';
 import { LoaderCircle } from 'lucide-react';
 import { useSetup } from '@/hooks/useSetup';
 
-const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_LLM_API_URL;
+const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
 
 export function Setup() {
 	const { submit, credentialsForm, handleProviderChange, isTesting, setCredentialsForm, validate } = useSetup();
