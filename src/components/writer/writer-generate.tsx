@@ -62,7 +62,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 			</div>
 
 			<div className="space-y-4">
-				<div className="flex justify-between items-center border p-4 rounded-md">
+				<div className="flex justify-between items-center border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Entry File</Label>
 						<p className="text-md text-muted-foreground">
@@ -87,7 +87,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					</Select>
 				</div>
 
-				<div className="flex justify-between items-center border p-4 rounded-md">
+				<div className="flex justify-between border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Generate Diagrams</Label>
 						<p className="text-md text-muted-foreground">

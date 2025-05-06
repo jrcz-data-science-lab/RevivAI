@@ -1,7 +1,7 @@
 import type { Database } from '@/hooks/useDb';
 import { generateText, streamObject, type LanguageModelV1 } from 'ai';
 import { chapterSchema } from '../schemas';
-import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?raw';
+import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
 
 // IDEA: Run first time, ask llm to generate topics worth documenting. Then run again with the generated topics.
 
@@ -15,7 +15,6 @@ import WriterGenerateStructure from '@/lib/prompts/writer-generate-structure.md?
 export async function applyGenerateTemplate(db: Database, model: LanguageModelV1, abortSignal: AbortSignal) {
 	const codebase = await db.codebases.orderBy('createdAt').last();
 	if (!codebase) return;
-
 
 	const { elementStream } = streamObject({
 		model,

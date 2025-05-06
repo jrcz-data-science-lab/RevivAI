@@ -37,7 +37,7 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 		case 'openai':
 			return {
 				provider: 'openai',
-				model: 'gpt-4o-mini',
+				model: 'gpt-4.1-mini',
 				baseUrl: 'https://api.openai.com/v1',
 				apiKey: '',
 			};
