@@ -44,7 +44,7 @@ export function WriterTemplatesItem({ icon: Icon, color, title, description, isD
 			)}
 		>
 			<Card className={cn('relative w-full px-6 flex justify-between', variants[color])}>
-				<div className="ml-auto group-hover:scale-125 transition-all duration-200">
+				<div className="ml-auto mb-4 group-hover:scale-125 transition-all duration-200">
 					<Icon />
 				</div>
 

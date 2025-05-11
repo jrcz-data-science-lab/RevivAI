@@ -4,8 +4,6 @@ import { WriterTemplatesItem } from './writer-templates-item';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import type { Database } from '@/hooks/useDb';
-import { generateObject } from 'ai';
 
 export type WriterTemplatesType = 'readme' | 'game' | 'api-reference' | 'generate';
 

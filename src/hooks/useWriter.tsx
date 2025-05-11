@@ -10,7 +10,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/generate';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
-import { useSettings } from './useSettings';
+import { Button } from '@/components/ui/button';
 
 export interface UseWriterProps {
 	db: Database;
@@ -115,14 +115,26 @@ export function useWriter({ db, model }: UseWriterProps) {
 		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, abortController.signal);
 
 		if (applyPromise) {
+			const abort = () => {
+				abortController.abort();
+				setIsGenerating(false);
+				toast.dismiss();
+			};
+
 			toast.promise(applyPromise, {
 				loading: 'Applying template...',
 				closeButton: false,
+				action: (
+					<Button size="sm" variant='outline' className="ml-auto" onClick={abort}>
+						Cancel
+					</Button>
+				),
 				success: () => {
 					setActiveItemId('templates');
 					return `Template "${template}" applied successfully!`;
 				},
 				error: (error) => {
+					if (abortController.signal.aborted) return 'Template application aborted';
 					console.error('Error applying template:', error);
 					return `Error applying template: ${error?.error?.message || error?.error || error}`;
 				},
@@ -141,7 +153,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * @param config - The configuration for generation.
 	 */
 	const generate = async (config: WriterGenerateConfig) => {
-		const generationId = crypto.randomUUID() as string;
+		const exportId = crypto.randomUUID() as string;
 		setIsGenerating(true);
 
 		try {
@@ -151,29 +163,53 @@ export function useWriter({ db, model }: UseWriterProps) {
 				return;
 			}
 
+			// Initiate export, create files for each chapter
 			for (const chapter of chapters ?? []) {
+				const id = crypto.randomUUID() as string;
+
+				const chapterTitle = chapter.title.trim();
+				const fileName = chapterTitle.endsWith('.md') ? chapterTitle : `${chapterTitle}.md`;
+
+				await db.generated.add({
+					id: id,
+					exportId: exportId,
+					chapterId: chapter.id,
+					status: 'pending',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					fileName,
+					content: '',
+				});
+			}
+
+			// Create table of contents prompt
+			const toc = createTOCPrompt(chapters ?? []);
+			
+			// Get 'pending' saved files from database
+			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
+
+			for (const file of generatedFiles) {
+				const chapter = chapters?.find((chapter) => chapter.id === file.chapterId);
+				if (!chapter) continue;
+
 				const { text } = await generateText({
 					model,
 					messages: [
 						{ role: 'system', content: writerSystemPrompt },
+						{ role: 'user', content: toc },
 						{ role: 'user', content: codebase.prompt },
 						{ role: 'user', content: chapter.outline },
 					],
 				});
 
-				const fileName = chapter.title.trim().endsWith('.md') ? chapter.title.trim() : `${chapter.title.trim()}.md`;
-
-				await db.generated.add({
-					id: crypto.randomUUID() as string,
-					chapterId: chapter.id,
-					generationId: generationId,
-					createdAt: new Date(),
-					fileName,
+				await db.generated.update(file.id, {
+					status: 'completed',
+					updatedAt: new Date(),
 					content: text,
 				});
 			}
 
-			console.log(createTOCPrompt(chapters ?? []));
+			console.log(toc);
 		} finally {
 			setIsGenerating(false);
 		}

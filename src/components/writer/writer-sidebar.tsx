@@ -40,7 +40,7 @@ export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onR
 			</div>
 
 			<div className="flex flex-col flex-1 overflow-hidden relative">
-				<div className="px-6 pt-6 pb-1.5 text-muted-foreground text-xs flex-none">Table of Contents</div>
+				<div className="px-6 pt-6 pb-1.5 text-muted-foreground text-xs flex-none uppercase">Table of Contents</div>
 
 				<div className="flex-1 overflow-y-auto px-6 pb-16">
 					{Array.isArray(chapters) && (

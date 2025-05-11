@@ -1,11 +1,7 @@
 import { downloadFile } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { zipSync, strToU8 } from 'fflate';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { LoaderCircle, Sparkles } from 'lucide-react';
-import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import type { WriterGenerateConfig } from '@/hooks/useWriter';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
@@ -13,6 +9,7 @@ import { atomWithStorage } from 'jotai/utils';
 import type { Database } from '@/hooks/useDb';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { LanguageModelV1 } from 'ai';
+import { WriterGenerateExports } from './writer-generate-exports';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -32,22 +29,18 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 	const [config, setConfig] = useAtom(generateConfigAtom);
 
 	// Get all generated content
-	const generated = useLiveQuery(() => db.generated.toArray(), [db]);
-	
-	// Get unique generation IDs
-	const generationsIds = useLiveQuery(async () => {
-		const generationIds = generated?.map((item) => item.generationId);
-		return [...new Set(generationIds)];
-	}, [db, generated]);
+	const generatedFiles = useLiveQuery(() => db.generated.toArray(), [db]);
 
-
-	const downloadGeneration = async (generationId: string) => {
-		const generated = await db.generated.where('generationId').equals(generationId).toArray();
+	/**
+	 * Download the generated export as a zip file.
+	 */
+	const downloadExport = async (exportId: string) => {
+		const generated = await db.generated.where('exportId').equals(exportId).toArray();
 		if (!generated) return;
 
 		const archiveStructure: Record<string, Uint8Array> = {};
 		for (const item of generated) {
-			archiveStructure[item.fileName] = strToU8(item.content);
+			archiveStructure[item.fileName.trim()] = strToU8(item.content);
 		}
 
 		const archiveName = 'documentation.zip';
@@ -57,9 +50,16 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		downloadFile(archiveName, blob);
 	};
 
-	const deleteGeneration = async (generationId: string) => {
-		await db.generated.where('generationId').equals(generationId).delete();
+	/**
+	 * Delete the generated export from the database.
+	 * @param exportId - The ID of the export to delete.
+	 */
+	const deleteExport = async (exportId: string) => {
+		await db.generated.where('exportId').equals(exportId).delete();
 	};
+
+	// Check if there are any generated files
+	const hasExports = generatedFiles && generatedFiles.length > 0;
 
 	return (
 		<div className="space-y-8">
@@ -97,35 +97,13 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					</Select>
 				</div> */}
 
-				<div className="flex flex-col border rounded-md">
-					{generationsIds?.map((generationId) => {
-						const generation = generated?.find((item) => item.generationId === generationId);
-						if (!generation) return null;
-
-						return (
-							<div
-								key={generationId}
-								className="flex justify-between items-center p-4 border-border border-b:last-none"
-							>
-								<div className="flex flex-col">
-									<span className="text-md font-medium">{generation.fileName}</span>
-									<span className="text-xs text-muted-foreground">{generation.createdAt.toLocaleString()}</span>
-								</div>
-
-								<div className="flex gap-2">
-									<Button size="sm" variant="outline" onClick={() => downloadGeneration(generationId)}>
-										Download
-									</Button>
-									<Button variant="outline" size="sm" onClick={() => deleteGeneration(generationId)}>
-										Delete
-									</Button>
-								</div>
-							</div>
-						);
-					}
+				{hasExports && (
+					<WriterGenerateExports
+						generatedFiles={generatedFiles}
+						onDelete={(id) => deleteExport(id)}
+						onDownload={(id) => downloadExport(id)}
+					/>
 				)}
-
-				</div>
 			</div>
 
 			<div className="flex flex-col gap-4">

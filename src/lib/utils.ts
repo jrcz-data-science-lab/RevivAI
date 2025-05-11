@@ -1,3 +1,4 @@
+import type { Chapter } from '@/hooks/useDb';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -7,6 +8,21 @@ import { twMerge } from 'tailwind-merge';
  */
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
+}
+
+/**
+ * Create a table of contents prompt for the given chapters.
+ * @param chapters The list of chapters.
+ * @returns The table of contents prompt.
+ */
+export function createTOCPrompt(chapters: Chapter[]) {
+	const toc = chapters.map((chapter) => {
+		const title = chapter.title.trim();
+		const fileName = `./${title}.md`;
+		return `- [${title}](${fileName})`;
+	});
+
+	return `# Table of Contents\n\n${toc.join('\n')}`;
 }
 
 /**

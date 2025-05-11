@@ -24,11 +24,15 @@ export interface Codebase {
 	metadata: PackResult;
 }
 
+export type GeneratedFileStatus = 'pending' | 'completed' | 'failed';
+
 export interface GeneratedFile {
 	id: string;
-	generationId: string;
+	exportId: string;
 	chapterId: string;
+	status: GeneratedFileStatus;
 	createdAt: Date;
+	updatedAt: Date;
 	fileName: string;
 	content: string;
 }
@@ -52,7 +56,7 @@ export function createDatabase(projectId: string) {
 	db.version(1).stores({
 		chapters: '++id, index',
 		codebases: '++id, createdAt',
-		generated: '++id, chapterId, generationId, fileName',
+		generated: '++id, chapterId, exportId, fileName',
 	});
 
 	return db;
