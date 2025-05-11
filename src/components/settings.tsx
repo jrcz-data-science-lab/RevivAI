@@ -6,9 +6,11 @@ import { Label } from './ui/label';
 import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useSettings, type Language } from '@/hooks/useSettings';
 
 function Settings() {
 	const projectId = useAtomValue(currentProjectIdAtom);
+	const { settings, setLanguage } = useSettings();
 
 	return (
 		<Dialog>
@@ -24,7 +26,7 @@ function Settings() {
 				</DialogHeader>
 
 				<div className="space-y-6 mt-4">
-					<div className="flex justify-between gap-4 items-center">
+					<div className="flex justify-between gap-4">
 						<div className="max-w-2/3">
 							<Label>Language</Label>
 							<p className="text-muted-foreground">
@@ -32,25 +34,21 @@ function Settings() {
 							</p>
 						</div>
 
-						<Select value="english" onValueChange={(value) => console.log(value)}>
+						<Select value={settings.language} onValueChange={(value) => setLanguage(value as Language)}>
 							<SelectTrigger className="w-fit">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="english">English</SelectItem>
-								<SelectItem value="dutch">Dutch</SelectItem>
-								<SelectItem value="french">French</SelectItem>
-								<SelectItem value="german">German</SelectItem>
-								<SelectItem value="italian">Italian</SelectItem>
-								<SelectItem value="japanese">Japanese</SelectItem>
-								<SelectItem value="russian">Russian</SelectItem>
-								<SelectItem value="polish">Polish</SelectItem>
-								<SelectItem value="latvian">Latvian</SelectItem>
+								<SelectItem value="en">English</SelectItem>
+								<SelectItem value="nl">Dutch</SelectItem>
+								<SelectItem value="ru">Russian</SelectItem>
+								<SelectItem value="lv">Latvian</SelectItem>
+								<SelectItem value="la">Latin</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
 
-					<div className="flex justify-between gap-4 items-center">
+					<div className="flex justify-between gap-4">
 						<div className="max-w-2/3">
 							<Label>Change Model</Label>
 							<p className="text-muted-foreground">
@@ -65,7 +63,7 @@ function Settings() {
 						</a>
 					</div>
 
-					<div className="flex justify-between gap-4 items-center">
+					<div className="flex justify-between gap-4">
 						<div className="max-w-2/3">
 							<Label>Delete Project</Label>
 							<p className="text-muted-foreground">Delete all information about current project.</p>

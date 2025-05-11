@@ -18,7 +18,6 @@ interface ChatMessageProps {
 	isWriting: boolean;
 }
 
-// TODO: Disable initial animation of messages on mount
 // TODO: Light mode for chat messages
 
 /**
@@ -31,8 +30,8 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 	return (
 		<motion.div
-			initial={isWriting ? { opacity: 0, scale: 1.1, translateY: 16 } : {}}
-			animate={{ opacity: 1, scale: 1, translateY: 0 }}
+			initial={isWriting ? { opacity: 0, translateY: 16 } : {}}
+			animate={{ opacity: 1, translateY: 0 }}
 			transition={{ duration: 0.3, type: 'tween' }}
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>

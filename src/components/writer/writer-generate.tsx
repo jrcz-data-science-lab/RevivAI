@@ -22,7 +22,6 @@ interface WriterGenerateProps {
 }
 
 const generateConfigAtom = atomWithStorage<WriterGenerateConfig>('generate-config', {
-	entry: 'readme',
 	diagrams: 'mermaid',
 });
 
@@ -62,31 +61,6 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 			</div>
 
 			<div className="space-y-4">
-				<div className="flex justify-between items-center border p-4 gap-6 rounded-md">
-					<div>
-						<Label className="text-md">Entry File</Label>
-						<p className="text-md text-muted-foreground">
-							Generate README file as an entry point, containing short description and table of contents. Disabled if
-							README provided.
-						</p>
-					</div>
-
-					<Select
-						value={config.entry}
-						onValueChange={(value) => setConfig({ ...config, entry: value as WriterGenerateConfig['entry'] })}
-					>
-						<SelectTrigger className="w-32">
-							<SelectValue placeholder="Entry file" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="readme" className="font-mono">
-								README.md
-							</SelectItem>
-							<SelectItem value="none">None</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
-
 				<div className="flex justify-between border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Generate Diagrams</Label>
@@ -111,13 +85,13 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					</Select>
 				</div>
 			</div>
-
-			{/* <div className="w-full border border-border rounded-md">
+{/* 
+			<div className="w-full border border-border rounded-md">
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead className="w-[100px]">Invoice</TableHead>
-							<TableHead>Status</TableHead>
+							<TableHead className="w-[100px]">Id</TableHead>
+							<TableHead>Date</TableHead>
 							<TableHead>Method</TableHead>
 							<TableHead className="text-right">Amount</TableHead>
 						</TableRow>
@@ -125,7 +99,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					<TableBody>
 						<TableRow>
 							<TableCell className="font-medium">INV001</TableCell>
-							<TableCell>Paid</TableCell>
+							<TableCell>6 May 2025</TableCell>
 							<TableCell>Credit Card</TableCell>
 							<TableCell className="text-right">$250.00</TableCell>
 						</TableRow>

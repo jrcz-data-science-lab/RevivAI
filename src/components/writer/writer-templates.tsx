@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import type { Database } from '@/hooks/useDb';
 import { generateObject } from 'ai';
 
-export type WriterTemplatesType = 'readme' | 'game' | 'documentation' | 'api-reference' | 'generate';
+export type WriterTemplatesType = 'readme' | 'game' | 'api-reference' | 'generate';
 
 interface WriterTemplatesProps {
 	isLoading: boolean;
@@ -39,16 +39,14 @@ export function WriterTemplates({ isLoading, onTemplateApply }: WriterTemplatesP
 			</div>
 
 			<div className="grid grid-cols-2 gap-4 items-start w-full">
-				<div className="w-full col-span-2">
-					<WriterTemplatesItem
-						icon={Brain}
-						color="slate"
-						title="Generate Template"
-						isDisabled={isLoading}
-						onClick={() => onTemplateSelect('generate')}
-						description="Use AI to generate documentation structure for your project. Result may vary!"
-					/>
-				</div>
+				<WriterTemplatesItem
+					icon={Brain}
+					color="gray"
+					title="Generate Template"
+					isDisabled={isLoading}
+					onClick={() => onTemplateSelect('generate')}
+					description="Use AI to generate documentation structure for your project. Result may vary!"
+				/>
 
 				<WriterTemplatesItem
 					icon={ScrollText}
@@ -59,20 +57,12 @@ export function WriterTemplates({ isLoading, onTemplateApply }: WriterTemplatesP
 					description="Markdown file for your repository. Perfect for open-source or small personal projects."
 				/>
 				<WriterTemplatesItem
-					icon={GraduationCap}
-					color="amber"
-					title="Documentation"
-					isDisabled={isLoading}
-					onClick={() => onTemplateSelect('documentation')}
-					description="Comprehensive documentation for your project. Ideal for larger projects or libraries."
-				/>
-				<WriterTemplatesItem
 					icon={Gamepad2}
 					color="violet"
 					title="Game Project"
 					isDisabled={isLoading}
 					onClick={() => onTemplateSelect('game')}
-					description="Documentation for projects, made with game game engines. Includes sections for gameplay, mechanics, and more. "
+					description="Documentation for projects, made with game engines. Includes sections for gameplay, mechanics, and more. "
 				/>
 				<WriterTemplatesItem
 					icon={Notebook}

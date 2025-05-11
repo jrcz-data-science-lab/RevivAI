@@ -1,18 +1,23 @@
 import { motion } from 'motion/react';
-import { Button } from '../ui/button';
 import { useProjects } from '@/hooks/useProjects';
 import { ProjectsList } from './projects-list.tsx';
 import ProjectsNew, { type ProjectNewFormSchema } from './projects-new.tsx';
 import Title from '../title.tsx';
-import Logo from '@/assets/logo.webp';
-import Navbar from '../navbar.tsx';
-import { ThemeToggle } from '../theme-toggle.tsx';
+import { useModel } from '@/hooks/useModel.ts';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
+	const { credentials } = useModel();
 
 	const createNewProject = (data: ProjectNewFormSchema) => {
 		const created = createProject({ name: data.projectName });
+		
+		// If no model specified
+		if (!credentials) {
+			window.location.href = `/setup?redirectToProject=${created.id}`;
+			return;
+		}
+
 		window.location.href = `/app/${created.id}`;
 	};
 
@@ -27,13 +32,6 @@ export function Projects() {
 			<div className="mb-12">
 				<Title />
 			</div>
-
-			{/* <div className="mb-4">
-				<h1 className="font-serif font-black text-xl mb-4">Welcome back!</h1>
-				<p className="text-sm text-muted-foreground">
-					Select project you are going to work with. You can always submit new project by clicking button below.
-				</p>
-			</div> */}
 
 			<ProjectsList projects={projects} deleteProject={deleteProject} />
 

@@ -25,16 +25,16 @@ export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onR
 			<div className="flex flex-col flex-none text-muted-foreground py-3">
 				<div className="flex flex-col px-6">
 					<WriterSidebarItem
-						icon={Sparkles}
-						title={'Generate'}
-						active={activeItemId === 'generate'}
-						onClick={() => onSelect('generate')}
-					/>
-					<WriterSidebarItem
 						icon={LibraryBig}
 						title={'Templates'}
 						active={activeItemId === 'templates'}
 						onClick={() => onSelect('templates')}
+					/>
+					<WriterSidebarItem
+						icon={Sparkles}
+						title={'Generate'}
+						active={activeItemId === 'generate'}
+						onClick={() => onSelect('generate')}
 					/>
 				</div>
 			</div>

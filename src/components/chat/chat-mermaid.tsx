@@ -1,17 +1,10 @@
-import mermaid from 'mermaid';
 import Zoom from 'react-medium-image-zoom';
 import { useEffect, useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
+import { renderMermaidCode, validateMermaidCode } from '@/lib/mermaid';
 
 // Styles for image zooming
 import '@/styles/medium-image-zoom.css';
-
-// Initialize Mermaid with default settings
-mermaid.initialize({
-	startOnLoad: true,
-	theme: 'dark',
-	darkMode: true,
-});
 
 interface ChatMermaidProps {
 	children: string;
@@ -26,10 +19,10 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 
 	useEffect(() => {
 		const renderMermaid = async (code: string) => {
-			const valid = await mermaid.parse(code, { suppressErrors: true });
+			const valid = await validateMermaidCode(code);
 			if (!valid) return;
 
-			const result = await mermaid.render(id, code);
+			const result = await renderMermaidCode(code, id);
 			setDiagramSVG(result.svg);
 		};
 

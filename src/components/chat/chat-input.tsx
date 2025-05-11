@@ -57,12 +57,15 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 						size="icon"
 						variant={isStreaming ? 'outline' : 'link'}
 						onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
-						className={cn('absolute bottom-1.5 right-1.5')}
+						className={cn(
+							'absolute bottom-1.5 right-1.5',
+							input === '' && !isStreaming && 'opacity-50 pointer-events-none cursor-default',
+						)}
 					>
 						{isStreaming ? (
 							<CircleStop />
 						) : (
-							<Send className={cn(input === '' && 'opacity-50 pointer-events-none cursor-default')} />
+							<Send />
 						)}
 					</Button>
 					<Textarea

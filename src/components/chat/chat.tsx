@@ -8,7 +8,6 @@ import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
 import type { LanguageModelV1 } from 'ai';
 import type { Database } from '@/hooks/useDb';
-import { useLiveQuery } from 'dexie-react-hooks';
 
 interface ChatProps {
 	db: Database;
@@ -16,7 +15,7 @@ interface ChatProps {
 }
 
 export function Chat({ db, model }: ChatProps) {
-	const chatContainerRef = useRef<HTMLDivElement>(null);
+	const chatContainerRef = useRef<HTMLDivElement>(null);	
 	const chat = useChat({ db, model });
 
 	const scrollToLastMessage = (behavior: ScrollBehavior) => {

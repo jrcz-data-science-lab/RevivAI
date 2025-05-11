@@ -10,6 +10,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/generate';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
+import { useSettings } from './useSettings';
 
 export interface UseWriterProps {
 	db: Database;
@@ -21,7 +22,6 @@ export type WriterItemId = 'generate' | 'templates' | string;
 
 // Config for documentation generation
 export interface WriterGenerateConfig {
-	entry: 'readme' | 'none';
 	diagrams: 'none' | 'mermaid' | 'svg';
 }
 
