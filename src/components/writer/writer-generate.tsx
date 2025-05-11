@@ -31,10 +31,18 @@ const generateConfigAtom = atomWithStorage<WriterGenerateConfig>('generate-confi
 export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGenerateProps) {
 	const [config, setConfig] = useAtom(generateConfigAtom);
 
+	// Get all generated content
 	const generated = useLiveQuery(() => db.generated.toArray(), [db]);
+	
+	// Get unique generation IDs
+	const generationsIds = useLiveQuery(async () => {
+		const generationIds = generated?.map((item) => item.generationId);
+		return [...new Set(generationIds)];
+	}, [db, generated]);
 
-	const createArchive = async () => {
-		const generated = await db.generated.toArray();
+
+	const downloadGeneration = async (generationId: string) => {
+		const generated = await db.generated.where('generationId').equals(generationId).toArray();
 		if (!generated) return;
 
 		const archiveStructure: Record<string, Uint8Array> = {};
@@ -49,6 +57,10 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		downloadFile(archiveName, blob);
 	};
 
+	const deleteGeneration = async (generationId: string) => {
+		await db.generated.where('generationId').equals(generationId).delete();
+	};
+
 	return (
 		<div className="space-y-8">
 			<div>
@@ -61,7 +73,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 			</div>
 
 			<div className="space-y-4">
-				<div className="flex justify-between border p-4 gap-6 rounded-md">
+				{/* <div className="flex justify-between border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Generate Diagrams</Label>
 						<p className="text-md text-muted-foreground">
@@ -83,29 +95,38 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 							<SelectItem value="none">None</SelectItem>
 						</SelectContent>
 					</Select>
+				</div> */}
+
+				<div className="flex flex-col border rounded-md">
+					{generationsIds?.map((generationId) => {
+						const generation = generated?.find((item) => item.generationId === generationId);
+						if (!generation) return null;
+
+						return (
+							<div
+								key={generationId}
+								className="flex justify-between items-center p-4 border-border border-b:last-none"
+							>
+								<div className="flex flex-col">
+									<span className="text-md font-medium">{generation.fileName}</span>
+									<span className="text-xs text-muted-foreground">{generation.createdAt.toLocaleString()}</span>
+								</div>
+
+								<div className="flex gap-2">
+									<Button size="sm" variant="outline" onClick={() => downloadGeneration(generationId)}>
+										Download
+									</Button>
+									<Button variant="outline" size="sm" onClick={() => deleteGeneration(generationId)}>
+										Delete
+									</Button>
+								</div>
+							</div>
+						);
+					}
+				)}
+
 				</div>
 			</div>
-{/* 
-			<div className="w-full border border-border rounded-md">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead className="w-[100px]">Id</TableHead>
-							<TableHead>Date</TableHead>
-							<TableHead>Method</TableHead>
-							<TableHead className="text-right">Amount</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						<TableRow>
-							<TableCell className="font-medium">INV001</TableCell>
-							<TableCell>6 May 2025</TableCell>
-							<TableCell>Credit Card</TableCell>
-							<TableCell className="text-right">$250.00</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
-			</div> */}
 
 			<div className="flex flex-col gap-4">
 				<div className="flex gap-3">
@@ -117,17 +138,6 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 						)}
 						Generate
 					</Button>
-
-					{generated?.length && (
-						<>
-							<Button size="lg" variant="outline" onClick={createArchive}>
-								Download
-							</Button>
-							<Button size="lg" variant="outline" onClick={() => db.generated.clear()}>
-								Delete
-							</Button>
-						</>
-					)}
 				</div>
 			</div>
 		</div>
