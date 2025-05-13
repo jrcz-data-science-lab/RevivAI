@@ -1,7 +1,7 @@
 import type { GeneratedFile } from '@/hooks/useDb';
 import { useMemo } from 'react';
 import { Button } from '../ui/button';
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, Trash2 } from 'lucide-react';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
@@ -86,8 +86,8 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 								Download
 							</Button>
 						)}
-						<Button variant="outline" size="sm" onClick={() => onDelete(exportItem.id)}>
-							Delete
+						<Button variant="destructive" size="sm" onClick={() => onDelete(exportItem.id)}>
+							<Trash2 />
 						</Button>
 					</div>
 				</div>

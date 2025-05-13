@@ -38,6 +38,19 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		const generated = await db.generated.where('exportId').equals(exportId).toArray();
 		if (!generated) return;
 
+		if (generated.length === 0) {
+			alert('No generated files found for this export.');
+			return;
+		}
+
+		// Download just one file
+		if (generated.length === 1) {
+			const file = generated[0];
+			const blob = new Blob([file.content], { type: 'text/plain' });
+			downloadFile(file.fileName, blob);
+			return;
+		}
+
 		const archiveStructure: Record<string, Uint8Array> = {};
 		for (const item of generated) {
 			archiveStructure[item.fileName.trim()] = strToU8(item.content);

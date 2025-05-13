@@ -68,7 +68,7 @@ export function WriterTemplates({ isLoading, onTemplateApply }: WriterTemplatesP
 					title="API Reference"
 					isDisabled={isLoading}
 					onClick={() => onTemplateSelect('api-reference')}
-					description="Detailed API reference for your project. Great for microservices, REST APIs or frameworks."
+					description="Detailed API reference for your project. Great for microservices, REST APIs or Web frameworks."
 				/>
 			</div>
 
