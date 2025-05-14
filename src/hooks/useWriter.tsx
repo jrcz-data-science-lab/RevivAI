@@ -106,8 +106,6 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * @param template - The template name to apply.
 	 */
 	const applyTemplate = async (template: WriterTemplatesType) => {
-		setIsGenerating(true);
-
 		const abortController = new AbortController();
 		let applyPromise: Promise<void> | null = null;
 
@@ -115,6 +113,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, abortController.signal);
 
 		if (applyPromise) {
+			setIsGenerating(true);
+
 			const abort = () => {
 				abortController.abort();
 				setIsGenerating(false);
