@@ -11,6 +11,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import type { LanguageModelV1 } from 'ai';
 import { WriterGenerateExports } from './writer-generate-exports';
 import { renderMermaidInMarkdown } from '@/lib/mermaid';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Label } from '../ui/label';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -50,7 +52,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		// Download just one file
 		if (generated.length === 1) {
 			const file = generated[0];
-			const rendered = await renderMermaidInMarkdown(file.content)
+			const rendered = await renderMermaidInMarkdown(file.content);
 			const blob = new Blob([rendered], { type: 'text/plain' });
 			downloadFile(file.fileName, blob);
 			return;
@@ -92,7 +94,15 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 			</div>
 
 			<div className="space-y-4">
-				{/* <div className="flex justify-between border p-4 gap-6 rounded-md">
+				{hasExports && (
+					<WriterGenerateExports
+						generatedFiles={generatedFiles}
+						onDelete={(id) => deleteExport(id)}
+						onDownload={(id) => downloadExport(id)}
+					/>
+				)}
+
+				<div className="flex justify-between border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Generate Diagrams</Label>
 						<p className="text-md text-muted-foreground">
@@ -114,15 +124,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 							<SelectItem value="none">None</SelectItem>
 						</SelectContent>
 					</Select>
-				</div> */}
-
-				{hasExports && (
-					<WriterGenerateExports
-						generatedFiles={generatedFiles}
-						onDelete={(id) => deleteExport(id)}
-						onDownload={(id) => downloadExport(id)}
-					/>
-				)}
+				</div>
 			</div>
 
 			<div className="flex flex-col gap-4">

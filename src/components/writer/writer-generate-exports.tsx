@@ -64,16 +64,21 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 					<div className="flex flex-col">
 						{exportItem.status === 'pending' && (
 							<span className="text-md font-medium animate-pulse">
-								{exportItem.completedFiles.length} / {exportItem.files.length} files
-								completed...
+								Generating {exportItem.pendingFiles.map((value) => value.fileName).join(', ')}
 							</span>
 						)}
 
 						{exportItem.status === 'completed' && <span className="text-md font-medium">Export Completed!</span>}
 
 						<span className="text-xs text-muted-foreground">
-							<span>{exportItem.files.length} files</span>
-							<span className="mx-1 text-muted">/</span>
+							<span className="text-md font-medium">
+								{exportItem.pendingFiles.length > 0
+									? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
+									: `${exportItem.files.length} files`
+								}
+							</span>
+
+							<span className="mx-1 text-border">/</span>
 							<span>{exportItem.createdAt.toLocaleString()}</span>
 						</span>
 					</div>
