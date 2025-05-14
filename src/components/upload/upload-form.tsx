@@ -9,13 +9,15 @@ import { promptifySchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { GithubIcon } from '@/components/ui/github-icon';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { FolderUp, LoaderCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UploadFiles } from './upload-files';
+import { minimatch } from 'minimatch';
+import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore';
+
 
 export type UploadFormSchema = z.infer<typeof promptifySchema>;
 
@@ -30,6 +32,7 @@ interface UploadFormProps {
 export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 	const [tab, setTab] = useState<CodebaseType>('files');
 
+	// Initialize the form with the schema and default values
 	const form = useForm<UploadFormSchema>({
 		resolver: zodResolver(
 			tab === 'remote' ? promptifySchema.omit({ files: true }) : promptifySchema.omit({ url: true }),
@@ -63,8 +66,26 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 		// Append the type of codebase
 		if (data.type === 'files' && data.files) {
+
 			for (const file of data.files) {
-				formData.append('files', file, file.webkitRelativePath || file.name);
+				const filePath = file.webkitRelativePath || file.name;
+
+				const shouldBeIgnored = [...defaultIgnoreList, `${data.ignore}`].some((pattern) => minimatch(filePath, pattern.trim()));
+				const shouldBeIncluded = data.include
+					? data.include.split(',').some((pattern) => minimatch(filePath, pattern.trim()))
+					: true;
+
+				// Skip uploading unnecessary files
+				if (shouldBeIgnored || !shouldBeIncluded) continue;
+
+				// Replace big files (>20mb) with a placeholder
+				if (file.size > 20_000_000) {
+					const placeholder = new Blob(['empty'], { type: file.type });
+					formData.append('files', placeholder, filePath);
+					continue;
+				}
+
+				formData.append('files', file, filePath);
 			}
 		} else if (data.type === 'remote' && data.url) {
 			formData.append('url', data.url);
@@ -162,9 +183,9 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Include Patterns</FormLabel>
-							<FormDescription>Comma-separated patterns to include.</FormDescription>
+							<FormDescription>Comma-separated glob patterns to include. Only matching files will be included.</FormDescription>
 							<FormControl>
-								<Input placeholder="src/**" {...field} />
+								<Input placeholder="**/src/**/*" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -177,9 +198,9 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Ignore Patterns</FormLabel>
-							<FormDescription>Comma-separated patterns to ignore.</FormDescription>
+							<FormDescription>Comma-separated global patterns to ignore.</FormDescription>
 							<FormControl>
-								<Input placeholder="**/*.gif" {...field} />
+								<Input placeholder="node_modules/**/*" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

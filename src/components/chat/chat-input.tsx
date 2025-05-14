@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import { CircleStop, Send } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getTokensCountColor } from '@/lib/utils';
 import { useTokensCount } from '../../hooks/useTokensCount';
 import { contextSizeAtom } from '../../hooks/useChat';
 import { useAtomValue } from 'jotai';
@@ -89,7 +89,7 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 
 						<span className="text-muted">/</span>
 
-						<span>
+						<span className={getTokensCountColor(totalTokens)}>
 							<b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}
 						</span>
 					</div>

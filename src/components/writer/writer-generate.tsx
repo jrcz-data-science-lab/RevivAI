@@ -10,6 +10,7 @@ import type { Database } from '@/hooks/useDb';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { LanguageModelV1 } from 'ai';
 import { WriterGenerateExports } from './writer-generate-exports';
+import { renderMermaidInMarkdown } from '@/lib/mermaid';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -29,7 +30,10 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 	const [config, setConfig] = useAtom(generateConfigAtom);
 
 	// Get all generated content
-	const generatedFiles = useLiveQuery(() => db.generated.toArray(), [db]);
+	const generatedFiles = useLiveQuery(async () => {
+		const generated = await db.generated.toArray();
+		return generated.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+	}, [db]);
 
 	/**
 	 * Download the generated export as a zip file.
@@ -46,11 +50,13 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		// Download just one file
 		if (generated.length === 1) {
 			const file = generated[0];
-			const blob = new Blob([file.content], { type: 'text/plain' });
+			const rendered = await renderMermaidInMarkdown(file.content)
+			const blob = new Blob([rendered], { type: 'text/plain' });
 			downloadFile(file.fileName, blob);
 			return;
 		}
 
+		// Create archive for multiple files
 		const archiveStructure: Record<string, Uint8Array> = {};
 		for (const item of generated) {
 			archiveStructure[item.fileName.trim()] = strToU8(item.content);

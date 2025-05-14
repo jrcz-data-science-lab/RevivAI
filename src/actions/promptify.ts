@@ -20,11 +20,13 @@ export interface PromptifyResult {
  * @returns Array of saved file paths.
  */
 function saveFilesToTempDir(files: File[], tempDir: string) {
+	// Throw error on too much files
+	const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+	if (totalSize > 100_000_000) throw new Error('Uploaded codebase is bigger then 100mb. Use include/ignore patterns to reduce the size.');
+
 	return Promise.all(
 		files.map(async (file) => {
 			const filePath = path.join(tempDir, file.name);
-
-			if (filePath.includes('node_modules/')) return null;
 
 			// Verify the path is still within our temp directory (prevent path traversal)
 			if (!filePath.startsWith(tempDir)) {

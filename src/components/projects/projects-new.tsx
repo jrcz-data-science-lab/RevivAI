@@ -7,13 +7,9 @@ import { Input } from '@/components/ui/input';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { UploadForm } from '../upload/upload-form';
 import { newProjectFormSchema } from '@/lib/schemas';
 
 interface ProjectsNewProps {

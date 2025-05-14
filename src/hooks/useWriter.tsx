@@ -8,7 +8,7 @@ import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
-import { createTOCPrompt } from '@/lib/generate';
+import { createTOCPrompt } from '@/lib/utils';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { Button } from '@/components/ui/button';
 
@@ -196,9 +196,9 @@ export function useWriter({ db, model }: UseWriterProps) {
 					model,
 					messages: [
 						{ role: 'system', content: writerSystemPrompt },
-						{ role: 'user', content: toc },
 						{ role: 'user', content: codebase.prompt },
-						{ role: 'user', content: chapter.outline },
+						{ role: 'user', content: toc },
+						{ role: 'user', content: `Here is the page template: \n\n ${chapter.outline}` },
 					],
 				});
 
@@ -209,7 +209,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 				});
 			}
 
-			console.log(toc);
+			toast.success('Documentation generated successfully!', { richColors: true });
+
 		} finally {
 			setIsGenerating(false);
 		}

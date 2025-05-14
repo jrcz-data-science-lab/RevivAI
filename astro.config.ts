@@ -11,13 +11,12 @@ export default defineConfig({
 	integrations: [
 		react({
 			babel: {
-        // Enable React Compiler
-				plugins: ['babel-plugin-react-compiler'],
+        		// Enable React Compiler
+				// plugins: ['babel-plugin-react-compiler'],
 			},
 		}),
 	],
 	devToolbar: { enabled: false },
-
 	vite: {
 		plugins: [tailwindcss(), visualizer()],
 		worker: {

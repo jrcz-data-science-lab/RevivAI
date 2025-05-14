@@ -1,10 +1,9 @@
 import type { Codebase } from '@/hooks/useDb';
 import { Button } from '../ui/button';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 import { ScrollArea } from '../ui/scroll-area';
 import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, getTokensCountColor } from '@/lib/utils';
 
 interface UploadCodebaseProps {
 	codebase: Codebase;
@@ -13,18 +12,6 @@ interface UploadCodebaseProps {
 
 export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps) {
 	const createdAtFormatted = formatDistanceToNow(codebase.createdAt, { addSuffix: true, includeSeconds: true });
-
-	const getTotalTokensColor = (tokensCount: number) => {
-		if (tokensCount > 100_000) return 'text-destructive';
-		if (tokensCount > 60_000) return 'text-amber-500';
-		return '';
-	};
-
-	const getFileTokensColor = (tokensCount: number) => {
-		if (tokensCount > 20_000) return 'text-destructive';
-		if (tokensCount > 10_000) return 'text-amber-500';
-		return 'text-muted-foreground';
-	};
 
 	// Sort the files by token count
 	const largestFiles = useMemo(
@@ -47,7 +34,7 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 				<div className="grid grid-cols-3 gap-6">
 					<div>
 						<h3 className="text-xs text-muted-foreground">Tokens Count</h3>
-						<div className={getTotalTokensColor(codebase.metadata.totalTokens)}>
+						<div className={getTokensCountColor(codebase.metadata.totalTokens)}>
 							{codebase.metadata.totalTokens.toLocaleString()}
 						</div>
 					</div>
@@ -78,10 +65,14 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 					<ScrollArea className="relative h-48">
 						{largestFiles.map(([file, tokensCount]) => (
 							<div key={file} className="flex justify-between text-xs font-mono items-center border-b py-1.5">
-								<span className="max-w-xs truncate" title={file}>
+								<span
+									className="max-w-xs truncate text-left direction-rtl text-ellipsis"
+									style={{ direction: 'rtl', textAlign: 'left' }}
+									title={file}
+								>
 									{file}
 								</span>
-								<span className={cn('flex-shrink-0 pl-2', getFileTokensColor(tokensCount))}>
+								<span className={cn('text-muted-foreground flex-shrink-0 pl-2', getTokensCountColor(tokensCount, 15_000, 30_000))}>
 									{tokensCount.toLocaleString()} tokens
 								</span>
 							</div>

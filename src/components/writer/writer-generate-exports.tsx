@@ -54,8 +54,6 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		return structuredExports;
 	}, [generatedFiles]);
 
-    console.log('generationExports', generationExports);
-
 	return (
 		<div className="flex flex-col border rounded-md">
 			{generationExports.map((exportItem) => (

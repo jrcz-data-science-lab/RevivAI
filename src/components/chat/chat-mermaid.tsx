@@ -22,8 +22,8 @@ export function ChatMermaid({ children }: ChatMermaidProps) {
 			const valid = await validateMermaidCode(code);
 			if (!valid) return;
 
-			const result = await renderMermaidCode(code, id);
-			setDiagramSVG(result.svg);
+			const svg = await renderMermaidCode(code, id);
+			setDiagramSVG(svg);
 		};
 
 		if (code) renderMermaid(code);
