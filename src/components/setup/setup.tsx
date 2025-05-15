@@ -7,10 +7,14 @@ import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
 import { SetupBanner } from './setup-banner';
 import { LoaderCircle } from 'lucide-react';
-import { useSetup } from '@/hooks/useSetup';
+import { getDefaultCredentials, useSetup } from '@/hooks/useSetup';
 
+// True if the public model is provided
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
 
+/**
+ * Setup component that handles the setup of the LLM provider.
+ */
 export function Setup() {
 	const { submit, credentialsForm, handleProviderChange, isTesting, setCredentialsForm, validate } = useSetup();
 
@@ -19,12 +23,14 @@ export function Setup() {
 	 * @param provider The LLM provider data
 	 */
 	const renderForm = (credentialsForm: LLMCredentials) => {
+		const { baseUrl, model } = getDefaultCredentials(credentialsForm.provider);
+
 		return (
 			<div className="space-y-4">
 				<div>
 					<Label>API URL</Label>
 					<Input
-						placeholder="https://api.openai.com/v1"
+						placeholder={baseUrl || 'https://api.openai.com/v1'}
 						className="mt-2"
 						value={credentialsForm.baseUrl}
 						onChange={(e) => {
@@ -36,7 +42,7 @@ export function Setup() {
 				<div>
 					<Label>Model</Label>
 					<Input
-						placeholder="gpt-4o"
+						placeholder={model || 'gpt-4.1-mini'}
 						className="mt-2"
 						value={credentialsForm.model}
 						onChange={(e) => {
@@ -99,9 +105,6 @@ export function Setup() {
 								RevivAI
 							</TabsTrigger>
 						)}
-						<TabsTrigger value="openrouter" className="px-3">
-							OpenRouter
-						</TabsTrigger>
 						<TabsTrigger value="openai" className="px-3">
 							OpenAI
 						</TabsTrigger>
@@ -110,6 +113,9 @@ export function Setup() {
 						</TabsTrigger>
 						<TabsTrigger value="google" className="px-3">
 							Google
+						</TabsTrigger>
+						<TabsTrigger value="openrouter" className="px-3">
+							OpenRouter
 						</TabsTrigger>
 						<TabsTrigger value="custom" className="px-3">
 							Custom

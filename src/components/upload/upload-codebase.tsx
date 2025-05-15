@@ -72,7 +72,12 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 								>
 									{file}
 								</span>
-								<span className={cn('text-muted-foreground flex-shrink-0 pl-2', getTokensCountColor(tokensCount, 15_000, 30_000))}>
+								<span
+									className={cn(
+										'text-muted-foreground flex-shrink-0 pl-2',
+										getTokensCountColor(tokensCount, 15_000, 30_000),
+									)}
+								>
 									{tokensCount.toLocaleString()} tokens
 								</span>
 							</div>

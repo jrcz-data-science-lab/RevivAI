@@ -17,7 +17,7 @@ export function cn(...inputs: ClassValue[]) {
  * @param highThreshold The threshold for high tokens count.
  * @returns The tailwind color class.
  */
-export function getTokensCountColor(tokensCount: number, mediumThreshold = 60_000, highThreshold = 100_000) {
+export function getTokensCountColor(tokensCount: number, mediumThreshold = 90_000, highThreshold = 200_000) {
 	if (tokensCount > highThreshold) return 'text-destructive';
 	if (tokensCount > mediumThreshold) return 'text-amber-500';
 	return '';
@@ -35,5 +35,5 @@ export function createTOCPrompt(chapters: Chapter[]) {
 		return `- [${title}](${fileName})`;
 	});
 
-	return `# Table of Contents\n\n${toc.join('\n')}`;
+	return toc.join('\n');
 }

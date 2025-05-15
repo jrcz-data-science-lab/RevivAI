@@ -27,11 +27,18 @@ const variants = {
 	lime: 'dark:text-lime-100 text-lime-800 border-lime-500/80 hover:border-lime-500 bg-lime-500/5',
 };
 
-export function WriterTemplatesItem({ icon: Icon, color, title, description, isDisabled, onClick }: WriterTemplatesItemProps) {
+export function WriterTemplatesItem({
+	icon: Icon,
+	color,
+	title,
+	description,
+	isDisabled,
+	onClick,
+}: WriterTemplatesItemProps) {
 	const onSelect = () => {
 		if (isDisabled) return;
 		onClick?.();
-	}
+	};
 
 	return (
 		<button
@@ -40,7 +47,7 @@ export function WriterTemplatesItem({ icon: Icon, color, title, description, isD
 			disabled={isDisabled}
 			className={cn(
 				'group cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 overflow-hidden w-full',
-				isDisabled && 'opacity-75 pointer-events-none'
+				isDisabled && 'opacity-75 pointer-events-none',
 			)}
 		>
 			<Card className={cn('relative w-full px-6 flex justify-between', variants[color])}>

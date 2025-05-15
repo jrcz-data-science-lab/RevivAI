@@ -15,7 +15,7 @@ interface ChatProps {
 }
 
 export function Chat({ db, model }: ChatProps) {
-	const chatContainerRef = useRef<HTMLDivElement>(null);	
+	const chatContainerRef = useRef<HTMLDivElement>(null);
 	const chat = useChat({ db, model });
 
 	const scrollToLastMessage = (behavior: ScrollBehavior) => {

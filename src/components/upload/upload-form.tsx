@@ -15,9 +15,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { FolderUp, LoaderCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UploadFiles } from './upload-files';
-import { minimatch } from 'minimatch';
-import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore';
-
+import { isPathIgnored, isPathIncluded } from '@/lib/filterFiles';
 
 export type UploadFormSchema = z.infer<typeof promptifySchema>;
 
@@ -66,24 +64,14 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 		// Append the type of codebase
 		if (data.type === 'files' && data.files) {
-
 			for (const file of data.files) {
 				const filePath = file.webkitRelativePath || file.name;
 
-				const shouldBeIgnored = [...defaultIgnoreList, `${data.ignore}`].some((pattern) => minimatch(filePath, pattern.trim()));
-				const shouldBeIncluded = data.include
-					? data.include.split(',').some((pattern) => minimatch(filePath, pattern.trim()))
-					: true;
-
 				// Skip uploading unnecessary files
-				if (shouldBeIgnored || !shouldBeIncluded) continue;
+				if (isPathIgnored(filePath, data.ignore) || !isPathIncluded(filePath, data.include)) continue;
 
 				// Replace big files (>20mb) with a placeholder
-				if (file.size > 20_000_000) {
-					const placeholder = new Blob(['empty'], { type: file.type });
-					formData.append('files', placeholder, filePath);
-					continue;
-				}
+				if (file.size > 20_000_000) continue;
 
 				formData.append('files', file, filePath);
 			}
@@ -183,7 +171,9 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Include Patterns</FormLabel>
-							<FormDescription>Comma-separated glob patterns to include. Only matching files will be included.</FormDescription>
+							<FormDescription>
+								Comma-separated glob patterns to include. Only matching files will be included.
+							</FormDescription>
 							<FormControl>
 								<Input placeholder="**/src/**/*" {...field} />
 							</FormControl>

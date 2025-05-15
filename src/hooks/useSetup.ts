@@ -8,7 +8,7 @@ import { createModel, useModel, type LLMCredentials, type LLMProvider } from './
  * Get the default credentials for the selected LLM provider
  * @param provider The LLM provider to get the credentials for
  */
-function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
+export function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 	switch (provider) {
 		case 'revivai':
 			return {
@@ -21,7 +21,7 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
 		case 'openrouter':
 			return {
 				provider: 'openrouter',
-				model: 'meta-llama/llama-4-scout',
+				model: 'meta-llama/llama-4-maverick',
 				baseUrl: 'https://openrouter.ai/api/v1',
 				apiKey: '',
 			};
@@ -64,10 +64,11 @@ function getDefaultCredentials(provider: LLMProvider): LLMCredentials {
  * Setup the LLM provider
  */
 export function useSetup() {
+	const { credentials, setCredentials } = useModel();
+
 	const defaultCredentials: LLMCredentials = getDefaultCredentials(
 		import.meta.env.PUBLIC_OLLAMA_API_URL ? 'revivai' : 'openai',
 	);
-	const { credentials, setCredentials } = useModel();
 
 	const [isTesting, setIsTesting] = useState(false);
 	const [credentialsForm, setCredentialsForm] = useState<LLMCredentials>(credentials ?? defaultCredentials);
@@ -88,7 +89,6 @@ export function useSetup() {
 
 		try {
 			const model = createModel(credentialsForm);
-			console.log(model);
 
 			const { object } = await generateObject({
 				model: model,

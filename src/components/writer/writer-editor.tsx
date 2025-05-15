@@ -31,7 +31,7 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 				outline: value,
 			});
 		},
-		[onChange, chapter]
+		[onChange, chapter],
 	);
 
 	const onTitleChange = useCallback(
@@ -43,7 +43,7 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 				title: e.target.value,
 			});
 		},
-		[onChange, chapter]
+		[onChange, chapter],
 	);
 
 	return (
@@ -51,7 +51,8 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Chapter Content</h1>
 				<p className="text-md text-muted-foreground">
-					Describe the content of the chapter. You can use markdown to format the text.
+					Describe the content of the chapter using Markdown. Title will be used as a file name of the generated
+					chapter.
 				</p>
 			</div>
 
@@ -59,6 +60,7 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 				<Label htmlFor="chapter-title" className="text-sm font-semibold">
 					Title
 				</Label>
+
 				<Input
 					id="chapter-title"
 					placeholder="Chapter title"
@@ -68,15 +70,14 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 				/>
 			</div>
 
-			<div className="flex flex-col gap-2">
-				<Label htmlFor="chapter-description" className="text-sm font-semibold">
-					Outline
-				</Label>
-				<div className="border border-input rounded-md shadow-xs focus-within:ring-4 focus-within:outline-1 transition-all selection:text-primary-foreground selection:bg-primary select ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50">
+			<div className="flex flex-col gap-3">
+				<Label className="text-sm font-semibold">Outline</Label>
+				<div className="border border-input rounded-md shadow-xs focus-within:ring-4 focus-within:outline-1 transition-all selection:text-primary-foreground selection:bg-primary ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 min-h-32">
 					<MDXEditor
 						onChange={onOutlineChange}
 						markdown={chapter.outline ?? ''}
-						contentEditableClassName="outline-none prose prose-neutral dark:prose-invert w-full max-w-full text-sm p-3 pb-6"
+						onError={console.error}
+						contentEditableClassName="outline-none prose prose-neutral dark:prose-invert w-full max-w-full text-sm p-3"
 						plugins={[
 							headingsPlugin(),
 							listsPlugin(),

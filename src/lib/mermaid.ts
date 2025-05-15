@@ -13,7 +13,7 @@ mermaid.initialize({
  * @returns - Returns true if the code is valid, false otherwise
  */
 export function validateMermaidCode(code: string) {
-    return mermaid.parse(code, { suppressErrors: true });
+	return mermaid.parse(code, { suppressErrors: true });
 }
 
 /**
@@ -23,8 +23,8 @@ export function validateMermaidCode(code: string) {
  * @returns - Returns the rendered SVG as a string
  */
 export async function renderMermaidCode(code: string, id: string) {
-    const result = await mermaid.render(id, code);
-	return result.svg
+	const result = await mermaid.render(id, code);
+	return result.svg;
 }
 
 /**

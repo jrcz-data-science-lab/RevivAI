@@ -37,7 +37,8 @@ export function Writer({ db, model }: WriterProps) {
 	 * @returns The rendered component for the active item.
 	 */
 	const renderActiveItem = (id: WriterItemId) => {
-		if (id === 'generate') return <WriterGenerate db={db} model={model} isLoading={isGenerating} onGenerate={generate} />;
+		if (id === 'generate')
+			return <WriterGenerate db={db} model={model} isLoading={isGenerating} onGenerate={generate} />;
 		if (id === 'templates') return <WriterTemplates isLoading={isGenerating} onTemplateApply={applyTemplate} />;
 
 		// If chapters loaded

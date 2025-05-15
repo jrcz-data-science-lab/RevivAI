@@ -14,7 +14,7 @@ interface StructuredExport {
 	status: 'pending' | 'completed' | 'failed';
 	createdAt: Date;
 	pendingFiles: GeneratedFile[];
-    completedFiles: GeneratedFile[];
+	completedFiles: GeneratedFile[];
 	files: GeneratedFile[];
 }
 
@@ -36,7 +36,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 			if (exportFiles.length === 0) continue;
 
 			const completedFiles = exportFiles.filter((file) => file.status === 'completed');
-            const pendingFiles = exportFiles.filter((file) => file.status === 'pending');
+			const pendingFiles = exportFiles.filter((file) => file.status === 'pending');
 
 			// If any of files are pending, set status to pending
 			const status = completedFiles.length === exportFiles.length ? 'completed' : 'pending';
@@ -44,8 +44,8 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 			structuredExports.push({
 				id: exportId,
 				status: status,
-                completedFiles,
-                pendingFiles,
+				completedFiles,
+				pendingFiles,
 				createdAt: exportFiles.at(-1)?.createdAt ?? new Date(),
 				files: exportFiles,
 			});
@@ -74,8 +74,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 							<span className="text-md font-medium">
 								{exportItem.pendingFiles.length > 0
 									? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
-									: `${exportItem.files.length} files`
-								}
+									: `${exportItem.files.length} files`}
 							</span>
 
 							<span className="mx-1 text-border">/</span>

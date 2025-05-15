@@ -125,7 +125,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 				loading: 'Applying template...',
 				closeButton: false,
 				action: (
-					<Button size="sm" variant='outline' className="ml-auto" onClick={abort}>
+					<Button size="sm" variant="outline" className="ml-auto" onClick={abort}>
 						Cancel
 					</Button>
 				),
@@ -184,7 +184,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 
 			// Create table of contents prompt
 			const toc = createTOCPrompt(chapters ?? []);
-			
+
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
 
@@ -197,8 +197,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 					messages: [
 						{ role: 'system', content: writerSystemPrompt },
 						{ role: 'user', content: codebase.prompt },
-						{ role: 'user', content: toc },
-						{ role: 'user', content: `Here is the page template: \n\n ${chapter.outline}` },
+						{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
+						{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
 					],
 				});
 
@@ -210,7 +210,6 @@ export function useWriter({ db, model }: UseWriterProps) {
 			}
 
 			toast.success('Documentation generated successfully!', { richColors: true });
-
 		} finally {
 			setIsGenerating(false);
 		}

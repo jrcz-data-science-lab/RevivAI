@@ -5,6 +5,7 @@ import { runCli } from 'repomix';
 import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 import { promptifySchema } from '@/lib/schemas';
+import { ignorePatterns, includePatterns } from '@/lib/filterFiles';
 
 const WORKING_DIR = process.cwd();
 
@@ -22,7 +23,8 @@ export interface PromptifyResult {
 function saveFilesToTempDir(files: File[], tempDir: string) {
 	// Throw error on too much files
 	const totalSize = files.reduce((acc, file) => acc + file.size, 0);
-	if (totalSize > 100_000_000) throw new Error('Uploaded codebase is bigger then 100mb. Use include/ignore patterns to reduce the size.');
+	if (totalSize > 100_000_000)
+		throw new Error('Uploaded codebase is bigger then 100mb. Use include/ignore patterns to reduce the size.');
 
 	return Promise.all(
 		files.map(async (file) => {
@@ -68,8 +70,8 @@ async function runRepomixForDirectory(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		ignore: ignore,
-		include: include,
+		ignore: `${ignorePatterns},${ignore ?? ''}`,
+		include: `${includePatterns},${include ?? ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -104,8 +106,8 @@ async function runRepomixForRemote(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		ignore: ignore,
-		include: include,
+		ignore: `${ignorePatterns},${ignore ?? ''}`,
+		include: `${includePatterns},${include ?? ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');

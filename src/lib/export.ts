@@ -9,20 +9,20 @@ import { renderMermaidInMarkdown } from './mermaid';
  * @returns A promise that resolves when the download is complete.
  */
 export async function downloadExportedFiles(files: GeneratedFile[], renderDiagrams = true) {
-    if (files.length === 0) return;
+	if (files.length === 0) return;
 
-    // Check if there are any files to download
-    if (files.length === 1) {
-        const file = files[0];
-        const content = renderDiagrams ? await renderMermaidInMarkdown(file.content) : file.content;
+	// Check if there are any files to download
+	if (files.length === 1) {
+		const file = files[0];
+		const content = renderDiagrams ? await renderMermaidInMarkdown(file.content) : file.content;
 
-        const blob = new Blob([content], { type: 'text/plain' });
-        downloadFile(file.fileName, blob);
-        return;
-    }
+		const blob = new Blob([content], { type: 'text/plain' });
+		downloadFile(file.fileName, blob);
+		return;
+	}
 
-    // Create archive for multiple files
-    const exportStructure: Record<string, Uint8Array> = {};
+	// Create archive for multiple files
+	const exportStructure: Record<string, Uint8Array> = {};
 	for (const { fileName, content } of files) {
 		if (renderDiagrams) {
 			const markdown = await renderMermaidInMarkdown(content);

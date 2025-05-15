@@ -17,7 +17,7 @@ export function Upload() {
 
 	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>();
 	const [isOpen, setIsOpen] = useState(false);
-	
+
 	// Get current active codebase
 	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
 

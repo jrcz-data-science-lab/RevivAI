@@ -62,11 +62,7 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 							input === '' && !isStreaming && 'opacity-50 pointer-events-none cursor-default',
 						)}
 					>
-						{isStreaming ? (
-							<CircleStop />
-						) : (
-							<Send />
-						)}
+						{isStreaming ? <CircleStop /> : <Send />}
 					</Button>
 					<Textarea
 						ref={inputRef}

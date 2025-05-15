@@ -43,7 +43,7 @@ export const chatStateAtom = atomWithStorage<ChatState>('chat', {
  */
 export function useChat({ db, model }: UseChatProps) {
 	const abortControllerRef = useRef<AbortController | null>(null);
-	
+
 	const { getLanguagePrompt } = useSettings();
 
 	const setContextSize = useSetAtom(contextSizeAtom);

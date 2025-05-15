@@ -1,7 +1,6 @@
 import { Button } from '../ui/button';
 import { LoaderCircle, Sparkles } from 'lucide-react';
 import type { WriterGenerateConfig } from '@/hooks/useWriter';
-import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import type { Database } from '@/hooks/useDb';

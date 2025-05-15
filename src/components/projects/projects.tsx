@@ -11,7 +11,7 @@ export function Projects() {
 
 	const createNewProject = (data: ProjectNewFormSchema) => {
 		const created = createProject({ name: data.projectName });
-		
+
 		// If no model specified
 		if (!credentials) {
 			window.location.href = `/setup?redirectToProject=${created.id}`;
