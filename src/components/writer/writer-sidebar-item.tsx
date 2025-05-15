@@ -5,12 +5,13 @@ import { Trash } from 'lucide-react';
 interface WriterSidebarItemProps {
 	icon: ElementType;
 	title: string;
+	titlePostfix?: string;
 	active?: boolean;
 	onClick?: () => void;
 	onDelete?: () => void;
 }
 
-export function WriterSidebarItem({ icon: Icon, title, active, onClick, onDelete }: WriterSidebarItemProps) {
+export function WriterSidebarItem({ icon: Icon, title, titlePostfix, active, onClick, onDelete }: WriterSidebarItemProps) {
 	return (
 		<div>
 			<button
@@ -22,7 +23,10 @@ export function WriterSidebarItem({ icon: Icon, title, active, onClick, onDelete
 				)}
 			>
 				<Icon className="size-4 min-w-4" />
-				<span className="text-sm whitespace-nowrap overflow-hidden text-ellipsis inline-block max-w-40">{title}</span>
+				<span className="text-sm whitespace-nowrap overflow-hidden text-ellipsis inline-block max-w-40">
+					{title || <span>💀</span>}
+					{titlePostfix ?? ''}
+				</span>
 			</button>
 
 			{typeof onDelete === 'function' && (

@@ -37,9 +37,13 @@ export function Writer({ db, model }: WriterProps) {
 	 * @returns The rendered component for the active item.
 	 */
 	const renderActiveItem = (id: WriterItemId) => {
-		if (id === 'generate')
+		if (id === 'generate') {
 			return <WriterGenerate db={db} model={model} isLoading={isGenerating} onGenerate={generate} />;
-		if (id === 'templates') return <WriterTemplates isLoading={isGenerating} onTemplateApply={applyTemplate} />;
+		}
+
+		if (id === 'templates') {
+			return <WriterTemplates isLoading={isGenerating} onTemplateApply={applyTemplate} />;
+		}
 
 		// If chapters loaded
 		if (Array.isArray(chapters)) {
@@ -76,9 +80,8 @@ export function Writer({ db, model }: WriterProps) {
 
 				<motion.div
 					key={activeItemId}
-					initial={{ opacity: 0, translateX: 8 }}
-					animate={{ opacity: 1, translateX: 0 }}
-					exit={{ opacity: 0, translateX: 8 }}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
 					transition={{ duration: 0.15, ease: 'easeIn' }}
 					className="relative z-20 h-screen pt-16 px-8 w-full overflow-x-hidden overflow-y-scroll"
 				>

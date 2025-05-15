@@ -12,6 +12,7 @@ import {
 	markdownShortcutPlugin,
 } from '@mdxeditor/editor';
 import { useCallback } from 'react';
+import { AnimatedText } from '../ui/animated-text';
 
 interface WriterEditorProps {
 	chapter: Chapter;
@@ -49,10 +50,10 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 	return (
 		<div className="flex flex-col gap-8 w-full">
 			<div>
-				<h1 className="text-xl font-serif font-black mb-1.5">Chapter Content</h1>
+				<h1 className="text-xl font-serif font-black mb-1.5">Chapter Description</h1>
 				<p className="text-md text-muted-foreground">
 					Describe the content of the chapter using Markdown. Title will be used as a file name of the generated
-					chapter.
+					file.
 				</p>
 			</div>
 

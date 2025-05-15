@@ -94,11 +94,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * @param newOrder - The new order of chapters.
 	 */
 	const reorderChapters = async (newOrder: Chapter[]) => {
-		await db.chapters.bulkUpdate(
-			newOrder.map((chapter, index) => {
-				return { key: chapter.id, changes: { index } };
-			}),
-		);
+		await db.chapters.bulkUpdate(newOrder.map((chapter, index) => ({ key: chapter.id, changes: { index } })));
 	};
 
 	/**
