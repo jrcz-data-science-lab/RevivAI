@@ -37,25 +37,3 @@ export function createTOCPrompt(chapters: Chapter[]) {
 
 	return `# Table of Contents\n\n${toc.join('\n')}`;
 }
-
-/**
- * Download a file with the given filename and blob data.
- * @param filename The name of the file to download.
- * @param blob The blob data to download.
- */
-export function downloadFile(filename: string, blob: Blob) {
-	const url = URL.createObjectURL(blob);
-
-	const a = document.createElement('a');
-	a.style.display = 'none';
-	a.href = url;
-	a.download = filename;
-	
-	try {
-		document.body.appendChild(a);
-		a.click();
-	} finally {
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
-	}
-}

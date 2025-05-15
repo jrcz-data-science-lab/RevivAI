@@ -1,9 +1,9 @@
+import type { GeneratedFile } from '@/hooks/useDb';
 import mermaid from 'mermaid';
 
 // Initialize Mermaid with default settings
 mermaid.initialize({
-	startOnLoad: true,
-	theme: 'dark',
+	theme: 'neutral',
 	darkMode: true,
 });
 
@@ -28,31 +28,26 @@ export async function renderMermaidCode(code: string, id: string) {
 }
 
 /**
- * Find all mermaid diagram  blocks in the markdown, and replace them with the rendered SVG
+ * Find all mermaid diagram blocks in the markdown, and replace them with image links.
+ * Returns an object with image paths as keys and SVG code as values.
+ * TODO: Color the SVGs. Export as separate files.
  * @param markdown - The markdown string to process
- * @returns - Returns the markdown string with rendered SVGs
  */
 export async function renderMermaidInMarkdown(markdown: string) {
-	// Regex to find ```mermaid code blocks
-	const mermaidBlockRegex = /```mermaid\s+([\s\S]*?)```/g;
-
-	let idx = 0;
-	const replacements: Promise<[string, string]>[] = [];
-
-	markdown.replace(mermaidBlockRegex, (match, code) => {
-		const id = `mermaid-svg-${idx++}`;
-		const svgPromise = renderMermaidCode(code.trim(), id)
-			.then(svg => [match, svg])
-			.catch(() => [match, match]);
-		replacements.push(svgPromise as Promise<[string, string]>);
-		return match;
-	});
-
-	const resolved = await Promise.all(replacements);
-
+	const matches = Array.from(markdown.matchAll(/```mermaid\s+([\s\S]*?)```/g));
 	let result = markdown;
-	for (const [original, svg] of resolved) {
-		result = result.replace(original, svg);
+
+	for (let i = 0; i < matches.length; i++) {
+		const [fullBlock, code] = matches[i];
+
+		try {
+			const svg = await renderMermaidCode(code, `diagram-${i}`);
+			console.log('Rendered SVG:', svg);
+			result = result.replace(fullBlock, svg);
+		} catch {
+			console.error('Error rendering Mermaid diagram:', code);
+			// Skip if rendering fails, leave the original block
+		}
 	}
 
 	return result;

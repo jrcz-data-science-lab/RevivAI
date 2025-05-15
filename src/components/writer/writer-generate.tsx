@@ -1,6 +1,4 @@
-import { downloadFile } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { zipSync, strToU8 } from 'fflate';
 import { LoaderCircle, Sparkles } from 'lucide-react';
 import type { WriterGenerateConfig } from '@/hooks/useWriter';
 import { useState } from 'react';
@@ -10,9 +8,10 @@ import type { Database } from '@/hooks/useDb';
 import { useLiveQuery } from 'dexie-react-hooks';
 import type { LanguageModelV1 } from 'ai';
 import { WriterGenerateExports } from './writer-generate-exports';
-import { renderMermaidInMarkdown } from '@/lib/mermaid';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Label } from '../ui/label';
+import { toast } from 'sonner';
+import { downloadExportedFiles } from '@/lib/export';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -40,35 +39,14 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 	/**
 	 * Download the generated export as a zip file.
 	 */
-	const downloadExport = async (exportId: string) => {
+	const downloadExport = async (exportId: string, renderDiagrams = true) => {
 		const generated = await db.generated.where('exportId').equals(exportId).toArray();
-		if (!generated) return;
-
 		if (generated.length === 0) {
-			alert('No generated files found for this export.');
+			toast.error('No generated files found for this export.');
 			return;
 		}
 
-		// Download just one file
-		if (generated.length === 1) {
-			const file = generated[0];
-			const rendered = await renderMermaidInMarkdown(file.content);
-			const blob = new Blob([rendered], { type: 'text/plain' });
-			downloadFile(file.fileName, blob);
-			return;
-		}
-
-		// Create archive for multiple files
-		const archiveStructure: Record<string, Uint8Array> = {};
-		for (const item of generated) {
-			archiveStructure[item.fileName.trim()] = strToU8(item.content);
-		}
-
-		const archiveName = 'documentation.zip';
-
-		const zipFile = zipSync(archiveStructure, { level: 0, mtime: new Date() });
-		const blob = new Blob([zipFile], { type: 'application/zip' });
-		downloadFile(archiveName, blob);
+		downloadExportedFiles(generated, renderDiagrams);
 	};
 
 	/**

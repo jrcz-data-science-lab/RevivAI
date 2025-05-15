@@ -12,7 +12,7 @@ export default defineConfig({
 		react({
 			babel: {
         		// Enable React Compiler
-				// plugins: ['babel-plugin-react-compiler'],
+				plugins: ['babel-plugin-react-compiler'],
 			},
 		}),
 	],
