@@ -52,8 +52,7 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Chapter Description</h1>
 				<p className="text-md text-muted-foreground">
-					Describe the content of the chapter using Markdown. Title will be used as a file name of the generated
-					file.
+					Describe the content of the chapter using Markdown. Title will be used as a file name of the generated file.
 				</p>
 			</div>
 
@@ -73,12 +72,12 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 
 			<div className="flex flex-col gap-3">
 				<Label className="text-sm font-semibold">Outline</Label>
-				<div className="border border-input rounded-md shadow-xs focus-within:ring-4 focus-within:outline-1 transition-all selection:text-primary-foreground selection:bg-primary ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 min-h-32">
+				<div className="border border-input rounded-md shadow-xs focus-within:ring-4 focus-within:outline-1 transition-all selection:text-primary-foreground selection:bg-primary ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50">
 					<MDXEditor
 						onChange={onOutlineChange}
 						markdown={chapter.outline ?? ''}
 						onError={console.error}
-						contentEditableClassName="outline-none prose prose-neutral dark:prose-invert w-full max-w-full text-sm p-3"
+						contentEditableClassName="outline-none prose dark:prose-invert p-3 w-full max-w-full text-sm"
 						plugins={[
 							headingsPlugin(),
 							listsPlugin(),

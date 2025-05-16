@@ -1,14 +1,13 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import { CircleStop, Send } from 'lucide-react';
-import { cn, getTokensCountColor } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useTokensCount } from '../../hooks/useTokensCount';
 import { contextSizeAtom } from '../../hooks/useChat';
 import { useAtomValue } from 'jotai';
 import { Badge } from '../ui/badge';
-
-const formatter = new Intl.NumberFormat('en', { notation: 'standard' });
+import { InfoBar } from '../info-bar';
 
 interface ChatInputProps {
 	onSubmit: (value: string) => void;
@@ -19,6 +18,10 @@ interface ChatInputProps {
 	isStreaming: boolean;
 }
 
+/**
+ * ChatInput component that handles the input and submission of messages.
+ * It also displays the model name, number of messages, and total tokens used.
+ */
 export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStreaming, onClear }: ChatInputProps) {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [input, setInput] = useState('');
@@ -74,21 +77,7 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 				</div>
 
 				<div className="flex justify-between align-center">
-					<div className="flex gap-2 text-xs text-muted-foreground px-1">
-						<b>{modelName}</b>
-
-						<span className="text-muted">/</span>
-
-						<span>
-							<b>{formatter.format(messagesCount)}</b> {messagesCount === 1 ? 'message' : 'messages'}
-						</span>
-
-						<span className="text-muted">/</span>
-
-						<span className={getTokensCountColor(totalTokens)}>
-							<b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}
-						</span>
-					</div>
+					<InfoBar modelName={modelName} messagesCount={messagesCount} totalTokens={totalTokens} />
 
 					{messagesCount > 0 && (
 						<Badge

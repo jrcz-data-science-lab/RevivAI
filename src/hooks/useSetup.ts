@@ -78,7 +78,7 @@ export function useSetup() {
 	 * @param provider The LLM provider to change the default values for
 	 */
 	const handleProviderChange = (provider: LLMProvider) => {
-		setCredentialsForm((prev) => ({ ...getDefaultCredentials(provider), apiKey: prev.apiKey }));
+		setCredentialsForm((prev) => ({ ...getDefaultCredentials(provider) }));
 	};
 
 	/**

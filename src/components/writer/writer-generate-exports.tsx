@@ -1,7 +1,10 @@
 import type { GeneratedFile } from '@/hooks/useDb';
 import { useMemo } from 'react';
 import { Button } from '../ui/button';
-import { LoaderCircle, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { Progress } from '../ui/progress';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { cn } from '@/lib/utils';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
@@ -54,24 +57,40 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		return structuredExports;
 	}, [generatedFiles]);
 
+	// TODO: Fix
+	const calculateProgress = (total: number, finished: number) => {
+		if (total === 0) return 0;
+		const progress = Math.floor((finished / total) * 100);
+		return progress < 5 ? 5 : progress;
+	};
+
 	return (
 		<div className="flex flex-col border rounded-md">
 			{generationExports.map((exportItem) => (
 				<div
 					key={exportItem.id}
-					className="flex justify-between items-center p-4 border-b border-border last:border-none"
+					className="flex justify-between items-start p-4 border-b border-border last:border-none"
 				>
-					<div className="flex flex-col">
-						{exportItem.status === 'pending' && (
-							<span className="text-md font-medium animate-pulse">
-								Generating {exportItem.pendingFiles.map((value) => value.fileName).join(', ')}
-							</span>
-						)}
+					<div className="flex flex-col w-full max-w-2/3 pr-4">
+						<h2 className={cn('text-sm font-medium pb-0', exportItem.status === 'pending' && 'animate-pulse')}>
+							{exportItem.status === 'pending' ? 'Generating...' : 'Done!'}
+						</h2>
 
-						{exportItem.status === 'completed' && <span className="text-md font-medium">Export Completed!</span>}
+						<div className="mb-2 text-muted-foreground">
+							{exportItem.status === 'pending' && (
+								<Progress
+									className="my-2 animate-pulse w-full"
+									value={calculateProgress(exportItem.files.length, exportItem.completedFiles.length)}
+								/>
+							)}
 
-						<span className="text-xs text-muted-foreground">
-							<span className="text-md font-medium">
+							{exportItem.status === 'completed' && (
+								<span className="text-xs">{exportItem.completedFiles.map((value) => value.fileName).join(', ')}</span>
+							)}
+						</div>
+
+						<div className="text-xs text-muted-foreground">
+							<span className="text-md">
 								{exportItem.pendingFiles.length > 0
 									? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
 									: `${exportItem.files.length} files`}
@@ -79,7 +98,10 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 
 							<span className="mx-1 text-border">/</span>
 							<span>{exportItem.createdAt.toLocaleString()}</span>
-						</span>
+							<i className="ml-1">
+								({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})
+							</i>
+						</div>
 					</div>
 
 					<div className="flex gap-2">
@@ -88,8 +110,8 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 								Download
 							</Button>
 						)}
-						<Button variant="destructive" size="sm" onClick={() => onDelete(exportItem.id)}>
-							<Trash2 />
+						<Button variant="outline" size="sm" onClick={() => onDelete(exportItem.id)}>
+							<Trash2 className="text-destructive" />
 						</Button>
 					</div>
 				</div>

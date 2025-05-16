@@ -8,9 +8,11 @@ import { Input } from '../ui/input';
 import { SetupBanner } from './setup-banner';
 import { LoaderCircle } from 'lucide-react';
 import { getDefaultCredentials, useSetup } from '@/hooks/useSetup';
+import { SetupHelp } from './setup-help';
 
 // True if the public model is provided
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
+
 
 /**
  * Setup component that handles the setup of the LLM provider.
@@ -64,15 +66,7 @@ export function Setup() {
 					/>
 				</div>
 
-				{credentialsForm.provider === 'openai' && (
-					<p className="text-sm text-muted-foreground">
-						You can get OpenAI API Key, by going to{' '}
-						<a href="https://platform.openai.com/api-keys" className="underline text-foreground">
-							OpenAI Developer Portal
-						</a>{' '}
-						and generating a new API key.
-					</p>
-				)}
+				<SetupHelp provider={credentialsForm.provider} />
 			</div>
 		);
 	};

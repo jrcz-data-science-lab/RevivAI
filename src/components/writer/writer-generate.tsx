@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
 import { downloadExportedFiles } from '@/lib/export';
+import { InfoBar } from '../info-bar';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -64,10 +65,6 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Generate</h1>
 				<p className="text-md text-muted-foreground">Here you can generate and export your documentation.</p>
-
-				<div className="text-xs text-muted-foreground mt-4">
-					Model: <b>{model.modelId}</b>
-				</div>
 			</div>
 
 			<div className="space-y-4">
@@ -79,7 +76,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					/>
 				)}
 
-				<div className="flex justify-between border p-4 gap-6 rounded-md">
+				{/* <div className="flex justify-between border p-4 gap-6 rounded-md">
 					<div>
 						<Label className="text-md">Generate Diagrams</Label>
 						<p className="text-md text-muted-foreground">
@@ -101,11 +98,11 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 							<SelectItem value="none">None</SelectItem>
 						</SelectContent>
 					</Select>
-				</div>
+				</div> */}
 			</div>
 
 			<div className="flex flex-col gap-4">
-				<div className="flex gap-3">
+				<div className="flex flex-col gap-3">
 					<Button size="lg" onClick={() => onGenerate(config)} className="group" disabled={isLoading}>
 						{isLoading ? (
 							<LoaderCircle className="animate-spin" />
@@ -114,6 +111,8 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 						)}
 						Generate
 					</Button>
+
+					<InfoBar modelName={model.modelId} />
 				</div>
 			</div>
 		</div>

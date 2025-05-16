@@ -24,6 +24,9 @@ export default defineConfig({
 		},
 		server: {
 			cors: true,
+			watch: {
+				ignored: ['**/_temp/**'],
+			}
 		},
 	},
 	adapter: node({
