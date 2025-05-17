@@ -31,7 +31,7 @@ export function getTokensCountColor(tokensCount: number, mediumThreshold = 90_00
 export function createTOCPrompt(chapters: Chapter[]) {
 	const toc = chapters.map((chapter) => {
 		const title = chapter.title.trim();
-		const fileName = `./${title}.md`;
+		const fileName = `./${encodeURI(title)}.md`;
 		return `- [${title}](${fileName})`;
 	});
 
