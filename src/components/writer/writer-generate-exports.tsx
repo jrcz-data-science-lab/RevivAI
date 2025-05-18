@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
@@ -68,59 +69,64 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		const progress = Math.floor((finished / total) * 100);
 		return progress < 5 ? 5 : progress;
 	};
-
 	return (
 		<div className="flex flex-col border rounded-md">
-			{generationExports.map((exportItem) => (
-				<div
-					key={exportItem.id}
-					className="flex justify-between items-start p-4 border-b border-border last:border-none"
-				>
-					<div className="flex flex-col w-full max-w-2/3 pr-4">
-						<h2 className={cn('text-sm font-medium pb-0', exportItem.status === 'pending' && 'animate-pulse')}>
-							{exportItem.status === 'pending' ? 'Generating...' : 'Done!'}
-						</h2>
+			<AnimatePresence initial={false} mode="wait">
+				{generationExports.map((exportItem) => (
+					<motion.div
+						key={exportItem.id}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.2 }}
+						className="flex justify-between items-start p-4 border-b border-border last:border-none"
+					>
+						<div className="flex flex-col w-full max-w-2/3 pr-4">
+							<h2 className={cn('text-sm font-medium pb-0', exportItem.status === 'pending' && 'animate-pulse')}>
+								{exportItem.status === 'pending' ? 'Generating...' : 'Done!'}
+							</h2>
 
-						<div className="mb-2 text-muted-foreground">
-							{exportItem.status === 'pending' && (
-								<Progress
-									className="my-2 animate-pulse w-full"
-									value={calculateProgress(exportItem.files.length, exportItem.completedFiles.length)}
-								/>
-							)}
+							<div className="mb-2 text-muted-foreground">
+								{exportItem.status === 'pending' && (
+									<Progress
+										className="my-2 animate-pulse w-full"
+										value={calculateProgress(exportItem.files.length, exportItem.completedFiles.length)}
+									/>
+								)}
 
+								{exportItem.status === 'completed' && (
+									<span className="text-xs">{exportItem.completedFiles.map((value) => value.fileName).join(', ')}</span>
+								)}
+							</div>
+
+							<div className="text-xs text-muted-foreground">
+								<span className="text-md">
+									{exportItem.pendingFiles.length > 0
+										? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
+										: `${exportItem.files.length} files`}
+								</span>
+
+								<span className="mx-1 text-border">/</span>
+								<span>{exportItem.createdAt.toLocaleString()}</span>
+								<i className="ml-1">
+									({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})
+								</i>
+							</div>
+						</div>
+
+						<div className="flex gap-2">
 							{exportItem.status === 'completed' && (
-								<span className="text-xs">{exportItem.completedFiles.map((value) => value.fileName).join(', ')}</span>
+								<Button size="sm" variant="outline" onClick={() => onDownload(exportItem.id)}>
+									Download
+								</Button>
 							)}
-						</div>
-
-						<div className="text-xs text-muted-foreground">
-							<span className="text-md">
-								{exportItem.pendingFiles.length > 0
-									? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
-									: `${exportItem.files.length} files`}
-							</span>
-
-							<span className="mx-1 text-border">/</span>
-							<span>{exportItem.createdAt.toLocaleString()}</span>
-							<i className="ml-1">
-								({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})
-							</i>
-						</div>
-					</div>
-
-					<div className="flex gap-2">
-						{exportItem.status === 'completed' && (
-							<Button size="sm" variant="outline" onClick={() => onDownload(exportItem.id)}>
-								Download
+							<Button variant="outline" size="sm" onClick={() => onDelete(exportItem.id)}>
+								<Trash2 className="text-destructive" />
 							</Button>
-						)}
-						<Button variant="outline" size="sm" onClick={() => onDelete(exportItem.id)}>
-							<Trash2 className="text-destructive" />
-						</Button>
-					</div>
-				</div>
-			))}
+						</div>
+					</motion.div>
+				))}
+			</AnimatePresence>
 		</div>
 	);
 }

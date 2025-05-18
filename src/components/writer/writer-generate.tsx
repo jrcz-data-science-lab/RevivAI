@@ -12,6 +12,7 @@ import { Label } from '../ui/label';
 import { toast } from 'sonner';
 import { downloadExportedFiles } from '@/lib/export';
 import { InfoBar } from '../info-bar';
+import { motion } from 'motion/react';
 
 interface WriterGenerateProps {
 	db: Database;
@@ -57,11 +58,13 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		await db.generated.where('exportId').equals(exportId).delete();
 	};
 
+	const filesLoaded = Array.isArray(generatedFiles);
+
 	// Check if there are any generated files
 	const hasExports = generatedFiles && generatedFiles.length > 0;
 
 	return (
-		<div className="space-y-8">
+		<motion.div initial={{ opacity: 0 }} animate={{ opacity: filesLoaded ? 1 : 0 }} className="space-y-8">
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Generate</h1>
 				<p className="text-md text-muted-foreground">Here you can generate and export your documentation.</p>
@@ -115,6 +118,6 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 					<InfoBar modelName={model.modelId} />
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }
