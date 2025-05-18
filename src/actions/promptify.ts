@@ -70,8 +70,8 @@ async function runRepomixForDirectory(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		ignore: `${ignorePatterns},${ignore ?? ''}`,
-		include: `${includePatterns},${include ?? ''}`,
+		include: include || includePatterns.join(','),
+		ignore: `${ignorePatterns}${ignore ? `,${ignore}` : ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -106,8 +106,8 @@ async function runRepomixForRemote(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		ignore: `${ignorePatterns},${ignore ?? ''}`,
-		include: `${includePatterns},${include ?? ''}`,
+		include: include || includePatterns.join(','),
+		ignore: `${ignorePatterns}${ignore ? `,${ignore}` : ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');

@@ -187,11 +187,11 @@ export function useWriter({ db, model }: UseWriterProps) {
 				const chapter = chapters?.find((chapter) => chapter.id === file.chapterId);
 				if (!chapter) continue;
 
-				const metadata = {
-					chapterTitle: file.fileName,
-					creationDate: file.createdAt.toLocaleString(),
+				const metadata = JSON.stringify({
+					fileName: file.fileName,
+					createdAt: file.createdAt.toLocaleString(),
 					repositoryUrl: codebase.repositoryUrl || 'not specified',
-				};
+				}, null, 2);
 
 				const { text } = await generateText({
 					model,
@@ -199,7 +199,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 						{ role: 'system', content: writerSystemPrompt },
 						{ role: 'user', content: codebase.prompt },
 						{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
-						{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
+						{ role: 'user', content: `# Chapter Metadata: \n\n${metadata}` },
 						{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
 					],
 				});
