@@ -57,7 +57,12 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		return structuredExports;
 	}, [generatedFiles]);
 
-	// TODO: Fix
+	/**
+	 * Calculate the progress percentage based on the total and finished files.
+	 * @param total - The total number of files.
+	 * @param finished - The number of finished files.
+	 * @returns The progress percentage.
+	 */
 	const calculateProgress = (total: number, finished: number) => {
 		if (total === 0) return 0;
 		const progress = Math.floor((finished / total) * 100);

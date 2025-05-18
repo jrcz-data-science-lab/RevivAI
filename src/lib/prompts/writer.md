@@ -10,4 +10,6 @@ You are RevivAI, an expert AI code documentation assistant. Your job is to write
 
 - Use the provided Table of Contents to find the correct filenames for linking other chapters.
 
+- When referring to other chapters, always mention them in the main content and provide links using this format: [Chapter Title](./chapter-filename.md). Also, include a list of these chapter links at the end of the chapter.
+
 - Output only the Markdown content for the chapter, following the provided template.

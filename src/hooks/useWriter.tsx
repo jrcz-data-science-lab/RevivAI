@@ -2,7 +2,7 @@ import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Database } from './useDb';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
@@ -32,7 +32,7 @@ const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templa
  * Custom hook to manage the writer state and actions.
  */
 export function useWriter({ db, model }: UseWriterProps) {
-	const [isGenerating, setIsGenerating] = useState(false);
+	// const abortController = useMemo(() => new AbortController(), []);
 	const [activeItemId, setActiveItemId] = useAtom(activeItemIdAtom);
 
 	// Fetch chapters from the database, sorted by index
@@ -40,6 +40,12 @@ export function useWriter({ db, model }: UseWriterProps) {
 		const records = await db.chapters.toArray();
 		return records.sort((a, b) => a.index - b.index);
 	}, [db]);
+
+	// True if there is generation in progress
+	const isGenerating = useLiveQuery(async () => {
+		const generatedCount = await db.generated.where('status').equals('pending').count();
+		return generatedCount > 0;
+	}, [chapters]) || false;
 
 	/**
 	 * Add a new chapter to the database.
@@ -109,11 +115,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, abortController.signal);
 
 		if (applyPromise) {
-			setIsGenerating(true);
-
 			const abort = () => {
 				abortController.abort();
-				setIsGenerating(false);
 				toast.dismiss();
 			};
 
@@ -136,10 +139,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 				},
 				onDismiss: () => {
 					abortController.abort();
-				},
-				finally: () => {
-					setIsGenerating(false);
-				},
+				}
 			});
 		}
 	};
@@ -150,7 +150,6 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 */
 	const generate = async (config: WriterGenerateConfig) => {
 		const exportId = crypto.randomUUID() as string;
-		setIsGenerating(true);
 
 		try {
 			const [codebase] = await db.codebases.toArray();
@@ -205,6 +204,10 @@ export function useWriter({ db, model }: UseWriterProps) {
 					],
 				});
 
+				// If file doesn't exist anymore, skip it
+				const fileExists = await db.generated.where('id').equals(file.id).count();
+				if (fileExists === 0) continue;
+
 				await db.generated.update(file.id, {
 					status: 'completed',
 					updatedAt: new Date(),
@@ -213,8 +216,11 @@ export function useWriter({ db, model }: UseWriterProps) {
 			}
 
 			toast.success('Documentation generated successfully!', { richColors: true });
-		} finally {
-			setIsGenerating(false);
+		} catch (error) {
+			console.error('Error generating documentation:', error);
+			toast.error(`Error generating documentation: ${(error as Error)?.message || error}`);
+
+			await db.generated.where('exportId').equals(exportId).delete();
 		}
 	};
 

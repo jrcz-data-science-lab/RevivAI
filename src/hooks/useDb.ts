@@ -56,7 +56,7 @@ export function createDatabase(projectId: string) {
 	db.version(1).stores({
 		chapters: '++id, index',
 		codebases: '++id, createdAt',
-		generated: '++id, chapterId, exportId, fileName',
+		generated: '++id, chapterId, status, exportId, fileName',
 	});
 
 	return db;
