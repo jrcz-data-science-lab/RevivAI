@@ -256,7 +256,10 @@ export function useWriter({ db, model }: UseWriterProps) {
 				promises.push(generateChapter(chapter));
 
 				// Await execution if the number of promises exceeds the parallelization limit
-				if (promises.length >= settings.parallelization) await Promise.all(promises);
+				if (promises.length >= settings.parallelization) {
+					await Promise.all(promises);
+					promises.length = 0; // Clear the array
+				}
 			}
 
 			// Await all promises in parallelized mode
