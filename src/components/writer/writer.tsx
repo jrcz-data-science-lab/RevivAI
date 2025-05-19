@@ -8,6 +8,8 @@ import { WriterEditor } from './writer-editor';
 import { WriterGenerate } from './writer-generate';
 import { WriterTemplates } from './writer-templates';
 import { useWriter, type WriterItemId } from '@/hooks/useWriter';
+import { useEffect } from 'react';
+
 
 interface WriterProps {
 	db: Database;

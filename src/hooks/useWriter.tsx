@@ -2,7 +2,7 @@ import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Database } from './useDb';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
@@ -20,6 +20,9 @@ export interface UseWriterProps {
 
 // Type of opened items in the sidebar. String is a UUID of user created chapter.
 export type WriterItemId = 'generate' | 'templates' | string;
+
+// True if removing of pending files was triggered
+let pendingWasDeleted = false;
 
 // Last active item ID in the sidebar. Stored in local storage.
 const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templates');
@@ -46,6 +49,22 @@ export function useWriter({ db, model }: UseWriterProps) {
 			const generatedCount = await db.generated.where('status').equals('pending').count();
 			return generatedCount > 0;
 		}, [chapters]) || false;
+
+	// Refresh the unfinished chapters when the component mounts
+	useEffect(() => {
+		if (pendingWasDeleted) return;
+		pendingWasDeleted = true;
+		
+		const deletePending = async () => {
+			const pendingChapters = await db.generated.where('status').equals('pending').toArray();
+			const pendingExports = pendingChapters.map((chapter) => chapter.exportId);
+			const uniquePendingExports = [...new Set(pendingExports)];
+
+			await db.generated.where('exportId').anyOf(uniquePendingExports).delete();
+		};
+
+		deletePending();
+	}, []);
 
 	/**
 	 * Add a new chapter to the database.
