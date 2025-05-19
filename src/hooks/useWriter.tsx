@@ -2,16 +2,16 @@ import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Database } from './useDb';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
-import { useEffect, useMemo, useState } from 'react';
+import { useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
 import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/utils';
-import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { Button } from '@/components/ui/button';
 import { useSettings } from './useSettings';
+import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 
 export interface UseWriterProps {
 	db: Database;
@@ -28,7 +28,8 @@ const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templa
  * Custom hook to manage the writer state and actions.
  */
 export function useWriter({ db, model }: UseWriterProps) {
-	const { settings } = useSettings();
+	const { settings, getLanguagePrompt } = useSettings();
+	const abortControllerRef = useRef<AbortController | null>(null);
 
 	// const abortController = useMemo(() => new AbortController(), []);
 	const [activeItemId, setActiveItemId] = useAtom(activeItemIdAtom);
@@ -150,6 +151,13 @@ export function useWriter({ db, model }: UseWriterProps) {
 	const generate = async () => {
 		const exportId = crypto.randomUUID() as string;
 
+		// Abort previous generation if in progress
+		if (abortControllerRef.current) abortControllerRef.current.abort();
+
+		// Set abort controller to cancel generation
+		const abortController = new AbortController();
+		abortControllerRef.current = abortController;
+
 		try {
 			const [codebase] = await db.codebases.toArray();
 			if (!codebase) {
@@ -157,27 +165,27 @@ export function useWriter({ db, model }: UseWriterProps) {
 				return;
 			}
 
+			if (!chapters || chapters.length === 0) {
+				toast.error('No chapters found. Please add a chapter first.');
+				return;
+			}
+
 			// Initiate export, create files for each chapter
-			for (const chapter of chapters ?? []) {
-				const id = crypto.randomUUID() as string;
-
-				const chapterTitle = chapter.title.trim();
-				const fileName = chapterTitle.endsWith('.md') ? chapterTitle : `${chapterTitle}.md`;
-
-				await db.generated.add({
-					id: id,
-					exportId: exportId,
+			await db.generated.bulkAdd(
+				chapters.map((chapter) => ({
+					id: crypto.randomUUID(),
+					exportId,
 					chapterId: chapter.id,
 					status: 'pending',
 					createdAt: new Date(),
 					updatedAt: new Date(),
-					fileName,
+					fileName: chapter.title.trim().endsWith('.md') ? chapter.title.trim() : `${chapter.title.trim()}.md`,
 					content: '',
-				});
-			}
+				})),
+			);
 
 			// Create table of contents prompt
-			const toc = createTOCPrompt(chapters ?? []);
+			const toc = createTOCPrompt(chapters);
 
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
@@ -191,6 +199,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 
 				// Function to generate chapter content
 				const generateChapter = async (chapter: Chapter) => {
+					console.log(`Generating chapter "${chapter.title}"...`);
+
 					const metadata = {
 						fileName: file.fileName,
 						createdAt: file.createdAt.toLocaleString(),
@@ -198,13 +208,15 @@ export function useWriter({ db, model }: UseWriterProps) {
 					};
 
 					const { text } = await generateText({
+						abortSignal: abortController.signal,
 						model,
 						messages: [
 							{ role: 'system', content: writerSystemPrompt },
 							{ role: 'user', content: codebase.prompt },
+							{ role: 'user', content: `${getLanguagePrompt()}` },
 							{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
 							{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
-							{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
+							{ role: 'user', content: `# Chapter Outline / Template: \n\n ${chapter.outline}` },
 						],
 					});
 
@@ -212,16 +224,16 @@ export function useWriter({ db, model }: UseWriterProps) {
 					const fileExists = await db.generated.where('id').equals(file.id).count();
 					if (fileExists === 0) return;
 
-					console.log(`Chapter "${chapter.title}" generated!`);
 					await db.generated.update(file.id, {
 						status: 'completed',
 						updatedAt: new Date(),
 						content: text,
 					});
+
+					console.log(`Chapter "${chapter.title}" generated successfully!`);
 				};
 
-				// Push promise to execution queue
-				console.log(`Generating chapter "${chapter.title}"...`);
+				// Start promise
 				promises.push(generateChapter(chapter));
 
 				// Await execution if the number of promises exceeds the parallelization limit
@@ -233,11 +245,30 @@ export function useWriter({ db, model }: UseWriterProps) {
 
 			toast.success('Documentation generated successfully!');
 		} catch (error) {
-			console.error('Error generating documentation:', error);
-			toast.error(`Error generating documentation: ${(error as Error)?.message || error}`, { richColors: true });
+			// Log error only when error is not abort message is not 'cancelGeneration'
+			if (error !== 'cancelGeneration') {
+				console.error('Error generating documentation:', error);
+				toast.error(`Error generating documentation: ${(error as Error)?.message || error}`, { richColors: true });
+			}
 
 			await db.generated.where('exportId').equals(exportId).delete();
 		}
+	};
+
+	/**
+	 * Cancel the current generation process.
+	 * @param exportId - The ID of the export to cancel. If not provided, all pending generations will be cancelled.
+	 */
+	const cancelGeneration = async (exportId?: string) => {
+		if (abortControllerRef.current) abortControllerRef.current.abort('cancelGeneration');
+
+		if (exportId) {
+			await db.generated.where({ exportId }).delete();
+		} else {
+			await db.generated.where({ status: 'pending' }).delete();
+		}
+
+		toast.success('Generation cancelled.');
 	};
 
 	return {
@@ -250,6 +281,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 		removeChapter,
 		reorderChapters,
 		generate,
+		cancelGeneration,
 		applyTemplate,
 	};
 }

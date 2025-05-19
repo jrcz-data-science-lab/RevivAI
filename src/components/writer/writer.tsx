@@ -22,6 +22,7 @@ export function Writer({ db, model }: WriterProps) {
 		isGenerating,
 		chapters,
 		generate,
+		cancelGeneration,
 		activeItemId,
 		setActiveItemId,
 		removeChapter,
@@ -38,7 +39,15 @@ export function Writer({ db, model }: WriterProps) {
 	 */
 	const renderActiveItem = (id: WriterItemId) => {
 		if (id === 'generate') {
-			return <WriterGenerate db={db} model={model} isLoading={isGenerating} onGenerate={generate} />;
+			return (
+				<WriterGenerate
+					db={db}
+					model={model}
+					isLoading={isGenerating}
+					onGenerate={generate}
+					onGenerationCancel={cancelGeneration}
+				/>
+			);
 		}
 
 		if (id === 'templates') {

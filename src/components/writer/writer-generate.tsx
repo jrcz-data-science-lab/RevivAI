@@ -14,13 +14,13 @@ interface WriterGenerateProps {
 	model: LanguageModelV1;
 	isLoading: boolean;
 	onGenerate: () => void;
+	onGenerationCancel: () => void;
 }
 
 /**
  * WriterGenerate component that handles the generation and export of documentation.
  */
-export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGenerateProps) {
-
+export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationCancel }: WriterGenerateProps) {
 	// Get all generated content
 	const generatedFiles = useLiveQuery(async () => {
 		const generated = await db.generated.toArray();
@@ -45,9 +45,15 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 	 * @param exportId - The ID of the export to delete.
 	 */
 	const deleteExport = async (exportId: string) => {
+		// Call cancellation function export is currently pending
+		const pendingExports = await db.generated.where({ exportId }).toArray();
+		const isPending = pendingExports.some((file) => file.status === 'pending');
+		if (isPending) onGenerationCancel();
+
 		await db.generated.where('exportId').equals(exportId).delete();
 	};
 
+	// True if files loaded from the database
 	const filesLoaded = Array.isArray(generatedFiles);
 
 	// Check if there are any generated files
@@ -57,7 +63,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: filesLoaded ? 1 : 0 }} className="space-y-8">
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Generate</h1>
-				<p className="text-md text-muted-foreground">Here you can generate and export your documentation.</p>
+				<p className="text-md text-muted-foreground">Here you can generate and export documentation.</p>
 			</div>
 
 			<div className="space-y-4">
