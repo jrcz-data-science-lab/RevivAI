@@ -1,7 +1,7 @@
 import type { Database } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
 import { motion } from 'motion/react';
-import { Plus } from 'lucide-react';
+import { MagnetIcon, Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import { WriterSidebar } from './writer-sidebar';
 import { WriterEditor } from './writer-editor';
@@ -80,7 +80,7 @@ export function Writer({ db, model }: WriterProps) {
 						onRemoveChapter={removeChapter}
 					/>
 
-					<div className="p-3 bg-muted absolute bottom-0 left-0 w-full flex items-center justify-center">
+					<div className="p-3 bg-muted absolute bottom-0 left-0 w-full flex flex-col gap-2 items-center justify-center">
 						<Button variant="outline" className="w-full" size="lg" onClick={addChapter}>
 							<Plus className="h-4 w-4 mr-2" />
 							New Chapter

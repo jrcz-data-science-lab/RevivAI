@@ -61,6 +61,10 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 		[files],
 	);
 
+	/**
+	 * Render the sidebar with a list of files
+	 * @param files - The list of files to render
+	 */
 	const renderSidebar = (files: GeneratedFile[]) => {
 		return (
 			<ul className="py-2">
@@ -84,31 +88,37 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 	};
 
 	/**
+	 * Render a link in markdown
+	 * @param href - The URL of the link
+	 * @param children - The content of the link
+	 */
+	const MarkdownLink = ({ href = '', children, ...props }: { href?: string; children?: React.ReactNode }) => {
+		return (
+			<a
+				href={href}
+				{...props}
+				onClick={(e) => handleLinkClick(href, e)}
+				className="text-primary underline cursor-pointer"
+			>
+				{children}
+			</a>
+		);
+	};
+
+	/**
 	 * Render content of the file
 	 * @param file - The file to render
 	 */
 	const renderFileContent = (file: GeneratedFile | undefined) => {
 		if (!file) return <span className="text-muted-foreground">No file selected.</span>;
-		if (!file.content) return <span className="text-muted-foreground">File is empty.</span>;
 		if (file.status === 'pending') return <span className="animate-pulse">Generation in progress...</span>;
+		if (!file.content) return <span className="text-muted-foreground">File is empty.</span>;
 
 		return (
 			<ReactMarkdown
 				key={file.id}
 				remarkPlugins={[rehypeInlineCodeProperty, remarkGfm]}
-				components={{
-					code: CodeHighlight,
-					a: ({ href = '', children, ...props }) => (
-						<a
-							href={href}
-							{...props}
-							onClick={(e) => handleLinkClick(href, e)}
-							className="text-primary underline cursor-pointer"
-						>
-							{children}
-						</a>
-					),
-				}}
+				components={{ code: CodeHighlight, a: MarkdownLink }}
 			>
 				{file.content}
 			</ReactMarkdown>
