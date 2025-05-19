@@ -1,11 +1,12 @@
 import type { GeneratedFile } from '@/hooks/useDb';
 import { cn } from '@/lib/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { Progress } from '../ui/progress';
 import { AnimatePresence, motion } from 'motion/react';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { WriterPreview } from './writer-preview';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
@@ -29,6 +30,8 @@ interface StructuredExport {
  * @param onDelete - Callback function to handle delete action.
  */
 export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: WriterGenerateExportsProps) {
+	const [previewExportId, setPreviewExportId] = useState<string | null>(null);
+
 	// Check if there are any generated files
 	const generationExports = useMemo(() => {
 		const exportsIds = generatedFiles.map((file) => file.exportId);
@@ -124,6 +127,10 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 						</div>
 
 						<div className="flex p-4">
+							<Button size="sm" variant="ghost" onClick={() => setPreviewExportId(exportItem.id)}>
+								Preview
+							</Button>
+
 							{exportItem.status === 'completed' && (
 								<Button size="sm" variant="ghost" onClick={() => onDownload(exportItem.id)}>
 									Download
@@ -136,6 +143,14 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 					</motion.div>
 				))}
 			</AnimatePresence>
+
+			{previewExportId && (
+				<WriterPreview
+					open={!!previewExportId}
+					onClose={() => setPreviewExportId(null)}
+					files={generatedFiles.filter((f) => f.exportId === previewExportId)}
+				/>
+			)}
 		</div>
 	);
 }

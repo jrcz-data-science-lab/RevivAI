@@ -3,10 +3,15 @@ import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 import CodeHighlight from './chat-code-highlight';
 import { rehypeInlineCodeProperty } from 'react-shiki';
+import type { Theme } from '@/hooks/useTheme';
 
-const ChatMarkdown = ({ children, ...props }: { children: string }) => {
+interface ChatMarkdownProps {
+	children: string;
+}
+
+const ChatMarkdown = ({ children }: ChatMarkdownProps) => {
 	return (
-		<div className="markdown prose prose-neutral dark:prose-invert text-md max-w-full" {...props}>
+		<div className="markdown prose prose-neutral prose-pre:bg-[#121212] dark:prose-invert text-md max-w-full">
 			<ReactMarkdown
 				rehypePlugins={[rehypeInlineCodeProperty, remarkGfm]}
 				components={{ code: CodeHighlight }}

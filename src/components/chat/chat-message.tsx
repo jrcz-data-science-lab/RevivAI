@@ -1,13 +1,13 @@
 import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
+import type { Theme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
-import { lazy, memo, Suspense } from 'react';
+import { memo } from 'react';
 import { motion } from 'motion/react';
 import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 
-import '@/styles/markdown.css';
-import { Skeleton } from '../ui/skeleton';
+// import '@/styles/markdown.css';
 
 import ChatMarkdown from './chat-markdown';
 // const ChatMarkdown = lazy(() => import('./chat-markdown'));

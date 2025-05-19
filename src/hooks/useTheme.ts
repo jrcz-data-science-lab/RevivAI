@@ -1,7 +1,7 @@
 import { atom, useAtom } from 'jotai';
 import { useEffect } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
 const initialTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
 const themeAtom = atom<Theme>(initialTheme);

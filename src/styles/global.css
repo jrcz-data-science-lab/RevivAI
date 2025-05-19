@@ -136,3 +136,9 @@ body {
 	overflow-x: hidden;
 	background-color: var(--background);
 }
+
+#shiki-container .languageLabel {
+	top: 0 !important;
+	right: 0 !important;
+	color: rgb(122, 122, 122) !important;
+}

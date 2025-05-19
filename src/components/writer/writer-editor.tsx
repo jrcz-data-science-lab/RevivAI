@@ -76,7 +76,7 @@ export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 						onChange={onOutlineChange}
 						markdown={chapter.outline ?? ''}
 						onError={console.error}
-						contentEditableClassName="outline-none prose dark:prose-invert p-3 w-full max-w-full text-sm"
+						contentEditableClassName="outline-none prose prose-neutral dark:prose-invert p-3 w-full max-w-full text-sm"
 						plugins={[
 							headingsPlugin(),
 							listsPlugin(),

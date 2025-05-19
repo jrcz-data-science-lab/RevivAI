@@ -8,6 +8,7 @@ import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
 import type { LanguageModelV1 } from 'ai';
 import type { Database } from '@/hooks/useDb';
+import { useTheme } from '@/hooks/useTheme';
 
 interface ChatProps {
 	db: Database;
@@ -70,7 +71,12 @@ export function Chat({ db, model }: ChatProps) {
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
 								return (
-									<ChatMessage key={message.id} message={message} isWriting={isWriting} onDelete={chat.deleteMessage} />
+									<ChatMessage
+										key={message.id}
+										message={message}
+										isWriting={isWriting}
+										onDelete={chat.deleteMessage}
+									/>
 								);
 							})}
 						</div>

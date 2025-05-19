@@ -1,7 +1,6 @@
 import { memo, type ReactNode } from 'react';
 import ShikiHighlighter, { type Element, isInlineCode } from 'react-shiki';
 import { ChatMermaid } from './chat-mermaid';
-import { useTheme } from '@/hooks/useTheme';
 
 interface CodeHighlightProps {
 	className?: string;
