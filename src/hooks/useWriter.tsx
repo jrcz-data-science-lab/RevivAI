@@ -203,13 +203,13 @@ export function useWriter({ db, model }: UseWriterProps) {
 				})),
 			);
 
-			// Create table of contents prompt
 			const toc = createTOCPrompt(chapters);
+			const languagePrompt = getLanguagePrompt();
 
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
 
-			// Store promises for awaiting
+			// Store promises for awaiting and parallelization
 			const promises: Promise<void>[] = [];
 
 			for (const file of generatedFiles) {
@@ -232,7 +232,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 						messages: [
 							{ role: 'system', content: writerSystemPrompt },
 							{ role: 'user', content: codebase.prompt },
-							{ role: 'user', content: `${getLanguagePrompt()}` },
+							{ role: 'user', content: languagePrompt },
 							{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
 							{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
 							{ role: 'user', content: `# Chapter Outline / Template: \n\n ${chapter.outline}` },
