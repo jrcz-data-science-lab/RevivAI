@@ -1,11 +1,11 @@
 import type { GeneratedFile } from '@/hooks/useDb';
+import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 import { Button } from '../ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash } from 'lucide-react';
 import { Progress } from '../ui/progress';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'motion/react';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
@@ -69,19 +69,28 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		const progress = Math.floor((finished / total) * 100);
 		return progress < 5 ? 5 : progress;
 	};
+
+	// Set the content height for the animation
+	const setContentHeight = (el: HTMLDivElement) => {
+		if (el) {
+			el.style.setProperty('--content-height', `${el.scrollHeight * 2}px`);
+		}
+	}
+
 	return (
 		<div className="flex flex-col border rounded-md">
-			<AnimatePresence initial={false} mode="wait">
+			<AnimatePresence initial={false} mode="sync">
 				{generationExports.map((exportItem) => (
 					<motion.div
 						key={exportItem.id}
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -20 }}
-						transition={{ duration: 0.2 }}
-						className="flex justify-between items-start p-4 border-b border-border last:border-none"
+						ref={setContentHeight}
+						initial={{ maxHeight: 0 }}
+						animate={{ maxHeight: 'var(--content-height, 1000px)' }}
+						exit={{ maxHeight: 0 }}
+						transition={{ duration: 0.15 }}
+						className="flex justify-between items-start border-b border-border last:border-none overflow-hidden"
 					>
-						<div className="flex flex-col w-full max-w-2/3 pr-4">
+						<div className="flex flex-col w-full max-w-2/3 p-4">
 							<h2 className={cn('text-sm font-medium pb-0', exportItem.status === 'pending' && 'animate-pulse')}>
 								{exportItem.status === 'pending' ? 'Generating...' : 'Done!'}
 							</h2>
@@ -114,14 +123,14 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 							</div>
 						</div>
 
-						<div className="flex gap-2">
+						<div className="flex p-4">
 							{exportItem.status === 'completed' && (
-								<Button size="sm" variant="outline" onClick={() => onDownload(exportItem.id)}>
+								<Button size="sm" variant="ghost" onClick={() => onDownload(exportItem.id)}>
 									Download
 								</Button>
 							)}
-							<Button variant="outline" size="sm" onClick={() => onDelete(exportItem.id)}>
-								<Trash2 className="text-destructive" />
+							<Button variant="ghost" size="sm" className="group" onClick={() => onDelete(exportItem.id)}>
+								<Trash className="group-hover:text-destructive" />
 							</Button>
 						</div>
 					</motion.div>

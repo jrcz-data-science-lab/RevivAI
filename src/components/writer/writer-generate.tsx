@@ -1,18 +1,16 @@
-import { Button } from '../ui/button';
-import { LoaderCircle, Sparkles } from 'lucide-react';
 import type { WriterGenerateConfig } from '@/hooks/useWriter';
-import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import type { Database } from '@/hooks/useDb';
-import { useLiveQuery } from 'dexie-react-hooks';
 import type { LanguageModelV1 } from 'ai';
-import { WriterGenerateExports } from './writer-generate-exports';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Label } from '../ui/label';
 import { toast } from 'sonner';
-import { downloadExportedFiles } from '@/lib/export';
-import { InfoBar } from '../info-bar';
+import { useAtom } from 'jotai';
 import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { InfoBar } from '../info-bar';
+import { atomWithStorage } from 'jotai/utils';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { LoaderCircle, Sparkles } from 'lucide-react';
+import { WriterGenerateExports } from './writer-generate-exports';
+import { downloadExportedFiles } from '@/lib/export';
 
 interface WriterGenerateProps {
 	db: Database;

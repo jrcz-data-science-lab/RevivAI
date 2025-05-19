@@ -42,10 +42,11 @@ export function useWriter({ db, model }: UseWriterProps) {
 	}, [db]);
 
 	// True if there is generation in progress
-	const isGenerating = useLiveQuery(async () => {
-		const generatedCount = await db.generated.where('status').equals('pending').count();
-		return generatedCount > 0;
-	}, [chapters]) || false;
+	const isGenerating =
+		useLiveQuery(async () => {
+			const generatedCount = await db.generated.where('status').equals('pending').count();
+			return generatedCount > 0;
+		}, [chapters]) || false;
 
 	/**
 	 * Add a new chapter to the database.
@@ -139,7 +140,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 				},
 				onDismiss: () => {
 					abortController.abort();
-				}
+				},
 			});
 		}
 	};
@@ -183,37 +184,49 @@ export function useWriter({ db, model }: UseWriterProps) {
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
 
+			const promises: Promise<void>[] = [];
+
 			for (const file of generatedFiles) {
 				const chapter = chapters?.find((chapter) => chapter.id === file.chapterId);
 				if (!chapter) continue;
 
-				const metadata = JSON.stringify({
-					fileName: file.fileName,
-					createdAt: file.createdAt.toLocaleString(),
-					repositoryUrl: codebase.repositoryUrl || 'not specified',
-				}, null, 2);
+				const operation = async (chapter: Chapter) => {
+					const metadata = JSON.stringify(
+						{
+							fileName: file.fileName,
+							createdAt: file.createdAt.toLocaleString(),
+							repositoryUrl: codebase.repositoryUrl || 'not specified',
+						},
+						null,
+						2,
+					);
 
-				const { text } = await generateText({
-					model,
-					messages: [
-						{ role: 'system', content: writerSystemPrompt },
-						{ role: 'user', content: codebase.prompt },
-						{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
-						{ role: 'user', content: `# Chapter Metadata: \n\n${metadata}` },
-						{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
-					],
-				});
+					const { text } = await generateText({
+						model,
+						messages: [
+							{ role: 'system', content: writerSystemPrompt },
+							{ role: 'user', content: codebase.prompt },
+							{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
+							{ role: 'user', content: `# Chapter Metadata: \n\n${metadata}` },
+							{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
+						],
+					});
 
-				// If file doesn't exist anymore, skip it
-				const fileExists = await db.generated.where('id').equals(file.id).count();
-				if (fileExists === 0) continue;
+					// If file doesn't exist anymore, skip it
+					const fileExists = await db.generated.where('id').equals(file.id).count();
+					if (fileExists === 0) return;
 
-				await db.generated.update(file.id, {
-					status: 'completed',
-					updatedAt: new Date(),
-					content: text,
-				});
+					await db.generated.update(file.id, {
+						status: 'completed',
+						updatedAt: new Date(),
+						content: text,
+					});
+				};
+
+				promises.push(operation(chapter));
 			}
+			
+			await Promise.all(promises);
 
 			toast.success('Documentation generated successfully!', { richColors: true });
 		} catch (error) {

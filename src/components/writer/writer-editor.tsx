@@ -12,7 +12,6 @@ import {
 	markdownShortcutPlugin,
 } from '@mdxeditor/editor';
 import { useCallback } from 'react';
-import { AnimatedText } from '../ui/animated-text';
 
 interface WriterEditorProps {
 	chapter: Chapter;
