@@ -54,7 +54,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 	useEffect(() => {
 		if (pendingWasDeleted) return;
 		pendingWasDeleted = true;
-		
+
 		const deletePending = async () => {
 			const pendingChapters = await db.generated.where('status').equals('pending').toArray();
 			const pendingExports = pendingChapters.map((chapter) => chapter.exportId);

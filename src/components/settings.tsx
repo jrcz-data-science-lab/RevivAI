@@ -20,7 +20,7 @@ function Settings() {
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-h-[90vh] overflow-y-scroll">
+			<DialogContent className="overflow-y-scroll max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>Settings</DialogTitle>
 				</DialogHeader>
@@ -52,8 +52,8 @@ function Settings() {
 						<div className="max-w-2/3">
 							<Label>Parallelization</Label>
 							<p className="text-muted-foreground">
-								Parallelize the generation of documentation files. This will speed up the generation process, but may
-								trigger rate limits.
+								The maximum number of chapters that can be processed in parallel. While this can speed up the generation
+								process, it may also trigger rate limits.
 							</p>
 						</div>
 

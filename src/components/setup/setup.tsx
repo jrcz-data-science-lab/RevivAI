@@ -13,7 +13,6 @@ import { SetupHelp } from './setup-help';
 // True if the public model is provided
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
 
-
 /**
  * Setup component that handles the setup of the LLM provider.
  */

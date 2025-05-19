@@ -11,7 +11,14 @@ interface WriterSidebarItemProps {
 	onDelete?: () => void;
 }
 
-export function WriterSidebarItem({ icon: Icon, title, titlePostfix, active, onClick, onDelete }: WriterSidebarItemProps) {
+export function WriterSidebarItem({
+	icon: Icon,
+	title,
+	titlePostfix,
+	active,
+	onClick,
+	onDelete,
+}: WriterSidebarItemProps) {
 	return (
 		<div>
 			<button

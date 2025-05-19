@@ -78,7 +78,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 		if (el) {
 			el.style.setProperty('--content-height', `${el.scrollHeight * 2}px`);
 		}
-	}
+	};
 
 	return (
 		<div className="flex flex-col border rounded-md">

@@ -48,7 +48,7 @@ export function useSettings() {
 			...prev,
 			parallelization: Math.max(1, parallelization),
 		}));
-	}
+	};
 
 	return {
 		settings,

@@ -71,12 +71,7 @@ export function Chat({ db, model }: ChatProps) {
 								const isWriting = chat.isStreaming && message === chat.currentMessage;
 
 								return (
-									<ChatMessage
-										key={message.id}
-										message={message}
-										isWriting={isWriting}
-										onDelete={chat.deleteMessage}
-									/>
+									<ChatMessage key={message.id} message={message} isWriting={isWriting} onDelete={chat.deleteMessage} />
 								);
 							})}
 						</div>
