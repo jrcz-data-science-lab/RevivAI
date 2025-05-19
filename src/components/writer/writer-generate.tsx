@@ -1,12 +1,9 @@
-import type { WriterGenerateConfig } from '@/hooks/useWriter';
 import type { Database } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
 import { toast } from 'sonner';
-import { useAtom } from 'jotai';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 import { InfoBar } from '../info-bar';
-import { atomWithStorage } from 'jotai/utils';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { LoaderCircle, Sparkles } from 'lucide-react';
 import { WriterGenerateExports } from './writer-generate-exports';
@@ -16,18 +13,13 @@ interface WriterGenerateProps {
 	db: Database;
 	model: LanguageModelV1;
 	isLoading: boolean;
-	onGenerate: (config: WriterGenerateConfig) => void;
+	onGenerate: () => void;
 }
-
-const generateConfigAtom = atomWithStorage<WriterGenerateConfig>('generate-config', {
-	diagrams: 'mermaid',
-});
 
 /**
  * WriterGenerate component that handles the generation and export of documentation.
  */
 export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGenerateProps) {
-	const [config, setConfig] = useAtom(generateConfigAtom);
 
 	// Get all generated content
 	const generatedFiles = useLiveQuery(async () => {
@@ -104,7 +96,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate }: WriterGener
 
 			<div className="flex flex-col gap-4">
 				<div className="flex flex-col gap-3">
-					<Button size="lg" onClick={() => onGenerate(config)} className="group" disabled={isLoading}>
+					<Button size="lg" onClick={() => onGenerate()} className="group" disabled={isLoading}>
 						{isLoading ? (
 							<LoaderCircle className="animate-spin" />
 						) : (

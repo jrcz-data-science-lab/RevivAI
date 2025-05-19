@@ -4,12 +4,12 @@ import { atomWithStorage } from 'jotai/utils';
 export type Language = 'en' | 'nl' | 'lv' | 'ru' | 'la';
 
 interface SettingsProps {
-	temperature: number;
+	parallelization: number;
 	language: Language;
 }
 
 const settingsAtom = atomWithStorage<SettingsProps>('settings', {
-	temperature: 0,
+	parallelization: 1,
 	language: 'en',
 });
 
@@ -39,9 +39,21 @@ export function useSettings() {
 		return 'WRITE AND RESPOND IN ENGLISH LANGUAGE ONLY!';
 	};
 
+	/**
+	 * Set parallelization for the LLM
+	 * @param parallelization - Parallelization to set
+	 */
+	const setParallelization = (parallelization: number) => {
+		setSettings((prev) => ({
+			...prev,
+			parallelization: Math.max(1, parallelization),
+		}));
+	}
+
 	return {
 		settings,
 		setLanguage,
+		setParallelization,
 		getLanguagePrompt,
 	};
 }

@@ -11,6 +11,7 @@ import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/utils';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { Button } from '@/components/ui/button';
+import { useSettings } from './useSettings';
 
 export interface UseWriterProps {
 	db: Database;
@@ -20,11 +21,6 @@ export interface UseWriterProps {
 // Type of opened items in the sidebar. String is a UUID of user created chapter.
 export type WriterItemId = 'generate' | 'templates' | string;
 
-// Config for documentation generation
-export interface WriterGenerateConfig {
-	diagrams: 'none' | 'mermaid' | 'svg';
-}
-
 // Last active item ID in the sidebar. Stored in local storage.
 const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templates');
 
@@ -32,6 +28,8 @@ const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templa
  * Custom hook to manage the writer state and actions.
  */
 export function useWriter({ db, model }: UseWriterProps) {
+	const { settings } = useSettings();
+
 	// const abortController = useMemo(() => new AbortController(), []);
 	const [activeItemId, setActiveItemId] = useAtom(activeItemIdAtom);
 
@@ -149,7 +147,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * Generate documentation based on the chapters and configuration.
 	 * @param config - The configuration for generation.
 	 */
-	const generate = async (config: WriterGenerateConfig) => {
+	const generate = async () => {
 		const exportId = crypto.randomUUID() as string;
 
 		try {
@@ -184,22 +182,20 @@ export function useWriter({ db, model }: UseWriterProps) {
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
 
+			// Store promises for awaiting
 			const promises: Promise<void>[] = [];
 
 			for (const file of generatedFiles) {
 				const chapter = chapters?.find((chapter) => chapter.id === file.chapterId);
 				if (!chapter) continue;
 
-				const operation = async (chapter: Chapter) => {
-					const metadata = JSON.stringify(
-						{
-							fileName: file.fileName,
-							createdAt: file.createdAt.toLocaleString(),
-							repositoryUrl: codebase.repositoryUrl || 'not specified',
-						},
-						null,
-						2,
-					);
+				// Function to generate chapter content
+				const generateChapter = async (chapter: Chapter) => {
+					const metadata = {
+						fileName: file.fileName,
+						createdAt: file.createdAt.toLocaleString(),
+						repositoryUrl: codebase.repositoryUrl || 'not specified',
+					};
 
 					const { text } = await generateText({
 						model,
@@ -207,7 +203,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 							{ role: 'system', content: writerSystemPrompt },
 							{ role: 'user', content: codebase.prompt },
 							{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
-							{ role: 'user', content: `# Chapter Metadata: \n\n${metadata}` },
+							{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
 							{ role: 'user', content: `# Chapter Template: \n\n ${chapter.outline}` },
 						],
 					});
@@ -216,6 +212,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 					const fileExists = await db.generated.where('id').equals(file.id).count();
 					if (fileExists === 0) return;
 
+					console.log(`Chapter "${chapter.title}" generated!`);
 					await db.generated.update(file.id, {
 						status: 'completed',
 						updatedAt: new Date(),
@@ -223,15 +220,21 @@ export function useWriter({ db, model }: UseWriterProps) {
 					});
 				};
 
-				promises.push(operation(chapter));
+				// Push promise to execution queue
+				console.log(`Generating chapter "${chapter.title}"...`);
+				promises.push(generateChapter(chapter));
+
+				// Await execution if the number of promises exceeds the parallelization limit
+				if (promises.length >= settings.parallelization) await Promise.all(promises);
 			}
-			
+
+			// Await all promises in parallelized mode
 			await Promise.all(promises);
 
-			toast.success('Documentation generated successfully!', { richColors: true });
+			toast.success('Documentation generated successfully!');
 		} catch (error) {
 			console.error('Error generating documentation:', error);
-			toast.error(`Error generating documentation: ${(error as Error)?.message || error}`);
+			toast.error(`Error generating documentation: ${(error as Error)?.message || error}`, { richColors: true });
 
 			await db.generated.where('exportId').equals(exportId).delete();
 		}
