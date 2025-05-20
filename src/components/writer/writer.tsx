@@ -55,7 +55,7 @@ export function Writer({ db, model }: WriterProps) {
 			return <WriterTemplates isLoading={isGenerating} onTemplateApply={applyTemplate} />;
 		}
 
-		// If chapters loaded
+		// If chapters loaded and 
 		if (Array.isArray(chapters)) {
 			const chapter = chapters?.find((chapter) => chapter.id === activeItemId);
 			if (!chapter) {
@@ -64,7 +64,9 @@ export function Writer({ db, model }: WriterProps) {
 				return;
 			}
 
-			return <WriterEditor chapter={chapter} onChange={(updated) => updateChapter(chapter.id, updated)} />;
+			return (
+				<WriterEditor key={chapter.id} chapter={chapter} onChange={(updated) => updateChapter(chapter.id, updated)} />
+			);
 		}
 	};
 

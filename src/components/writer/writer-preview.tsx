@@ -117,7 +117,7 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 	const renderFileContent = (file: GeneratedFile | undefined) => {
 		if (!file) return <span className="text-muted-foreground">No file selected.</span>;
 		if (file.status === 'pending') return <span className="animate-pulse">Generation in progress...</span>;
-		if (file.status === 'failed') return <span className="text-destructive">File generation filed</span>;
+		if (file.status === 'failed') return <span className="text-destructive">File generation failed.</span>;
 		if (!file.content) return <span className="text-muted-foreground">File is empty.</span>;
 
 		if (!renderMarkdown) {
