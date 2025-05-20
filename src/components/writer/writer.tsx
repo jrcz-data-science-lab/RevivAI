@@ -73,6 +73,7 @@ export function Writer({ db, model }: WriterProps) {
 			<div className="flex">
 				<div className="relative z-40 bg-muted border-r flex flex-col w-full h-screen max-w-64">
 					<WriterSidebar
+						isGenerating={isGenerating}
 						chapters={chapters}
 						activeItemId={activeItemId}
 						onSelect={setActiveItemId}

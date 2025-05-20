@@ -6,6 +6,7 @@ import type { WriterItemId } from '@/hooks/useWriter';
 
 interface WriterSidebarProps {
 	activeItemId: WriterItemId | undefined;
+	isGenerating: boolean;
 	chapters: Chapter[] | undefined;
 	onSelect: (id: WriterItemId) => void;
 	onReorder: (newOrder: Chapter[]) => void;
@@ -15,7 +16,7 @@ interface WriterSidebarProps {
 /**
  * Sidebar component for the Writer page.
  */
-export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onRemoveChapter }: WriterSidebarProps) {
+export function WriterSidebar({ chapters, isGenerating, onReorder, activeItemId, onSelect, onRemoveChapter }: WriterSidebarProps) {
 	return (
 		<motion.div
 			initial={{ translateX: -16, opacity: 0 }}
@@ -30,12 +31,14 @@ export function WriterSidebar({ chapters, onReorder, activeItemId, onSelect, onR
 						active={activeItemId === 'templates'}
 						onClick={() => onSelect('templates')}
 					/>
-					<WriterSidebarItem
-						icon={Sparkles}
-						title={'Generate'}
-						active={activeItemId === 'generate'}
-						onClick={() => onSelect('generate')}
-					/>
+					<div className={isGenerating ? 'animate-pulse' : ''}>
+						<WriterSidebarItem
+							icon={Sparkles}
+							title={'Generate'}
+							active={activeItemId === 'generate'}
+							onClick={() => onSelect('generate')}
+						/>
+					</div>
 				</div>
 			</div>
 
