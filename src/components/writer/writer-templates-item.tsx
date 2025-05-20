@@ -46,11 +46,11 @@ export function WriterTemplatesItem({
 			onClick={onSelect}
 			disabled={isDisabled}
 			className={cn(
-				'group cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 overflow-hidden w-full',
+				'group cursor-pointer transition-all hover:-translate-y-1 active:translate-y-0 overflow-hidden w-full h-full',
 				isDisabled && 'opacity-75 pointer-events-none',
 			)}
 		>
-			<Card className={cn('relative w-full px-6 flex justify-between', variants[color])}>
+			<Card className={cn('relative w-full px-6 flex justify-between h-full', variants[color])}>
 				<div className="ml-auto mb-4 group-hover:scale-125 transition-all duration-200">
 					<Icon />
 				</div>

@@ -6,8 +6,10 @@ import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { GeneratedFile } from '@/hooks/useDb';
-import { rehypeInlineCodeProperty } from 'react-shiki';
+import ShikiHighlighter, { rehypeInlineCodeProperty } from 'react-shiki';
 import CodeHighlight from '../chat/chat-code-highlight';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
 
 interface WriterPreviewProps {
 	open: boolean;
@@ -17,6 +19,8 @@ interface WriterPreviewProps {
 
 export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 	const mainRef = useRef<HTMLDivElement>(null);
+
+	const [renderMarkdown, setRenderMarkdown] = useState(true);
 	const [selectedFileId, setSelectedFileId] = useState<string | undefined>();
 
 	// Scroll to top when selected file changes
@@ -72,12 +76,12 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 					<li key={file.id}>
 						<Button
 							variant="link"
+							onClick={() => setSelectedFileId(file.id)}
 							className={cn(
 								'w-full justify-start rounded-none text-muted-foreground',
 								selectedFileId === file.id && 'text-foreground',
 								file.status === 'pending' && 'animate-pulse',
 							)}
-							onClick={() => setSelectedFileId(file.id)}
 						>
 							{file.fileName}
 						</Button>
@@ -114,14 +118,22 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 		if (file.status === 'pending') return <span className="animate-pulse">Generation in progress...</span>;
 		if (!file.content) return <span className="text-muted-foreground">File is empty.</span>;
 
+		if (!renderMarkdown) {
+			return (
+				<pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words">{file.content}</pre>
+			);
+		}
+
 		return (
-			<ReactMarkdown
-				key={file.id}
-				remarkPlugins={[rehypeInlineCodeProperty, remarkGfm]}
-				components={{ code: CodeHighlight, a: MarkdownLink }}
-			>
-				{file.content}
-			</ReactMarkdown>
+			<div className="prose prose-neutral prose-pre:bg-[#121212] dark:prose-invert">
+				<ReactMarkdown
+					key={file.id}
+					remarkPlugins={[rehypeInlineCodeProperty, remarkGfm]}
+					components={{ code: CodeHighlight, a: MarkdownLink }}
+				>
+					{file.content}
+				</ReactMarkdown>
+			</div>
 		);
 	};
 
@@ -133,12 +145,18 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 						<DialogTitle>Preview</DialogTitle>
 					</DialogHeader>
 					<ScrollArea className="flex-1">{renderSidebar(sortedFiles)}</ScrollArea>
+					<div className="p-4">
+						<div className="flex justify-between items-center">
+							<Label className="text-sm font-semibold" htmlFor="render-markdown">
+								Render Markdown
+							</Label>
+							<Switch id="render-markdown" checked={renderMarkdown} onCheckedChange={setRenderMarkdown} />
+						</div>
+					</div>
 				</aside>
 
 				<main ref={mainRef} className="flex-1 h-full w-full bg-background overflow-y-auto">
-					<div className="pl-8 p-16 prose prose-neutral prose-pre:bg-[#121212] dark:prose-invert">
-						{renderFileContent(selectedFile)}
-					</div>
+					<div className="pl-8 p-16">{renderFileContent(selectedFile)}</div>
 				</main>
 			</DialogContent>
 		</Dialog>
