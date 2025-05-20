@@ -7,10 +7,11 @@ import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useSettings, type Language } from '@/hooks/useSettings';
+import { Input } from './ui/input';
 
 function Settings() {
 	const projectId = useAtomValue(currentProjectIdAtom);
-	const { settings, setLanguage, setParallelization } = useSettings();
+	const { settings, setLanguage, setParallelization, setTemperature } = useSettings();
 
 	return (
 		<Dialog>
@@ -52,8 +53,8 @@ function Settings() {
 						<div className="max-w-2/3">
 							<Label>Parallelization</Label>
 							<p className="text-muted-foreground">
-								The maximum number of chapters that can be processed in parallel. While this can speed up the generation
-								process, it may also trigger rate limits.
+								The maximum number of chapters that can be processed in parallel. Increases generation speed, but may
+								trigger rate limits.
 							</p>
 						</div>
 
@@ -69,6 +70,28 @@ function Settings() {
 								<SelectItem value="999">Unlimited</SelectItem>
 							</SelectContent>
 						</Select>
+					</div>
+
+					<div className="flex justify-between gap-4">
+						<div className="max-w-2/3">
+							<Label>Temperature</Label>
+							<p className="text-muted-foreground">
+								Temperature of the LLM. Higher values make the output more random, lower values make it more
+								deterministic.
+							</p>
+						</div>
+
+						<Input
+							type="number"
+							value={settings.temperature}
+							onChange={(e) => setTemperature(Number(e.target.value))}
+							min={0}
+							max={2}
+							step={0.1}
+							className="w-20"
+							placeholder="0.7"
+						/>
+
 					</div>
 
 					<div className="flex justify-between gap-4">

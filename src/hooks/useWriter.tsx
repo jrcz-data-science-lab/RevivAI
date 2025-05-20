@@ -12,6 +12,7 @@ import { createTOCPrompt } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useSettings } from './useSettings';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
+import { getLanguagePrompt } from '@/lib/languages';
 
 export interface UseWriterProps {
 	db: Database;
@@ -31,7 +32,7 @@ const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templa
  * Custom hook to manage the writer state and actions.
  */
 export function useWriter({ db, model }: UseWriterProps) {
-	const { settings, getLanguagePrompt } = useSettings();
+	const { settings } = useSettings();
 	const abortControllerRef = useRef<AbortController | null>(null);
 
 	// const abortController = useMemo(() => new AbortController(), []);
@@ -131,7 +132,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 		let applyPromise: Promise<void> | null = null;
 
 		if (template === 'readme') applyPromise = applyReadmeTemplate(db);
-		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, abortController.signal);
+		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, settings, abortController.signal);
 
 		if (applyPromise) {
 			const abort = () => {
@@ -204,7 +205,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 			);
 
 			const toc = createTOCPrompt(chapters);
-			const languagePrompt = getLanguagePrompt();
+			const languagePrompt = getLanguagePrompt(settings.language);
 
 			// Get 'pending' saved files from database
 			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
@@ -229,6 +230,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 					const { text } = await generateText({
 						abortSignal: abortController.signal,
 						model,
+						temperature: settings.temperature,
 						messages: [
 							{ role: 'system', content: writerSystemPrompt },
 							{ role: 'user', content: codebase.prompt },

@@ -3,13 +3,15 @@ import { atomWithStorage } from 'jotai/utils';
 
 export type Language = 'en' | 'nl' | 'lv' | 'ru' | 'la';
 
-interface SettingsProps {
+export interface Settings {
 	parallelization: number;
+	temperature: number;
 	language: Language;
 }
 
-const settingsAtom = atomWithStorage<SettingsProps>('settings', {
+const settingsAtom = atomWithStorage<Settings>('settings', {
 	parallelization: 1,
+	temperature: 0.7,
 	language: 'en',
 });
 
@@ -28,18 +30,6 @@ export function useSettings() {
 	};
 
 	/**
-	 * Get the language prompt for the LLM
-	 * @returns Language prompt
-	 */
-	const getLanguagePrompt = () => {
-		if (settings.language === 'nl') return 'SCHRIJF EN ANTWOORD ALLEEN IN HET NEDERLANDS!';
-		if (settings.language === 'lv') return 'RAKIET UN ATBILDĒJIET TIKAI LATVIEŠU VALODĀ!';
-		if (settings.language === 'ru') return 'ПИШИТ И ОТВЕЧАЙТ ТОЛЬКО НА РУССКОМ ЯЗЫКЕ!';
-		if (settings.language === 'la') return 'SCRIBE ET RESPONDE IN LINGUA LATINA SOLUM!';
-		return 'WRITE AND RESPOND IN ENGLISH LANGUAGE ONLY!';
-	};
-
-	/**
 	 * Set parallelization for the LLM
 	 * @param parallelization - Parallelization to set
 	 */
@@ -50,10 +40,22 @@ export function useSettings() {
 		}));
 	};
 
+	/**
+	 * Set temperature for the LLM
+	 * @param temperature - Temperature to set. (from 0 to 2)
+	 * 
+	 */
+	const setTemperature = (temperature: number) => {
+		setSettings((prev) => ({
+			...prev,
+			temperature: Math.max(0, Math.min(2, temperature)),
+		}));
+	}
+
 	return {
 		settings,
 		setLanguage,
-		setParallelization,
-		getLanguagePrompt,
+		setTemperature,
+		setParallelization
 	};
 }

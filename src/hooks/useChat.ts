@@ -8,6 +8,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
 import { atomWithStorage } from 'jotai/utils';
 import { useSettings } from './useSettings';
+import settings from '@/components/settings';
+import { getLanguagePrompt } from '@/lib/languages';
 
 interface UseChatProps {
 	db: Database;
@@ -44,7 +46,7 @@ export const chatStateAtom = atomWithStorage<ChatState>('chat', {
 export function useChat({ db, model }: UseChatProps) {
 	const abortControllerRef = useRef<AbortController | null>(null);
 
-	const { getLanguagePrompt } = useSettings();
+	const { settings } = useSettings();
 
 	const setContextSize = useSetAtom(contextSizeAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
@@ -130,7 +132,7 @@ export function useChat({ db, model }: UseChatProps) {
 				{ role: 'system', content: chatSystemPrompt },
 				{ role: 'user', content: codebasePrompt },
 				...chatHistory,
-				{ role: 'user', content: getLanguagePrompt() },
+				{ role: 'user', content: getLanguagePrompt(settings.language) },
 				{ role: 'user', content: text },
 			];
 
@@ -144,6 +146,7 @@ export function useChat({ db, model }: UseChatProps) {
 				const { textStream } = streamText({
 					model: model,
 					messages: messages,
+					temperature: settings.temperature,
 					abortSignal: controller.signal,
 					onError: ({ error }) => handleError(error),
 				});

@@ -2,6 +2,8 @@ import type { Database } from '@/hooks/useDb';
 import { generateText, streamObject, type LanguageModelV1 } from 'ai';
 import { chapterSchema } from '../schemas';
 import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
+import type { Settings } from '@/hooks/useSettings';
+import { getLanguagePrompt } from '../languages';
 
 // IDEA: Run first time, ask llm to generate topics worth documenting. Then run again with the generated topics.
 
@@ -12,7 +14,7 @@ import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
  * @param abortSignal - The abort signal to cancel the operation.
  * @returns A promise that resolves when the template is applied.
  */
-export async function applyGenerateTemplate(db: Database, model: LanguageModelV1, abortSignal: AbortSignal) {
+export async function applyGenerateTemplate(db: Database, model: LanguageModelV1, settings: Settings, abortSignal: AbortSignal) {
 	const codebase = await db.codebases.orderBy('createdAt').last();
 	if (!codebase) return;
 
@@ -21,8 +23,10 @@ export async function applyGenerateTemplate(db: Database, model: LanguageModelV1
 		output: 'array',
 		schema: chapterSchema,
 		abortSignal: abortSignal,
+		temperature: settings.temperature,
 		messages: [
 			{ role: 'system', content: WriterGenerateStructure },
+			{ role: 'user', content: getLanguagePrompt(settings.language) },
 			{ role: 'user', content: codebase.prompt },
 		],
 		onError: (error) => {
