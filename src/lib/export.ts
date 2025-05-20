@@ -34,7 +34,7 @@ export async function downloadExportedFiles(files: GeneratedFile[], renderDiagra
 	}
 
 	// Download the archive
-	const archiveName = 'documentation.zip';
+	const archiveName = `${files.at(0)?.exportId || 'documentation'}.zip`;
 	const zipFile = zipSync(exportStructure, { level: 0, mtime: new Date() });
 	const blob = new Blob([zipFile], { type: 'application/zip' });
 	downloadFile(archiveName, blob);
