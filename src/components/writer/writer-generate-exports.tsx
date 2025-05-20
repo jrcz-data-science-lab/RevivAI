@@ -1,10 +1,11 @@
 import type { GeneratedFile } from '@/hooks/useDb';
-import { cn } from '@/lib/utils';
+import { cn, colorHash } from '@/lib/utils';
 import { useMemo, useState } from 'react';
 import { Button } from '../ui/button';
 import { Trash } from 'lucide-react';
 import { Progress } from '../ui/progress';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, color, motion } from 'motion/react';
+import { format } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { WriterPreview } from './writer-preview';
 
@@ -83,7 +84,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 	return (
 		<div className="flex flex-col border rounded-md">
 			<AnimatePresence initial={false} mode="sync">
-				{generationExports.map((exportItem) => (
+				{generationExports.map((exportItem, index) => (
 					<motion.div
 						key={exportItem.id}
 						ref={setContentHeight}
@@ -111,18 +112,23 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 								)}
 							</div>
 
-							<div className="text-xs text-muted-foreground">
+							<div className="flex items-center gap-2 text-xs text-muted-foreground">
+								<span className={cn('inline-block size-2 rounded-full', colorHash(exportItem.id))} />
+
+								<span className="text-border">/</span>
 								<span className="text-md">
 									{exportItem.pendingFiles.length > 0
 										? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
 										: `${exportItem.files.length} files`}
 								</span>
 
-								<span className="mx-1 text-border">/</span>
-								<span>{exportItem.createdAt.toLocaleString()}</span>
-								<i className="ml-1">
-									({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})
-								</i>
+								<span className="text-border">/</span>
+								<span>
+									<span className='mr-1.5'>
+										{format(exportItem.createdAt, 'EEE dd MMMM, HH:mm')}
+									</span>
+									<i>({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})</i>
+								</span>
 							</div>
 						</div>
 

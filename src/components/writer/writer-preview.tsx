@@ -75,7 +75,7 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 							className={cn(
 								'w-full justify-start rounded-none text-muted-foreground',
 								selectedFileId === file.id && 'text-foreground',
-								file.status === 'pending' && 'animate-pulse opacity-80',
+								file.status === 'pending' && 'animate-pulse',
 							)}
 							onClick={() => setSelectedFileId(file.id)}
 						>
