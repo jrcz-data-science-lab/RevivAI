@@ -1,5 +1,5 @@
 import { generateText, type LanguageModelV1 } from 'ai';
-import type { Chapter, Database } from './useDb';
+import type { Chapter, Codebase, Database, GeneratedFile } from './useDb';
 import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
@@ -22,8 +22,8 @@ export interface UseWriterProps {
 // Type of opened items in the sidebar. String is a UUID of user created chapter.
 export type WriterItemId = 'generate' | 'templates' | string;
 
-// True if removing of pending files was triggered
-let pendingWasDeleted = false;
+// True if marking pending files as failed was triggered
+let pendingFailed = false;
 
 // Last active item ID in the sidebar. Stored in local storage.
 const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templates');
@@ -51,20 +51,16 @@ export function useWriter({ db, model }: UseWriterProps) {
 			return generatedCount > 0;
 		}, [chapters]) || false;
 
-	// Refresh the unfinished chapters when the component mounts
+	// On the first initial run, set all pending files to failed
 	useEffect(() => {
-		if (pendingWasDeleted) return;
-		pendingWasDeleted = true;
+		if (pendingFailed) return;
+		pendingFailed = true;
 
-		const deletePending = async () => {
-			const pendingChapters = await db.generated.where('status').equals('pending').toArray();
-			const pendingExports = pendingChapters.map((chapter) => chapter.exportId);
-			const uniquePendingExports = [...new Set(pendingExports)];
-
-			await db.generated.where('exportId').anyOf(uniquePendingExports).delete();
+		const setPendingAsFailed = async () => {
+			await db.generated.where('status').equals('pending').modify({ status: 'failed' });
 		};
 
-		deletePending();
+		setPendingAsFailed();
 	}, []);
 
 	/**
@@ -128,9 +124,15 @@ export function useWriter({ db, model }: UseWriterProps) {
 	 * @param template - The template name to apply.
 	 */
 	const applyTemplate = async (template: WriterTemplatesType) => {
-		const abortController = new AbortController();
-		let applyPromise: Promise<void> | null = null;
+		// Cancel previous generation if in progress
+		if (abortControllerRef.current) abortControllerRef.current.abort();
 
+		// Set abort controller to cancel generation
+		const abortController = new AbortController();
+		abortControllerRef.current = abortController;
+
+		// Get template generation promise
+		let applyPromise: Promise<void> | null = null;
 		if (template === 'readme') applyPromise = applyReadmeTemplate(db);
 		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, settings, abortController.signal);
 
@@ -166,10 +168,10 @@ export function useWriter({ db, model }: UseWriterProps) {
 
 	/**
 	 * Generate documentation based on the chapters and configuration.
-	 * @param config - The configuration for generation.
+	 * @param previousExportId The ID of the previous generation, if applicable.
 	 */
-	const generate = async () => {
-		const exportId = crypto.randomUUID() as string;
+	const generate = async (previousExportId?: string) => {
+		const exportId = previousExportId || (crypto.randomUUID() as string);
 
 		// Abort previous generation if in progress
 		if (abortControllerRef.current) abortControllerRef.current.abort();
@@ -190,25 +192,43 @@ export function useWriter({ db, model }: UseWriterProps) {
 				return;
 			}
 
-			// Initiate export, create files for each chapter
-			await db.generated.bulkAdd(
-				chapters.map((chapter) => ({
-					id: crypto.randomUUID(),
-					exportId,
-					chapterId: chapter.id,
-					status: 'pending',
-					createdAt: new Date(),
-					updatedAt: new Date(),
-					fileName: chapter.title.trim().endsWith('.md') ? chapter.title.trim() : `${chapter.title.trim()}.md`,
-					content: '',
-				})),
-			);
+			// Check if chapters with the id already exist
+			const previousChapters = await db.generated.where('exportId').equals(exportId).toArray();
 
-			const toc = createTOCPrompt(chapters);
+			// Create pending files if its no previous chapters
+			if (previousChapters.length === 0) {
+				await db.generated.bulkAdd(
+					chapters.map((chapter) => ({
+						id: crypto.randomUUID(),
+						exportId: exportId,
+						chapterId: chapter.id,
+						status: 'pending',
+						createdAt: new Date(),
+						updatedAt: new Date(),
+						fileName: chapter.title.trim().endsWith('.md') ? chapter.title.trim() : `${chapter.title.trim()}.md`,
+						content: '',
+					})),
+				);
+			} else {
+				// If previously failed chapters exists - set them to "pending" to retry them now
+				await db.generated.bulkUpdate(
+					previousChapters
+						.filter((chapter) => chapter.status === 'failed')
+						.map((chapter) => ({
+							key: chapter.id,
+							changes: {
+								status: 'pending',
+								updatedAt: new Date(),
+							},
+						})),
+				);
+			}
+
+			const tocPrompt = createTOCPrompt(chapters);
 			const languagePrompt = getLanguagePrompt(settings.language);
 
-			// Get 'pending' saved files from database
-			const generatedFiles = await db.generated.where('exportId').equals(exportId).toArray();
+			// Get 'pending' files from database
+			const generatedFiles = await db.generated.where({ exportId, status: 'pending' }).toArray();
 
 			// Store promises for awaiting and parallelization
 			const promises: Promise<void>[] = [];
@@ -217,50 +237,13 @@ export function useWriter({ db, model }: UseWriterProps) {
 				const chapter = chapters?.find((chapter) => chapter.id === file.chapterId);
 				if (!chapter) continue;
 
-				// Function to generate chapter content
-				const generateChapter = async (chapter: Chapter) => {
-					console.log(`Generating chapter "${chapter.title}"...`);
-
-					const metadata = {
-						fileName: file.fileName,
-						createdAt: file.createdAt.toLocaleString(),
-						repositoryUrl: codebase.repositoryUrl || 'not specified',
-					};
-
-					const { text } = await generateText({
-						abortSignal: abortController.signal,
-						model,
-						temperature: settings.temperature,
-						messages: [
-							{ role: 'system', content: writerSystemPrompt },
-							{ role: 'user', content: codebase.prompt },
-							{ role: 'user', content: languagePrompt },
-							{ role: 'user', content: `# Table of Contents: \n\n ${toc}` },
-							{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
-							{ role: 'user', content: `# Chapter Outline / Template: \n\n ${chapter.outline}` },
-						],
-					});
-
-					// If file doesn't exist anymore, skip it
-					const fileExists = await db.generated.where('id').equals(file.id).count();
-					if (fileExists === 0) return;
-
-					await db.generated.update(file.id, {
-						status: 'completed',
-						updatedAt: new Date(),
-						content: text,
-					});
-
-					console.log(`Chapter "${chapter.title}" generated successfully!`);
-				};
-
-				// Start promise
-				promises.push(generateChapter(chapter));
+				const generationPromise = generateChapter(file, chapter, codebase, tocPrompt, languagePrompt, abortController);
+				promises.push(generationPromise);
 
 				// Await execution if the number of promises exceeds the parallelization limit
 				if (promises.length >= settings.parallelization) {
 					await Promise.all(promises);
-					promises.length = 0; // Clear the array
+					promises.length = 0;
 				}
 			}
 
@@ -275,8 +258,55 @@ export function useWriter({ db, model }: UseWriterProps) {
 				toast.error(`Error generating documentation: ${(error as Error)?.message || error}`, { richColors: true });
 			}
 
-			await db.generated.where('exportId').equals(exportId).delete();
+			if (abortControllerRef.current) abortControllerRef.current.abort((error as Error)?.message || 'Something went wrong');
+			abortControllerRef.current = null;
+
+			await db.generated.where({ exportId, status: 'pending' }).modify({ status: 'failed' });
 		}
+	};
+
+	// Function to generate chapter content
+	const generateChapter = async (
+		file: GeneratedFile,
+		chapter: Chapter,
+		codebase: Codebase,
+		tocPrompt: string,
+		languagePrompt: string,
+		abortController: AbortController,
+	) => {
+		console.log(`Generating chapter "${chapter.title}"...`);
+
+		const metadata = {
+			fileName: file.fileName,
+			createdAt: file.createdAt.toLocaleString(),
+			repositoryUrl: codebase.repositoryUrl || 'not specified',
+		};
+
+		const { text } = await generateText({
+			abortSignal: abortController.signal,
+			model,
+			temperature: settings.temperature,
+			messages: [
+				{ role: 'system', content: writerSystemPrompt },
+				{ role: 'user', content: codebase.prompt },
+				{ role: 'user', content: languagePrompt },
+				{ role: 'user', content: `# Table of Contents: \n\n ${tocPrompt}` },
+				{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
+				{ role: 'user', content: `# Chapter Outline / Template: \n\n ${chapter.outline}` },
+			],
+		});
+
+		// If file doesn't exist anymore, skip it
+		const fileExists = await db.generated.where('id').equals(file.id).count();
+		if (fileExists === 0) return;
+
+		await db.generated.update(file.id, {
+			status: 'completed',
+			updatedAt: new Date(),
+			content: text,
+		});
+
+		console.log(`Chapter "${chapter.title}" generated successfully!`);
 	};
 
 	/**

@@ -13,6 +13,7 @@ interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
 	onDownload: (exportId: string) => void;
 	onDelete: (chapterId: string) => void;
+	onContinue: (exportId: string) => void;
 }
 
 interface StructuredExport {
@@ -30,10 +31,10 @@ interface StructuredExport {
  * @param onDownload - Callback function to handle download action.
  * @param onDelete - Callback function to handle delete action.
  */
-export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: WriterGenerateExportsProps) {
+export function WriterGenerateExports({ generatedFiles, onDownload, onContinue, onDelete }: WriterGenerateExportsProps) {
 	const [previewExportId, setPreviewExportId] = useState<string | null>(null);
 
-	// Check if there are any generated files
+	// Generate generations list by grouping generated files
 	const generationExports = useMemo(() => {
 		const exportsIds = generatedFiles.map((file) => file.exportId);
 		const uniqueExportsIds = [...new Set(exportsIds)];
@@ -45,16 +46,20 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 
 			const completedFiles = exportFiles.filter((file) => file.status === 'completed');
 			const pendingFiles = exportFiles.filter((file) => file.status === 'pending');
+			const failedFiles = exportFiles.filter((file) => file.status === 'failed');
 
-			// If any of files are pending, set status to pending
-			const status = completedFiles.length === exportFiles.length ? 'completed' : 'pending';
+			let status: StructuredExport['status'] = 'completed';
+			if (failedFiles.length > 0) status = 'failed';
+			if (pendingFiles.length > 0) status = 'pending';
+			// // If any of files are pending, set status to pending
+			// const status = completedFiles.length === exportFiles.length ? 'completed' : 'pending';
 
 			structuredExports.push({
 				id: exportId,
 				status: status,
 				completedFiles,
 				pendingFiles,
-				createdAt: exportFiles.at(-1)?.createdAt ?? new Date(),
+				createdAt: exportFiles[0].createdAt,
 				files: exportFiles,
 			});
 		}
@@ -71,7 +76,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 	const calculateProgress = (total: number, finished: number) => {
 		if (total === 0) return 0;
 		const progress = Math.floor((finished / total) * 100);
-		return progress < 5 ? 5 : progress;
+		return progress < 1 ? 1 : progress;
 	};
 
 	// Set the content height for the animation
@@ -95,14 +100,22 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 						className="flex justify-between items-start border-b border-border last:border-none overflow-hidden"
 					>
 						<div className="flex flex-col w-full max-w-2/3 p-4">
-							<h2 className={cn('text-sm font-medium pb-0', exportItem.status === 'pending' && 'animate-pulse')}>
-								{exportItem.status === 'pending' ? 'Generating...' : 'Done!'}
+							<h2
+								className={cn(
+									'text-sm font-medium',
+									exportItem.status === 'pending' && 'animate-pulse',
+									exportItem.status === 'failed' && 'text-destructive',
+								)}
+							>
+								{exportItem.status === 'completed' && 'Completed'}
+								{exportItem.status === 'pending' && 'Generating...'}
+								{exportItem.status === 'failed' && 'Failed'}
 							</h2>
 
 							<div className="mb-2 text-muted-foreground">
 								{exportItem.status === 'pending' && (
 									<Progress
-										className="my-2 animate-pulse w-full"
+										className="my-3 animate-pulse w-full duration-[5s]"
 										value={calculateProgress(exportItem.files.length, exportItem.completedFiles.length)}
 									/>
 								)}
@@ -110,29 +123,40 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 								{exportItem.status === 'completed' && (
 									<span className="text-xs">{exportItem.completedFiles.map((value) => value.fileName).join(', ')}</span>
 								)}
+
+								{exportItem.status === 'failed' && (
+									<span className="text-xs">
+										Generation failed. This can happen due to page reload, network issues, or model errors.
+										You can try to continue generation or delete this export.
+									</span>
+								)}
 							</div>
 
-							<div className="flex items-center gap-2 text-xs text-muted-foreground">
+							<div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
 								<span className={cn('inline-block size-2 rounded-full', colorHash(exportItem.id))} />
 
 								<span className="text-border">/</span>
 								<span className="text-md">
-									{exportItem.pendingFiles.length > 0
+									{exportItem.status === 'pending' || exportItem.status === 'failed'
 										? `${exportItem.completedFiles.length} / ${exportItem.files.length} files`
 										: `${exportItem.files.length} files`}
 								</span>
 
 								<span className="text-border">/</span>
 								<span>
-									<span className='mr-1.5'>
-										{format(exportItem.createdAt, 'EEE dd MMMM, HH:mm')}
-									</span>
+									<span className="mr-1.5">{format(exportItem.createdAt, 'EEE dd MMMM, HH:mm')}</span>
 									<i>({formatDistanceToNow(exportItem.createdAt, { addSuffix: true, includeSeconds: true })})</i>
 								</span>
 							</div>
 						</div>
 
 						<div className="flex p-4">
+							{exportItem.status === 'failed' && (
+								<Button size="sm" variant="outline" onClick={() => onContinue(exportItem.id)}>
+									Continue
+								</Button>
+							)}
+
 							<Button size="sm" variant="ghost" onClick={() => setPreviewExportId(exportItem.id)}>
 								Preview
 							</Button>
@@ -142,6 +166,7 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 									Download
 								</Button>
 							)}
+
 							<Button variant="ghost" size="sm" className="group" onClick={() => onDelete(exportItem.id)}>
 								<Trash className="group-hover:text-destructive" />
 							</Button>
@@ -150,13 +175,11 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onDelete }: 
 				))}
 			</AnimatePresence>
 
-			{previewExportId && (
-				<WriterPreview
-					open={!!previewExportId}
-					onClose={() => setPreviewExportId(null)}
-					files={generatedFiles.filter((f) => f.exportId === previewExportId)}
-				/>
-			)}
+			<WriterPreview
+				open={!!previewExportId}
+				onClose={() => setPreviewExportId(null)}
+				files={generatedFiles.filter((f) => f.exportId === previewExportId)}
+			/>
 		</div>
 	);
 }

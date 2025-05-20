@@ -30,10 +30,10 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 	}, [selectedFileId]);
 
 	// Automatically select the first file if no file is selected
-	if (!selectedFileId && files.length > 0) {
+	useEffect(() => {
 		const readme = files.find((f) => f.fileName === 'README.md');
 		readme ? setSelectedFileId(readme.id) : setSelectedFileId(files[0]?.id);
-	}
+	}, [open]);
 
 	// Currently selected file
 	const selectedFile = useMemo(() => files.find((f) => f.id === selectedFileId), [files, selectedFileId]);
@@ -81,6 +81,7 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 								'w-full justify-start rounded-none text-muted-foreground',
 								selectedFileId === file.id && 'text-foreground',
 								file.status === 'pending' && 'animate-pulse',
+								file.status === 'failed' && 'text-destructive',
 							)}
 						>
 							{file.fileName}
@@ -116,12 +117,11 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 	const renderFileContent = (file: GeneratedFile | undefined) => {
 		if (!file) return <span className="text-muted-foreground">No file selected.</span>;
 		if (file.status === 'pending') return <span className="animate-pulse">Generation in progress...</span>;
+		if (file.status === 'failed') return <span className="text-destructive">File generation filed</span>;
 		if (!file.content) return <span className="text-muted-foreground">File is empty.</span>;
 
 		if (!renderMarkdown) {
-			return (
-				<pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words">{file.content}</pre>
-			);
+			return <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words">{file.content}</pre>;
 		}
 
 		return (

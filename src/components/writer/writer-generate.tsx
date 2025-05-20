@@ -13,7 +13,7 @@ interface WriterGenerateProps {
 	db: Database;
 	model: LanguageModelV1;
 	isLoading: boolean;
-	onGenerate: () => void;
+	onGenerate: (exportId?: string) => void;
 	onGenerationCancel: () => void;
 }
 
@@ -60,7 +60,12 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 	const hasExports = generatedFiles && generatedFiles.length > 0;
 
 	return (
-		<motion.div initial={{ opacity: 0 }} animate={{ opacity: filesLoaded ? 1 : 0 }} className="space-y-8">
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: filesLoaded ? 1 : 0 }}
+			transition={{ duration: 0.15 }}
+			className="space-y-8"
+		>
 			<div>
 				<h1 className="text-xl font-serif font-black mb-1.5">Generate</h1>
 				<p className="text-md text-muted-foreground">Here you can generate and export documentation.</p>
@@ -70,6 +75,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 				{hasExports && (
 					<WriterGenerateExports
 						generatedFiles={generatedFiles}
+						onContinue={(id) => onGenerate(id)}
 						onDelete={(id) => deleteExport(id)}
 						onDownload={(id) => downloadExport(id)}
 					/>

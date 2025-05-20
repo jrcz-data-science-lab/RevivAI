@@ -81,20 +81,14 @@ export function Writer({ db, model }: WriterProps) {
 					/>
 
 					<div className="p-3 bg-muted absolute bottom-0 left-0 w-full flex flex-col gap-2 items-center justify-center">
-						<Button variant="outline" className="w-full" size="lg" onClick={addChapter}>
+						<Button variant="outline" className="w-full" size="lg" onClick={addChapter} disabled={isGenerating}>
 							<Plus className="h-4 w-4 mr-2" />
 							New Chapter
 						</Button>
 					</div>
 				</div>
 
-				<motion.div
-					key={activeItemId}
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.15, ease: 'easeIn' }}
-					className="relative z-20 h-screen pt-16 px-8 w-full overflow-x-hidden overflow-y-scroll"
-				>
+				<main className="relative z-20 h-screen pt-16 px-8 w-full overflow-x-hidden overflow-y-scroll">
 					<div className="fixed top-0 left-0 w-full">
 						<div className="absolute w-full h-16 bg-gradient-to-b from-background to-transparent" />
 						<div className="absolute w-full h-12 bg-gradient-to-b from-background to-transparent" />
@@ -104,7 +98,7 @@ export function Writer({ db, model }: WriterProps) {
 					<div className="flex flex-col w-full justify-center space-y-6 min-xl:pr-38">
 						<div className="my-16">{renderActiveItem(activeItemId)}</div>
 					</div>
-				</motion.div>
+				</main>
 			</div>
 		</div>
 	);
