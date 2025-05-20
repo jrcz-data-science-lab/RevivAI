@@ -31,7 +31,12 @@ interface StructuredExport {
  * @param onDownload - Callback function to handle download action.
  * @param onDelete - Callback function to handle delete action.
  */
-export function WriterGenerateExports({ generatedFiles, onDownload, onContinue, onDelete }: WriterGenerateExportsProps) {
+export function WriterGenerateExports({
+	generatedFiles,
+	onDownload,
+	onContinue,
+	onDelete,
+}: WriterGenerateExportsProps) {
 	const [previewExportId, setPreviewExportId] = useState<string | null>(null);
 
 	// Generate generations list by grouping generated files
@@ -126,8 +131,8 @@ export function WriterGenerateExports({ generatedFiles, onDownload, onContinue, 
 
 								{exportItem.status === 'failed' && (
 									<span className="text-xs">
-										Generation failed. This can happen due to page reload, network issues, or model errors.
-										You can try to continue generation or delete this export.
+										Generation failed. This can happen due to page reload, network issues, or model errors. You can try
+										to continue generation or delete this export.
 									</span>
 								)}
 							</div>

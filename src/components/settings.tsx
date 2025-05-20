@@ -91,7 +91,6 @@ function Settings() {
 							className="w-20"
 							placeholder="0.7"
 						/>
-
 					</div>
 
 					<div className="flex justify-between gap-4">

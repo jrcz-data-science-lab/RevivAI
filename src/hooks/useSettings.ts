@@ -43,19 +43,19 @@ export function useSettings() {
 	/**
 	 * Set temperature for the LLM
 	 * @param temperature - Temperature to set. (from 0 to 2)
-	 * 
+	 *
 	 */
 	const setTemperature = (temperature: number) => {
 		setSettings((prev) => ({
 			...prev,
 			temperature: Math.max(0, Math.min(2, temperature)),
 		}));
-	}
+	};
 
 	return {
 		settings,
 		setLanguage,
 		setTemperature,
-		setParallelization
+		setParallelization,
 	};
 }

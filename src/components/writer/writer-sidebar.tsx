@@ -16,7 +16,14 @@ interface WriterSidebarProps {
 /**
  * Sidebar component for the Writer page.
  */
-export function WriterSidebar({ chapters, isGenerating, onReorder, activeItemId, onSelect, onRemoveChapter }: WriterSidebarProps) {
+export function WriterSidebar({
+	chapters,
+	isGenerating,
+	onReorder,
+	activeItemId,
+	onSelect,
+	onRemoveChapter,
+}: WriterSidebarProps) {
 	return (
 		<motion.div
 			initial={{ translateX: -16, opacity: 0 }}

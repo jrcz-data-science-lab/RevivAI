@@ -258,7 +258,8 @@ export function useWriter({ db, model }: UseWriterProps) {
 				toast.error(`Error generating documentation: ${(error as Error)?.message || error}`, { richColors: true });
 			}
 
-			if (abortControllerRef.current) abortControllerRef.current.abort((error as Error)?.message || 'Something went wrong');
+			if (abortControllerRef.current)
+				abortControllerRef.current.abort((error as Error)?.message || 'Something went wrong');
 			abortControllerRef.current = null;
 
 			await db.generated.where({ exportId, status: 'pending' }).modify({ status: 'failed' });

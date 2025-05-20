@@ -14,7 +14,12 @@ import { getLanguagePrompt } from '../languages';
  * @param abortSignal - The abort signal to cancel the operation.
  * @returns A promise that resolves when the template is applied.
  */
-export async function applyGenerateTemplate(db: Database, model: LanguageModelV1, settings: Settings, abortSignal: AbortSignal) {
+export async function applyGenerateTemplate(
+	db: Database,
+	model: LanguageModelV1,
+	settings: Settings,
+	abortSignal: AbortSignal,
+) {
 	const codebase = await db.codebases.orderBy('createdAt').last();
 	if (!codebase) return;
 
