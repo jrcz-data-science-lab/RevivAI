@@ -3,26 +3,26 @@ import { WriterTemplatesItem } from './writer-templates-item';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { useState } from 'react';
 import { Button } from '../ui/button';
-
-export type WriterTemplatesType = 'readme' | 'game' | 'api-reference' | 'generate';
+import { templates, type TemplateKey } from '@/lib/templates/main';
 
 interface WriterTemplatesProps {
 	isLoading: boolean;
-	onTemplateApply: (template: WriterTemplatesType) => void;
+	onTemplateApply: (template: TemplateKey) => void;
 }
 
 export function WriterTemplates({ isLoading, onTemplateApply }: WriterTemplatesProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [selectedTemplate, setSelectedTemplate] = useState<WriterTemplatesType | null>(null);
+	const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey | null>(null);
 
-	const onTemplateSelect = (template: WriterTemplatesType) => {
+	const selectedTemplateName = selectedTemplate ? templates[selectedTemplate]?.name : 'unknown';
+
+	const onTemplateSelect = (template: TemplateKey) => {
 		setSelectedTemplate(template);
 		setIsModalOpen(true);
 	};
 
 	const onApplyTemplate = async () => {
 		if (selectedTemplate) onTemplateApply(selectedTemplate);
-		setSelectedTemplate(null);
 		setIsModalOpen(false);
 	};
 
@@ -36,49 +36,24 @@ export function WriterTemplates({ isLoading, onTemplateApply }: WriterTemplatesP
 			</div>
 
 			<div className="grid grid-cols-2 gap-4 items-start w-full">
-				<WriterTemplatesItem
-					icon={Brain}
-					color="gray"
-					title="Generate Template"
-					isDisabled={isLoading}
-					onClick={() => onTemplateSelect('generate')}
-					description="Use AI to generate documentation structure for your project. Result may vary!"
-				/>
-
-				<WriterTemplatesItem
-					icon={ScrollText}
-					color="lime"
-					title="README.md"
-					isDisabled={isLoading}
-					onClick={() => onTemplateSelect('readme')}
-					description="Markdown file for your repository. Perfect for open-source or small personal projects."
-				/>
-				<WriterTemplatesItem
-					icon={Gamepad2}
-					color="violet"
-					title="Game Project"
-					isDisabled={isLoading}
-					onClick={() => onTemplateSelect('game')}
-					description="Documentation for projects, made with game engines. Includes sections for gameplay, mechanics, and more. "
-				/>
-				<WriterTemplatesItem
-					icon={Notebook}
-					color="pink"
-					title="API Reference"
-					isDisabled={isLoading}
-					onClick={() => onTemplateSelect('api-reference')}
-					description="Detailed API reference for your project. Great for microservices, REST APIs or Web frameworks."
-				/>
+				{Object.entries(templates).map(([key, template]) => {
+					return (
+						<WriterTemplatesItem
+							key={key}
+							template={template}
+							isDisabled={isLoading}
+							onClick={() => onTemplateSelect(key as TemplateKey)}
+						/>
+					);
+				})}
 			</div>
 
 			<Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
-				<DialogContent className="max-w-3xl">
+				<DialogContent className="max-w-lg">
 					<DialogHeader className="mb-4">
-						<DialogTitle>
-							Do you want to use <span>"{selectedTemplate}"</span> template?
-						</DialogTitle>
+						<DialogTitle>Use {selectedTemplateName} template?</DialogTitle>
 						<DialogDescription>
-							All previous content <i>(chapters, exports)</i> will be erased. Are you sure you want to continue?
+							All current chapters content will be erased. Are you sure you want to continue?
 						</DialogDescription>
 					</DialogHeader>
 

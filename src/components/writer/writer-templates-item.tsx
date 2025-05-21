@@ -1,15 +1,14 @@
-import type { ElementType } from 'react';
+import type { Template } from '@/lib/templates/main';
 import { Card } from '../ui/card';
 import { cn } from '@/lib/utils';
 
 interface WriterTemplatesItemProps {
-	color: keyof typeof variants;
-	title: string;
-	description: string;
-	icon: ElementType;
+	template: Template;
 	isDisabled: boolean;
-	onClick?: () => void;
+	onClick: () => void;
 }
+
+export type WriterTemplateColor = keyof typeof variants;
 
 const variants = {
 	amber: 'dark:text-amber-100 text-amber-800 border-amber-500/80 hover:border-amber-500 bg-amber-500/5',
@@ -27,14 +26,13 @@ const variants = {
 	lime: 'dark:text-lime-100 text-lime-800 border-lime-500/80 hover:border-lime-500 bg-lime-500/5',
 };
 
-export function WriterTemplatesItem({
-	icon: Icon,
-	color,
-	title,
-	description,
-	isDisabled,
-	onClick,
-}: WriterTemplatesItemProps) {
+/**
+ * Render single clickable template item.
+ * @returns A button element representing the template item.
+ */
+export function WriterTemplatesItem({ template, onClick, isDisabled }: WriterTemplatesItemProps) {
+	const { name, description, color, icon: Icon } = template;
+
 	const onSelect = () => {
 		if (isDisabled) return;
 		onClick?.();
@@ -51,12 +49,12 @@ export function WriterTemplatesItem({
 			)}
 		>
 			<Card className={cn('relative w-full px-6 flex justify-between h-full', variants[color])}>
-				<div className="ml-auto mb-4 group-hover:scale-125 transition-all duration-200">
+				<div className="ml-auto mb-4 group-hover:scale-110 transition-all duration-200">
 					<Icon />
 				</div>
 
 				<div className="text-left">
-					<h2 className="text-xl font-serif font-black mb-2">{title}</h2>
+					<h2 className="text-xl font-serif font-black mb-2">{name}</h2>
 					<p className="opacity-80">{description}</p>
 				</div>
 			</Card>

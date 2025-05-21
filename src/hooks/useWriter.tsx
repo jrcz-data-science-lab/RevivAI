@@ -1,6 +1,5 @@
 import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Codebase, Database, GeneratedFile } from './useDb';
-import type { WriterTemplatesType } from '@/components/writer/writer-templates';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -13,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSettings } from './useSettings';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { getLanguagePrompt } from '@/lib/languages';
+import { templates, type TemplateKey } from '@/lib/templates/main';
 
 export interface UseWriterProps {
 	db: Database;
@@ -121,9 +121,11 @@ export function useWriter({ db, model }: UseWriterProps) {
 
 	/**
 	 * Apply a template to the database.
-	 * @param template - The template name to apply.
+	 * @param templateKey - The template name to apply.
 	 */
-	const applyTemplate = async (template: WriterTemplatesType) => {
+	const applyTemplate = async (templateKey: TemplateKey) => {
+		const template = templates[templateKey];
+
 		// Cancel previous generation if in progress
 		if (abortControllerRef.current) abortControllerRef.current.abort();
 
@@ -132,27 +134,27 @@ export function useWriter({ db, model }: UseWriterProps) {
 		abortControllerRef.current = abortController;
 
 		// Get template generation promise
-		let applyPromise: Promise<void> | null = null;
-		if (template === 'readme') applyPromise = applyReadmeTemplate(db);
-		if (template === 'generate') applyPromise = applyGenerateTemplate(db, model, settings, abortController.signal);
+		const templatePromise = template.apply(db, model, settings, abortController.signal);
 
-		if (applyPromise) {
+		if (templatePromise) {
 			const abort = () => {
 				abortController.abort();
 				toast.dismiss();
 			};
 
-			toast.promise(applyPromise, {
+			const action = template.cancelable ? (
+				<Button size="sm" variant="outline" className="ml-auto" onClick={abort}>
+					Cancel
+				</Button>
+			) : undefined;
+
+			toast.promise(templatePromise, {
 				loading: 'Applying template...',
 				closeButton: false,
-				action: (
-					<Button size="sm" variant="outline" className="ml-auto" onClick={abort}>
-						Cancel
-					</Button>
-				),
+				action: action,
 				success: () => {
 					setActiveItemId('templates');
-					return `Template "${template}" applied successfully!`;
+					return `Template "${template.name}" applied successfully!`;
 				},
 				error: (error) => {
 					if (abortController.signal.aborted) return 'Template application aborted';
