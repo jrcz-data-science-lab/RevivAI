@@ -1,4 +1,3 @@
-import { Brain, Gamepad2, Notebook, ScrollText } from 'lucide-react';
 import { WriterTemplatesItem } from './writer-templates-item';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { useState } from 'react';

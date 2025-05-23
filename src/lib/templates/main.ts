@@ -6,7 +6,8 @@ import type { WriterTemplateColor } from '@/components/writer/writer-templates-i
 import { Brain, Gamepad2, Notebook, ScrollText } from 'lucide-react';
 
 import { applyReadmeTemplate } from './readmeTemplate';
-import { applyGenerateTemplate } from './generateTemplate';
+import { applySmartTemplate } from './smartTemplate';
+import { applyApiReferenceTemplate } from './apiReferenceTemplate';
 
 export interface Template {
 	name: string;
@@ -27,7 +28,7 @@ export const templates = {
 		color: 'gray',
 		icon: Brain,
 		cancelable: true,
-		apply: applyGenerateTemplate,
+		apply: applySmartTemplate,
 	},
 	readme: {
 		name: 'README.md',
@@ -43,7 +44,7 @@ export const templates = {
 		color: 'emerald',
 		icon: Notebook,
 		cancelable: true,
-		apply: applyReadmeTemplate,
+		apply: applyApiReferenceTemplate,
 	},
 	game: {
 		name: 'Game Project',

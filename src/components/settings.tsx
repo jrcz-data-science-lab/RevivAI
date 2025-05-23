@@ -6,8 +6,9 @@ import { Label } from './ui/label';
 import { useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { useSettings, type Language } from '@/hooks/useSettings';
+import { useSettings } from '@/hooks/useSettings';
 import { Input } from './ui/input';
+import { languages, type LanguageName } from '@/lib/languages';
 
 function Settings() {
 	const projectId = useAtomValue(currentProjectIdAtom);
@@ -35,16 +36,16 @@ function Settings() {
 							</p>
 						</div>
 
-						<Select value={settings.language} onValueChange={(value) => setLanguage(value as Language)}>
+						<Select value={settings.language} onValueChange={(value) => setLanguage(value as LanguageName)}>
 							<SelectTrigger className="w-fit">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="en">English</SelectItem>
-								<SelectItem value="nl">Dutch</SelectItem>
-								<SelectItem value="ru">Russian</SelectItem>
-								<SelectItem value="lv">Latvian</SelectItem>
-								<SelectItem value="la">Latin</SelectItem>
+								{Object.entries(languages).map(([key, [name]]) => (
+									<SelectItem key={key} value={key}>
+										{name}
+									</SelectItem>
+								))}
 							</SelectContent>
 						</Select>
 					</div>

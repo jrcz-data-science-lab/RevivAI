@@ -1,13 +1,13 @@
-import { atom, useAtom } from 'jotai';
+import type { LanguageName } from '@/lib/languages';
+import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-export type Language = 'en' | 'nl' | 'lv' | 'ru' | 'la';
 
 export interface Settings {
-	parallelization: number;
-	temperature: number;
-	language: Language;
-}
+		parallelization: number;
+		temperature: number;
+		language: LanguageName;
+	}
 
 const settingsAtom = atomWithStorage<Settings>('settings', {
 	parallelization: 1,
@@ -22,7 +22,7 @@ export function useSettings() {
 	 * Set language for the LLM
 	 * @param language - Language to set
 	 */
-	const setLanguage = (language: Language) => {
+	const setLanguage = (language: LanguageName) => {
 		setSettings((prev) => ({
 			...prev,
 			language,

@@ -1,16 +1,14 @@
 import { generateText, type LanguageModelV1 } from 'ai';
 import type { Chapter, Codebase, Database, GeneratedFile } from './useDb';
+import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { applyReadmeTemplate } from '@/lib/templates/readmeTemplate';
-import { applyGenerateTemplate } from '@/lib/templates/generateTemplate';
 import { atomWithStorage } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import { createTOCPrompt } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useSettings } from './useSettings';
-import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
 import { getLanguagePrompt } from '@/lib/languages';
 import { templates, type TemplateKey } from '@/lib/templates/main';
 

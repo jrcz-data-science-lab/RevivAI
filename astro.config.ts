@@ -5,7 +5,6 @@ import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-
 // https://astro.build/config
 export default defineConfig({
 	integrations: [
@@ -16,6 +15,9 @@ export default defineConfig({
 			},
 		}),
 	],
+	security: {
+		checkOrigin: false
+	},
 	devToolbar: { enabled: false },
 	vite: {
 		plugins: [tailwindcss(), visualizer()],

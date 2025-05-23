@@ -14,7 +14,7 @@ import { getLanguagePrompt } from '../languages';
  * @param abortSignal - The abort signal to cancel the operation.
  * @returns A promise that resolves when the template is applied.
  */
-export async function applyGenerateTemplate(
+export async function applyApiReferenceTemplate(
 	db: Database,
 	model: LanguageModelV1,
 	settings: Settings,
@@ -40,9 +40,8 @@ export async function applyGenerateTemplate(
 		},
 	});
 
-	// Collect current chapters
-	const oldChapters = await db.chapters.toArray();
-	const oldChaptersIds = oldChapters.map((chapter) => chapter.id);
+	// Delete all old chapters
+	await db.chapters.clear();
 
 	// Create new chapters
 	let counter = 0;
@@ -56,8 +55,4 @@ export async function applyGenerateTemplate(
 			outline: object.outline,
 		});
 	}
-
-	// Remove all old chapters
-	if (abortSignal.aborted) return;
-	await db.chapters.bulkDelete(oldChaptersIds);
 }
