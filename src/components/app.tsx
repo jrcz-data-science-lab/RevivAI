@@ -5,13 +5,13 @@ import { Chat } from './chat/chat';
 import { Writer } from './writer/writer';
 import { useHashRouter } from '@/hooks/useHashRouter';
 import { useDb } from '@/hooks/useDb';
-import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
 import { Button } from './ui/button';
 import { motion } from 'motion/react';
 import { useModel } from '@/hooks/useModel';
 import { useEffect } from 'react';
 import { useHydrateAtoms } from 'jotai/utils';
-
+import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
+import { Onboarding } from './onboarding/onboarding';
 interface AppProps {
 	projectId: string;
 }
@@ -91,6 +91,7 @@ export default function App({ projectId }: AppProps) {
 				</div>
 
 				<Toaster theme={theme} position="bottom-right" closeButton={true} />
+				<Onboarding />
 
 				{getAppScreen(hash)}
 			</div>

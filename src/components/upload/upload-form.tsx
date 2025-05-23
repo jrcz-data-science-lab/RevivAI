@@ -114,7 +114,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" data-onboarding="select-code-source">
 				<Tabs className="w-full" value={tab} onValueChange={(value) => onTabChange(value as CodebaseType)}>
 					<FormLabel>Code Source</FormLabel>
 					<TabsList>

@@ -4,6 +4,7 @@ import { ProjectsList } from './projects-list.tsx';
 import ProjectsNew, { type ProjectNewFormSchema } from './projects-new.tsx';
 import Title from '../title.tsx';
 import { useModel } from '@/hooks/useModel.ts';
+import { Upload } from '../upload/upload.tsx';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();

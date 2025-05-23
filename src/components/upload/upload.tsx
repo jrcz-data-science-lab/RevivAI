@@ -6,17 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { UploadForm, type UploadFormSchema } from './upload-form';
 import type { PromptifyResult } from '@/actions/promptify';
-import { useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { currentProjectIdAtom } from '@/hooks/useProjects';
 import { UploadCodebase } from './upload-codebase';
 import { useLiveQuery } from 'dexie-react-hooks';
 
+// Is upload dialog open
+export const isUploadOpenAtom = atom(false);
+
 export function Upload() {
 	const projectId = useAtomValue(currentProjectIdAtom) as string;
 	const { db } = useDb(projectId);
-
-	const [defaultValues, setDefaultValues] = useState<UploadFormSchema>();
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useAtom(isUploadOpenAtom);
 
 	// Get current active codebase
 	const currentCodebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
@@ -55,12 +56,12 @@ export function Upload() {
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button variant="ghost" size="icon" round title="Upload code files">
+				<Button data-onboarding="upload-code" variant="ghost" size="icon" round title="Upload code files">
 					<FolderUp />
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-w-3xl">
+			<DialogContent className="max-w-xl">
 				<DialogHeader className="mb-4">
 					<DialogTitle>Let's upload your code!</DialogTitle>
 					<DialogDescription>Upload your project files from GitHub or from your local directory.</DialogDescription>
