@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
 import { Onboarding } from './onboarding/onboarding';
+
 interface AppProps {
 	projectId: string;
 }

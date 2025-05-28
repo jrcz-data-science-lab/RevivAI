@@ -18,7 +18,7 @@ export function OnboardingTooltip(props: TooltipRenderProps) {
 			</button>
 
 			<div className="flex flex-col gap-2 text-center sm:text-left">
-				{step.title && <h4 className="text-lg leading-none font-semibold tracking-tight">{step.title}</h4>}
+				{step.title && <h4 className="text-lg leading-none font-semibold font-serif">{step.title}</h4>}
 
 				<div className="text-muted-foreground text-sm">{step.content}</div>
 			</div>

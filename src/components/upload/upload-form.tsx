@@ -114,56 +114,58 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" data-onboarding="select-code-source">
-				<Tabs className="w-full" value={tab} onValueChange={(value) => onTabChange(value as CodebaseType)}>
-					<FormLabel>Code Source</FormLabel>
-					<TabsList>
-						<TabsTrigger value="files" className="px-3">
-							<FolderUp />
-							Local Files
-						</TabsTrigger>
-						<TabsTrigger value="remote" className="px-3">
-							<GithubIcon />
-							Repository
-						</TabsTrigger>
-					</TabsList>
-				</Tabs>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<div data-onboarding="select-code-source" className='space-y-8'>
+					<Tabs className="w-full" value={tab} onValueChange={(value) => onTabChange(value as CodebaseType)}>
+						<FormLabel className='mb-1'>Code Source</FormLabel>
+						<TabsList>
+							<TabsTrigger value="files" className="px-3">
+								<FolderUp />
+								Local Files
+							</TabsTrigger>
+							<TabsTrigger value="remote" className="px-3">
+								<GithubIcon />
+								Repository
+							</TabsTrigger>
+						</TabsList>
+					</Tabs>
 
-				{tab === 'remote' && (
-					<FormField
-						control={form.control}
-						name="url"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Repository URL</FormLabel>
-								<FormDescription>
-									Link to the public GitHub repository. The repository must be public and accessible without
-									authentication.
-								</FormDescription>
-								<FormControl>
-									<Input placeholder="https://github.com/username/repository" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				)}
+					{tab === 'remote' && (
+						<FormField
+							control={form.control}
+							name="url"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Repository URL</FormLabel>
+									<FormDescription>
+										Link to the public GitHub repository. The repository must be public and accessible without
+										authentication.
+									</FormDescription>
+									<FormControl>
+										<Input placeholder="https://github.com/username/repository" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
 
-				{tab === 'files' && (
-					<FormField
-						control={form.control}
-						name="files"
-						render={({ field }) => (
-							<FormItem>
-								<UploadFiles
-									onChange={(files) => form.setValue('files', [...files])}
-									message={field.value?.length ? `${field.value.length} files selected` : undefined}
-								/>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				)}
+					{tab === 'files' && (
+						<FormField
+							control={form.control}
+							name="files"
+							render={({ field }) => (
+								<FormItem>
+									<UploadFiles
+										onChange={(files) => form.setValue('files', [...files])}
+										message={field.value?.length ? `${field.value.length} files selected` : undefined}
+									/>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
+				</div>
 
 				<FormField
 					control={form.control}

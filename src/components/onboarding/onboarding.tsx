@@ -18,12 +18,13 @@ const steps: Step[] = [
 		target: '[data-onboarding="upload-code"]',
 		title: 'Upload code',
 		content: 'Click here to upload your codebase.',
-		spotlightClicks: true
+		spotlightClicks: true,
 	},
 	{
 		target: '[data-onboarding="select-code-source"]',
 		title: 'Select your source',
 		content: 'Click here to upload your codebase.',
+		spotlightClicks: true,
 	},
 ];
 
@@ -32,17 +33,14 @@ type OnboardingState = null | 'skipped' | 'finished';
 export function Onboarding() {
 	const [isUploadOpen, setIsUploadOpen] = useAtom(isUploadOpenAtom);
 
-	const [isOnboarding, setIsOnboarding] = useState(true);
+	const [isOnboarding, setIsOnboarding] = useState(false);
 	const [stepIndex, setStepIndex] = useState(0);
 
 	useEffect(() => {
-		if (isUploadOpen) {
-			setTimeout(() => {
-				setStepIndex(2);
-			}, 100);
+		if (isOnboarding && stepIndex === 2 && !isUploadOpen) {
+			setIsUploadOpen(true);
 		}
-	}, [isUploadOpen]);
-
+	}, [isOnboarding, isUploadOpen]);
 
 	// Start onboarding if the user is not finished it
 	useEffect(() => {
@@ -67,36 +65,58 @@ export function Onboarding() {
         setIsOnboarding(true);
     };
 
-	const handleJoyrideCallback = (data: CallBackProps) => {
+	const handleJoyrideCallback = async (data: CallBackProps) => {
 		const { action, index, type, status, step } = data;
 		console.log(data);
 
 		// Run code when user clicks "Next" or "Back"
 		if (type === EVENTS.STEP_AFTER) {
 			console.log(`Completed step ${index}`);
-			setStepIndex((prev) => prev + 1);
 			
 			// Run specific code for each step
 			switch (index) {
 				case 0:
 					console.log('Welcome step completed');
+					setStepIndex(1);
 					break;
 				case 1:
 					setIsUploadOpen(true);
+					// Wait up to 1000ms or until the element appears
+					await new Promise<void>((resolve) => {
+						const timeout = setTimeout(resolve, 1000);
+						const check = () => {
+							if (document.querySelector('[data-onboarding="select-code-source"]')) {
+								clearTimeout(timeout);
+								resolve();
+							} else {
+								requestAnimationFrame(check);
+							}
+						};
+						check();
+					});
+					setStepIndex(2);
+					// setTimeout(() => {
+					// }, 1000);
 					console.log('Writer step completed');
 					break;
 				default:
 					break;
 			}
+			// setStepIndex((prev) => prev + 1);
 		}
 
+		// When onboarding is finished
 		if (status === 'finished') {
 			setIsOnboarding(false);
 			localStorage.setItem('onboarding', 'finished');
+			return;
 		}
 
+		// When onboarding is skipped
 		if (status === 'skipped') {
-			localStorage.setItem('onboarding', 'skipped');
+			setIsOnboarding(false);
+			localStorage.setItem('onboarding', 'skipped')
+			return;
 		}
 	};
 
