@@ -1,7 +1,6 @@
 ---
 import AppContainer from '@/components/app';
 import AppLayout from '@/layouts/app-layout.astro';
-import { LoaderPinwheel } from 'lucide-react';
 
 // Do not render on the server
 export const prerender = false;
@@ -14,9 +13,5 @@ if (!projectId) return Astro.redirect('/');
 ---
 
 <AppLayout>
-	<div id="loading-spinner" class="z-50 transition-[opacity,scale] fixed top-1/2 left-1/2 translate-1/2 animate-spin">
-		<LoaderPinwheel className="size-6" />
-	</div>
-
 	<AppContainer client:only projectId={projectId} />
 </AppLayout>

@@ -31,15 +31,6 @@ export default function App({ projectId }: AppProps) {
 	const { isProjectExists } = useProjects();
 	const { hash, setHash } = useHashRouter('chat');
 
-	// Hide loading spinner
-	useEffect(() => {
-		const loadingSpinner = document.querySelector('#loading-spinner');
-		if (!loadingSpinner) return;
-
-		loadingSpinner.classList.add('opacity-0', 'scale-125');
-		setTimeout(() => loadingSpinner.remove(), 1000);
-	}, []);
-
 	// If no project ID is provided or the project does not exist, show a message
 	if (!projectId || !isProjectExists(projectId)) {
 		return (
