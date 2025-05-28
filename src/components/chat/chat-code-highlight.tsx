@@ -1,6 +1,7 @@
-import { memo, type ReactNode } from 'react';
+import { lazy, memo, type ReactNode } from 'react';
 import ShikiHighlighter, { type Element, isInlineCode } from 'react-shiki';
-import { ChatMermaid } from './chat-mermaid';
+
+const ChatMermaidLazy = lazy(() => import('./chat-mermaid'));
 
 interface CodeHighlightProps {
 	className?: string;
@@ -15,7 +16,7 @@ const CodeHighlight = ({ className, children, node }: CodeHighlightProps) => {
 
 	// Mermaid diagram rendering
 	if (language === 'mermaid') {
-		return <ChatMermaid>{String(children)}</ChatMermaid>;
+		return <ChatMermaidLazy>{String(children)}</ChatMermaidLazy>;
 	}
 
 	// Is inline rendering
@@ -38,4 +39,4 @@ const CodeHighlight = ({ className, children, node }: CodeHighlightProps) => {
 	);
 };
 
-export default CodeHighlight;
+export default memo(CodeHighlight);

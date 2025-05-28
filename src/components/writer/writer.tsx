@@ -1,13 +1,15 @@
-import type { Database } from '@/hooks/useDb';
+import type { Database, Chapter } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import { WriterSidebar } from './writer-sidebar';
-import { WriterEditor } from './writer-editor';
 import { WriterGenerate } from './writer-generate';
 import { WriterTemplates } from './writer-templates';
 import { useWriter, type WriterItemId } from '@/hooks/useWriter';
 import { motion } from 'motion/react';
+import { lazy, Suspense } from 'react';
+
+const WriterEditorLazy = lazy(() => import('./writer-editor'));
 
 interface WriterProps {
 	db: Database;
@@ -64,7 +66,7 @@ export function Writer({ db, model }: WriterProps) {
 			}
 
 			return (
-				<WriterEditor key={chapter.id} chapter={chapter} onChange={(updated) => updateChapter(chapter.id, updated)} />
+				<WriterEditorLazy key={chapter.id} chapter={chapter} onChange={(updated: Chapter) => updateChapter(chapter.id, updated)} />
 			);
 		}
 	};
@@ -97,14 +99,17 @@ export function Writer({ db, model }: WriterProps) {
 						<div className="absolute w-full h-8 bg-gradient-to-b from-background to-transparent" />
 					</div>
 
-					<motion.div
-						initial={{ opacity: 0, x: -16 }}
-						animate={{ opacity: 1, x: 0 }}
-						transition={{ duration: 0.15 }}
-						className="flex flex-col w-full justify-center space-y-6 min-xl:pr-38"
-					>
-						<div className="my-16">{renderActiveItem(activeItemId)}</div>
-					</motion.div>
+					<Suspense>
+						<motion.div
+							initial={{ opacity: 0, x: -16 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.15 }}
+							className="flex flex-col w-full justify-center space-y-6 min-xl:pr-38"
+						>
+							<div className="my-16">{renderActiveItem(activeItemId)}</div>
+						</motion.div>
+
+					</Suspense>
 				</main>
 			</div>
 		</div>

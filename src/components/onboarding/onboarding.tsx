@@ -1,4 +1,5 @@
-import Joyride, { type Step, type CallBackProps, EVENTS, ACTIONS } from 'react-joyride';
+import { EVENTS, type CallBackProps, type Step } from 'react-joyride';
+import { JoyrideLazy } from './joyride-lazy';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { OnboardingTooltip } from './onboarding-tooltip';
@@ -122,7 +123,7 @@ export function Onboarding() {
 
 	return (
 		<>
-			<Joyride
+			<JoyrideLazy
 				run={isOnboarding}
 				stepIndex={stepIndex}
 				continuous={true}

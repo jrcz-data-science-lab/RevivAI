@@ -10,7 +10,7 @@ interface ChatMermaidProps {
 	children: string;
 }
 
-export function ChatMermaid({ children }: ChatMermaidProps) {
+export default function ChatMermaid({ children }: ChatMermaidProps) {
 	// Generate a unique ID for the Mermaid diagram
 	const id = useMemo(() => `mermaid-${Math.random().toString(36).substring(2, 15)}`, []);
 

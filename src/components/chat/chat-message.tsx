@@ -1,16 +1,12 @@
 import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
-import type { Theme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
-import { memo } from 'react';
+import { lazy, memo, Suspense } from 'react';
 import { motion } from 'motion/react';
 import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Button } from '../ui/button';
 
-// import '@/styles/markdown.css';
-
-import ChatMarkdown from './chat-markdown';
-// const ChatMarkdown = lazy(() => import('./chat-markdown'));
+const ChatMarkdownLazy = lazy(() => import('./chat-markdown'));
 
 interface ChatMessageProps {
 	onDelete?: (id: string) => void;
@@ -35,24 +31,34 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 			transition={{ duration: 0.3, type: 'tween' }}
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>
-			<div className="relative flex flex-col gap-2">
-				<h3 className="relative text-xl font-black font-serif break-words whitespace-pre-wrap">
-					<span className="max-w-10/12 block">{message.prompt}</span>
-				</h3>
-
+			<Suspense>
 				<motion.div
-					className={cn('absolute -left-10 opacity-60 max-md:hidden', message.answer === '' ? 'top-0.5' : 'bottom-0.5')}
 					initial={{ opacity: 0 }}
-					animate={isWriting ? { opacity: 1, scale: 0.8 } : { opacity: 0, scale: 1.1 }}
-					transition={{ duration: isWriting ? 0.3 : 0.6, type: 'spring' }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.15 }}
+					className="relative flex flex-col gap-2"
 				>
-					<LoaderPinwheel className="animate-spin" />
+					<h3 className="relative text-xl font-black font-serif break-words whitespace-pre-wrap">
+						<span className="max-w-10/12 block">{message.prompt}</span>
+					</h3>
+
+					<motion.div
+						className={cn(
+							'absolute -left-10 opacity-60 max-md:hidden',
+							message.answer === '' ? 'top-0.5' : 'bottom-0.5',
+						)}
+						initial={{ opacity: 0 }}
+						animate={isWriting ? { opacity: 1, scale: 0.8 } : { opacity: 0, scale: 1.1 }}
+						transition={{ duration: isWriting ? 0.3 : 0.6, type: 'spring' }}
+					>
+						<LoaderPinwheel className="animate-spin" />
+					</motion.div>
+
+					<Separator className="separator mt-1 mb-3" />
+
+					<ChatMarkdownLazy>{message.answer}</ChatMarkdownLazy>
 				</motion.div>
-
-				<Separator className="separator mt-1 mb-3" />
-
-				<ChatMarkdown>{message.answer}</ChatMarkdown>
-			</div>
+			</Suspense>
 
 			<div className="flex justify-start items-center -mx-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-0 right-0">
 				<Button size="icon" variant="ghost" className="w-8 h-8" onClick={copyToClipboard}>

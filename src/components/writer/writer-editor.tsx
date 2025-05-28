@@ -21,7 +21,7 @@ interface WriterEditorProps {
 /**
  * Editor component for the Writer page.
  */
-export function WriterEditor({ chapter, onChange }: WriterEditorProps) {
+export default function WriterEditor({ chapter, onChange }: WriterEditorProps) {
 	const onOutlineChange = useCallback(
 		(value: string) => {
 			if (!onChange) return;

@@ -3,7 +3,6 @@ import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 import CodeHighlight from './chat-code-highlight';
 import { rehypeInlineCodeProperty } from 'react-shiki';
-import type { Theme } from '@/hooks/useTheme';
 
 interface ChatMarkdownProps {
 	children: string;
