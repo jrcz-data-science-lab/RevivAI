@@ -44,12 +44,30 @@ function Navbar({
 			</div>
 
 			{showTabs && (
-				<Tabs value={value} onValueChange={(value) => onTabChange?.(value as TabName)}>
-					<TabsList className="rounded-full">
-						<TabsTrigger value="chat" className="w-20 rounded-full">
+				<Tabs
+					value={value}
+					onValueChange={(value) => onTabChange?.(value as TabName)}
+					className="shadow-sm shadow-background rounded-full"
+				>
+					<TabsList className="rounded-full" role="tablist" aria-label="Main navigation">
+						<TabsTrigger
+							value="chat"
+							className="w-20 rounded-full"
+							title="Chat with Codebase"
+							role="tab"
+							aria-label="Chat with Codebase"
+							aria-selected={value === 'chat'}
+						>
 							Chat
 						</TabsTrigger>
-						<TabsTrigger value="writer" className="w-20 rounded-full">
+						<TabsTrigger
+							value="writer"
+							className="w-20 rounded-full"
+							title="Write Documentation"
+							role="tab"
+							aria-label="Write Documentation"
+							aria-selected={value === 'writer'}
+						>
 							Writer
 						</TabsTrigger>
 					</TabsList>

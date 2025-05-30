@@ -38,7 +38,7 @@ export function WriterSidebarItem({
 
 			{typeof onDelete === 'function' && (
 				<div className="flex items-center h-8 absolute top-0 right-0 opacity-0 transition-all group-hover:opacity-100">
-					<button type="button" onClick={() => onDelete()}>
+					<button type="button" onClick={() => onDelete()} aria-label="Delete chapter">
 						<Trash className="h-4 hover:text-destructive cursor-pointer" />
 					</button>
 				</div>

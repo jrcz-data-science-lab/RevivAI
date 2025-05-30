@@ -40,35 +40,12 @@ function Settings() {
 							<SelectTrigger className="w-fit">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
-							<SelectContent>
+							<SelectContent className="max-h-40">
 								{Object.entries(languages).map(([key, [name]]) => (
 									<SelectItem key={key} value={key}>
 										{name}
 									</SelectItem>
 								))}
-							</SelectContent>
-						</Select>
-					</div>
-
-					<div className="flex justify-between gap-4">
-						<div className="max-w-2/3">
-							<Label>Parallelization</Label>
-							<p className="text-muted-foreground">
-								The maximum number of chapters that can be processed in parallel. Increases generation speed, but may
-								trigger rate limits.
-							</p>
-						</div>
-
-						<Select value={`${settings.parallelization}`} onValueChange={(value) => setParallelization(Number(value))}>
-							<SelectTrigger className="w-fit">
-								<SelectValue placeholder="Language" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="1">Disabled</SelectItem>
-								<SelectItem value="2">2</SelectItem>
-								<SelectItem value="4">4</SelectItem>
-								<SelectItem value="8">8</SelectItem>
-								<SelectItem value="999">Unlimited</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -92,6 +69,29 @@ function Settings() {
 							className="w-20"
 							placeholder="0.7"
 						/>
+					</div>
+
+					<div className="flex justify-between gap-4">
+						<div className="max-w-2/3">
+							<Label>Parallelization</Label>
+							<p className="text-muted-foreground">
+								The maximum number of chapters that can be processed in parallel. Increases generation speed, but may
+								trigger rate limits.
+							</p>
+						</div>
+
+						<Select value={`${settings.parallelization}`} onValueChange={(value) => setParallelization(Number(value))}>
+							<SelectTrigger className="w-fit">
+								<SelectValue placeholder="Language" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="1">Disabled</SelectItem>
+								<SelectItem value="2">2</SelectItem>
+								<SelectItem value="4">4</SelectItem>
+								<SelectItem value="8">8</SelectItem>
+								<SelectItem value="999">Unlimited</SelectItem>
+							</SelectContent>
+						</Select>
 					</div>
 
 					<div className="flex justify-between gap-4">

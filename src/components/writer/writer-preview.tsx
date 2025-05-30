@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { GeneratedFile } from '@/hooks/useDb';
-import ShikiHighlighter, { rehypeInlineCodeProperty } from 'react-shiki';
+import { rehypeInlineCodeProperty } from 'react-shiki';
 import CodeHighlight from '../chat/chat-code-highlight';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
