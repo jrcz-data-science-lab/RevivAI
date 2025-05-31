@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useDebounce } from './useDebounce';
-import { countTokens } from '../lib/countTokens';
+
+const { countTokens } = await import('../lib/countTokens');
 
 /**
  * Hook to count the number of tokens in a given input string.

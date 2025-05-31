@@ -27,33 +27,8 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss(), visualizer()],
 		build: {
-			rollupOptions: {
-				output: {
-					manualChunks: {
-						// Separate vendor chunks for better caching
-						'vendor-react': ['react', 'react-dom'],
-						'vendor-ui': [
-							'@radix-ui/react-dialog',
-							'@radix-ui/react-select',
-							'@radix-ui/react-tabs',
-							'@radix-ui/react-scroll-area',
-							'@radix-ui/react-progress',
-						],
-						'vendor-mdx': ['@mdxeditor/editor'],
-						'vendor-ai': ['@ai-sdk/openai', '@ai-sdk/anthropic', '@ai-sdk/google'],
-						'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
-						'vendor-markdown': ['react-markdown', 'remark-gfm', 'react-shiki'],
-						'vendor-animation': ['motion', 'react-medium-image-zoom'],
-						'vendor-onboarding': ['react-joyride'],
-						'vendor-mermaid': ['mermaid'],
-						'vendor-forms': ['react-hook-form', '@hookform/resolvers'],
-					},
-				},
-			},
-			// CSS optimization
 			cssCodeSplit: true,
-			// // Reduce chunk size for better loading
-			// chunkSizeWarningLimit: 1000,
+			chunkSizeWarningLimit: 5000,
 		},
 		worker: {
 			format: 'es',

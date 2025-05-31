@@ -108,7 +108,6 @@ export function Writer({ db, model }: WriterProps) {
 						>
 							<div className="my-16">{renderActiveItem(activeItemId)}</div>
 						</motion.div>
-
 					</Suspense>
 				</main>
 			</div>
