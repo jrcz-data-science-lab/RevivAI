@@ -10,11 +10,18 @@ import '@/styles/global.css';
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>RevivAI</title>
-		
+
 		<!-- Resource hints for performance -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
 		<link rel="dns-prefetch" href="https://api.openai.com" />
 		<link rel="dns-prefetch" href="https://api.anthropic.com" />
+
+		<!-- Prevent theme flicker on initial load -->
+		<script is:inline>
+			const isDark = localStorage.getItem('theme') !== 'light';
+			document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+		</script>
+
 	</head>
 	<body>
 		<slot />

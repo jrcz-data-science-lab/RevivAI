@@ -1,15 +1,17 @@
 ---
 import AppLayout from '@/layouts/app-layout.astro';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Setup as SetupApp } from '@/components/setup/setup.tsx';
+import NavbarMini from '@/components/navbar-mini.astro';
 
 // Do not render on the server
 export const prerender = false;
+
+// Make back button redirect to the project if `redirectToProject` query parameter is set
+const redirectToProjectParam = Astro.url.searchParams.get('redirectToProject');
+const backLink = redirectToProjectParam ? `/app/${redirectToProjectParam}` : '/';
 ---
 
 <AppLayout>
-	<div class="z-50 fixed top-4 left-0 px-4 flex w-full justify-end">
-		<ThemeToggle client:only />
-	</div>
+	<NavbarMini backLink={backLink} />
 	<SetupApp client:only />
 </AppLayout>

@@ -1,0 +1,25 @@
+---
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from './ui/button';
+import { DoorClosed } from 'lucide-react';
+
+interface Props {
+    backLink?: string;
+}
+
+const { backLink } = Astro.props;
+---
+
+<div class="z-50 fixed top-4 left-0 px-4 flex w-full justify-between">
+    {backLink && (
+        <a href={backLink}>
+            <Button className="text-neutral-400" variant="ghost" size="icon" round title="Back to projects">
+                <DoorClosed />
+            </Button>
+        </a>
+    )}
+    
+    <div class="ml-auto">
+        <ThemeToggle client:only />
+    </div>
+</div>

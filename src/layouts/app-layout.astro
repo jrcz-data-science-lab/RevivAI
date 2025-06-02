@@ -6,10 +6,4 @@ import BaseLayout from './base-layout.astro';
 	<div class="relative flex flex-col items-center justify-center mx-auto min-h-screen overflow-x-hidden">
 		<slot />
 	</div>
-
-	<script is:inline>
-		// Theme script optimized for back/forward cache
-		const isDark = localStorage.getItem('theme') !== 'light';
-		document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
-	</script>
 </BaseLayout>
