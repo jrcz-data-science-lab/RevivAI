@@ -55,6 +55,17 @@ To set up RevivAI locally, follow these steps:
 5. **Access the Application**:
    Open your browser and navigate to `http://localhost:3000`.
 
+## Docker
+1. Build the Docker image:
+   ```bash
+   docker build -t revivai .
+   ```
+
+2. Run the Docker container:
+   ```bash
+   docker run -p 3000:3000 --name revivai-app revivai
+   ```
+
 ## Usage Examples
 
 ### Uploading a Codebase
