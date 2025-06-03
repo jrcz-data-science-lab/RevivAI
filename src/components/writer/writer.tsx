@@ -19,6 +19,13 @@ interface WriterProps {
 /**
  * Writer component that manages the writing interface.
  */
+
+/**
+ * Component for writing documentation.
+ * Provides text editing, AI-powered content generation, template application,
+ * and chapter organization in a sidebar-based layout.
+ * @returns The Writer component that renders the complete writing workspace.
+ */
 export function Writer({ db, model }: WriterProps) {
 	const {
 		isGenerating,

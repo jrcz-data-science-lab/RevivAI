@@ -38,21 +38,21 @@ export const templates = {
 		cancelable: false,
 		apply: applyReadmeTemplate,
 	},
-	api: {
-		name: 'API Reference',
-		description: 'Detailed API reference for your project. Great for microservices, REST APIs or Web frameworks.',
-		color: 'emerald',
-		icon: Notebook,
-		cancelable: true,
-		apply: applyApiReferenceTemplate,
-	},
-	game: {
-		name: 'Game Project',
-		description:
-			'Documentation for projects, made with game engines. Includes sections for gameplay, mechanics, and more. ',
-		color: 'pink',
-		icon: Gamepad2,
-		cancelable: true,
-		apply: applyReadmeTemplate,
-	},
+	// api: {
+	// 	name: 'API Reference',
+	// 	description: 'Detailed API reference for your project. Great for microservices, REST APIs or Web frameworks.',
+	// 	color: 'emerald',
+	// 	icon: Notebook,
+	// 	cancelable: true,
+	// 	apply: applyApiReferenceTemplate,
+	// },
+	// game: {
+	// 	name: 'Game Project',
+	// 	description:
+	// 		'Documentation for projects, made with game engines. Includes sections for gameplay, mechanics, and more. ',
+	// 	color: 'pink',
+	// 	icon: Gamepad2,
+	// 	cancelable: true,
+	// 	apply: applyReadmeTemplate,
+	// },
 } as const satisfies Record<string, Template>;
