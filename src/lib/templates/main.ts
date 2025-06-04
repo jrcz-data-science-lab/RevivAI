@@ -1,13 +1,12 @@
 import type { ElementType } from 'react';
 import type { LanguageModelV1 } from 'ai';
-import type { Settings } from '@/hooks/useSettings';
+import { Brain, ScrollText } from 'lucide-react';
 import type { Database } from '@/hooks/useDb';
+import type { Settings } from '@/hooks/useSettings';
 import type { WriterTemplateColor } from '@/components/writer/writer-templates-item';
-import { Brain, Gamepad2, Notebook, ScrollText } from 'lucide-react';
 
 import { applyReadmeTemplate } from './readmeTemplate';
 import { applySmartTemplate } from './smartTemplate';
-import { applyApiReferenceTemplate } from './apiReferenceTemplate';
 
 export interface Template {
 	name: string;
@@ -21,6 +20,8 @@ export interface Template {
 // All possible templates
 export type TemplateKey = keyof typeof templates;
 
+// List of templates available in the writer
+// Each template applies function, modifying the Chapters table in the database 
 export const templates = {
 	smart: {
 		name: 'AI Assisted',
