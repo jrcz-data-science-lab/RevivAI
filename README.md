@@ -2,15 +2,6 @@
 
 RevivAI is an AI-powered code documentation assistant designed to help developers understand and document their codebases effectively. It leverages advanced language models to analyze code and generate meaningful documentation, making it easier for teams to maintain and share knowledge about their projects.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Setup Instructions](#setup-instructions)
-- [Usage Examples](#usage-examples)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Overview
 
 RevivAI provides a user-friendly interface for interacting with AI models to generate documentation from codebases. It supports both local file uploads and remote repositories, allowing users to easily document their projects regardless of their source.
@@ -29,12 +20,12 @@ To set up RevivAI locally, follow these steps:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/revivai.git
-   cd revivai
+   git clone https://github.com/jrcz-data-science-lab/RevivAI.git
+   cd RevivAI
    ```
 
 2. **Install Dependencies**:
-   Ensure you have [Node.js](https://nodejs.org/) installed, then run:
+   Ensure you have [Node.js](https://nodejs.org/) installed (v22.14 or later) , then run:
    ```bash
    npm install
    ```
@@ -53,7 +44,7 @@ To set up RevivAI locally, follow these steps:
    ```
 
 5. **Access the Application**:
-   Open your browser and navigate to `http://localhost:3000`.
+   Open your browser and navigate to `http://localhost:4321`.
 
 ## Docker
 1. Build the Docker image:
