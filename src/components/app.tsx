@@ -83,7 +83,7 @@ export default function App({ projectId }: AppProps) {
 				</div>
 
 				<Toaster theme={theme} position="bottom-right" closeButton={true} />
-				<Onboarding />
+				{/* <Onboarding /> */}
 
 				{getAppScreen(hash)}
 			</div>
