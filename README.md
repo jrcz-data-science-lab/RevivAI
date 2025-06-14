@@ -1,6 +1,8 @@
-# RevivAI
+![RevivAI Preview](assets/preview.webp)
 
 RevivAI is an AI-powered code documentation assistant designed to help developers understand and document their codebases effectively. It leverages advanced language models to analyze code and generate meaningful documentation, making it easier for teams to maintain and share knowledge about their projects.
+
+<br>
 
 ## Overview
 
@@ -29,13 +31,15 @@ To set up RevivAI locally, follow these steps:
    ```bash
    npm install
    ```
+   > NOTE: If you getting an errors during `npm install`, try to delete `package-lock.json` and `node_modules` directory, then run `npm install` again.
 
-3. **Environment Variables**:
-   Create a `.env` file in the root directory and add the following variables:
+3. **Environment Variables (Optional)**:
+   You can specify default AI provider (Self-hosted Ollama) by setting the following environment variables in a `.env` file at the root of the project:
    ```env
    PUBLIC_OLLAMA_API_URL=your_llm_api_url
    PUBLIC_OLLAMA_API_MODEL=your_llm_model
    ```
+   > NOTE: Ollama server should be accessible from the browser. If you are using a self-hosted Ollama server, ensure it is running and accessible at the specified URL. It is recommended to put Ollama server behind a reverse proxy (e.g., Nginx) to handle CORS configurations and rate limit.
 
 4. **Run the Application**:
    Start the development server:
@@ -45,6 +49,20 @@ To set up RevivAI locally, follow these steps:
 
 5. **Access the Application**:
    Open your browser and navigate to `http://localhost:4321`.
+
+6. **Build for Production** (Optional):
+   To build the application for production, specify `.env` variables, and run:
+   ```bash
+   npm run build
+   ```
+
+7. **Start the Production Server**:
+   After building, you can start the production server with:
+   ```bash
+   node dist/server/entry.mjs
+   ```
+
+<br>
 
 ## Docker
 1. Build the Docker image:
