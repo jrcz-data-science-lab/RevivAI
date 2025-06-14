@@ -1,22 +1,20 @@
 ![RevivAI Preview](assets/preview.webp)
 
-RevivAI is an AI-powered code documentation assistant designed to help developers understand and document their codebases effectively. It leverages advanced language models to analyze code and generate meaningful documentation, making it easier for teams to maintain and share knowledge about their projects.
-
-<br>
-
-## Overview
-
-RevivAI provides a user-friendly interface for interacting with AI models to generate documentation from codebases. It supports both local file uploads and remote repositories, allowing users to easily document their projects regardless of their source.
+RevivAI is an AI-powered code documentation assistant designed to help developers document their codebases more effectively. It analyses code and generates meaningful documentation, breathing new life into abandoned or poorly documented projects.
 
 <br>
 
 ## Features
 
 - **AI-Powered Documentation**: Automatically generate documentation from codebases using advanced language models.
-- **Local and Remote Support**: Upload code files directly or link to public GitHub repositories.
+
+- **Chat With Your Code**: It provides a chat interface where you can ask questions or get explanations about your code.
+
+- **Local Files or Github Repository**: Upload code files directly or link to public GitHub repositories for analysis.
+
+- **Bring Your Own Key**: Easily integrate LLM APIs like OpenAI, OpenRouter, Anthropic, Google or Ollama by providing your own API keys.
+
 - **Customizable Settings**: Configure LLM provider settings and adjust documentation parameters.
-- **User-Friendly Interface**: Intuitive UI for managing projects and viewing generated documentation.
-- **Real-Time Chat Interface**: Interact with the AI in a chat format to ask questions about the code.
 
 <br>
 
