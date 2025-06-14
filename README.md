@@ -35,8 +35,8 @@ To set up RevivAI locally, follow these steps:
    ```bash
    npm install
    ```
-   > [!NOTE]
-   > If you getting an errors during `npm install`, try to delete `package-lock.json` and `node_modules` directory, then run `npm install` again.
+> [!NOTE]
+> If you getting an errors during `npm install`, try to delete `package-lock.json` and `node_modules` directory, then run `npm install` again.
 
 3. **Environment Variables (Optional)**:
    You can specify default AI provider (Self-hosted Ollama) by setting the following environment variables in a `.env` file at the root of the project:
@@ -44,8 +44,8 @@ To set up RevivAI locally, follow these steps:
    PUBLIC_OLLAMA_API_URL=your_llm_api_url
    PUBLIC_OLLAMA_API_MODEL=your_llm_model
    ```
-   > [!NOTE]
-   > Ollama server should be accessible from the browser. If you are using a self-hosted Ollama server, ensure it is running and accessible at the specified URL. It is recommended to put Ollama server behind a reverse proxy (e.g., Nginx) to handle CORS configurations and rate limit.
+> [!NOTE]
+> Ollama server should be accessible from the browser. If you are using a self-hosted Ollama server, ensure it is running and accessible at the specified URL. It is recommended to put Ollama server behind a reverse proxy (e.g., Nginx) to handle CORS configurations and rate limit.
 
 4. **Run the Application**:
    Start the development server:
