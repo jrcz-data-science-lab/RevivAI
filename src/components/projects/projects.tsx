@@ -28,9 +28,17 @@ export function Projects() {
 			animate={{ opacity: 1, translateY: 0 }}
 			exit={{ opacity: 0, translateY: 8 }}
 			transition={{ duration: 0.6, type: 'spring' }}
-			className="flex flex-col p-4 gap-4 max-w-prose py-16"
+			className="flex flex-col p-4 gap-4 max-w-prose py-16 z-50"
 		>
-			<div className="mb-12">
+			<div className="flex flex-col mb-12 -mt-8 space-y-8 w-full">
+				<a
+					rel="noreferrer"
+					target="_blank"
+					href="https://github.com/jrcz-data-science-lab/RevivAI"
+					className="cursor-pointer opacity-20 hover:opacity-50 transition-opacity"
+				>
+					<img src="/logo.svg" alt="RevivAI" className="h-6 mx-auto not-dark:invert-100" />
+				</a>
 				<Title />
 			</div>
 

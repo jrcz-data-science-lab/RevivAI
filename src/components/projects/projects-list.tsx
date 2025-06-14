@@ -28,7 +28,10 @@ export function ProjectsList({ projects, deleteProject }: ProjectsListProps) {
 
 	return (
 		<div
-			className={cn('border border-border rounded-md overflow-hidden mb-8', sortedProjects.length === 0 && 'hidden')}
+			className={cn(
+				'border border-border rounded-md overflow-hidden mb-8 bg-background',
+				sortedProjects.length === 0 && 'hidden',
+			)}
 		>
 			<AnimatePresence initial={false}>
 				{sortedProjects.map((project) => {
