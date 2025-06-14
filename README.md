@@ -8,6 +8,8 @@ RevivAI is an AI-powered code documentation assistant designed to help developer
 
 RevivAI provides a user-friendly interface for interacting with AI models to generate documentation from codebases. It supports both local file uploads and remote repositories, allowing users to easily document their projects regardless of their source.
 
+<br>
+
 ## Features
 
 - **AI-Powered Documentation**: Automatically generate documentation from codebases using advanced language models.
@@ -15,6 +17,8 @@ RevivAI provides a user-friendly interface for interacting with AI models to gen
 - **Customizable Settings**: Configure LLM provider settings and adjust documentation parameters.
 - **User-Friendly Interface**: Intuitive UI for managing projects and viewing generated documentation.
 - **Real-Time Chat Interface**: Interact with the AI in a chat format to ask questions about the code.
+
+<br>
 
 ## Setup Instructions
 
@@ -31,7 +35,8 @@ To set up RevivAI locally, follow these steps:
    ```bash
    npm install
    ```
-   > NOTE: If you getting an errors during `npm install`, try to delete `package-lock.json` and `node_modules` directory, then run `npm install` again.
+   > [!NOTE]
+   > If you getting an errors during `npm install`, try to delete `package-lock.json` and `node_modules` directory, then run `npm install` again.
 
 3. **Environment Variables (Optional)**:
    You can specify default AI provider (Self-hosted Ollama) by setting the following environment variables in a `.env` file at the root of the project:
@@ -39,7 +44,8 @@ To set up RevivAI locally, follow these steps:
    PUBLIC_OLLAMA_API_URL=your_llm_api_url
    PUBLIC_OLLAMA_API_MODEL=your_llm_model
    ```
-   > NOTE: Ollama server should be accessible from the browser. If you are using a self-hosted Ollama server, ensure it is running and accessible at the specified URL. It is recommended to put Ollama server behind a reverse proxy (e.g., Nginx) to handle CORS configurations and rate limit.
+   > [!NOTE]
+   > Ollama server should be accessible from the browser. If you are using a self-hosted Ollama server, ensure it is running and accessible at the specified URL. It is recommended to put Ollama server behind a reverse proxy (e.g., Nginx) to handle CORS configurations and rate limit.
 
 4. **Run the Application**:
    Start the development server:
@@ -75,6 +81,8 @@ To set up RevivAI locally, follow these steps:
    docker run -p 3000:3000 --name revivai-app revivai
    ```
 
+<br>
+
 ## Usage Examples
 
 ### Uploading a Codebase
@@ -91,6 +99,8 @@ Once your codebase is uploaded, you can start a chat with the AI. Type your ques
 
 After analyzing your code, RevivAI will generate documentation based on the provided codebase. You can view and export this documentation for your project.
 
+<br>
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps to contribute:
@@ -100,6 +110,8 @@ Contributions are welcome! Please follow these steps to contribute:
 3. Make your changes and commit them (`git commit -m 'Add new feature'`).
 4. Push to the branch (`git push origin feature-branch`).
 5. Open a pull request.
+
+<br>
 
 ## License
 
