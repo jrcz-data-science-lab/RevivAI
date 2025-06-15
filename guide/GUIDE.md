@@ -1,6 +1,9 @@
-# RevivAI Guide
+# RevivAI Guide 📚
 
 Welcome to RevivAI! This guide will walk you through all the main features and help you get started with AI-powered code documentation. RevivAI makes it easy to understand, document, and interact with your codebase using advanced language models.
+
+> [!NOTE]
+> This guide assumes you have RevivAI running locally or have access to a hosted instance. Check the [README.md](../README.md) for installation instructions.
 
 ## Table of Contents
 1. [Creating a New Project](#creating-a-new-project)
@@ -27,6 +30,9 @@ Projects in RevivAI help you organize your work. Each project contains one codeb
 3. **Enter Project Name**: Give your project a descriptive name like "My Graduation Project" or "Company API Documentation".
 
 4. **Setup LLM Provider**: If you haven't set up an AI provider yet, you'll be redirected to the setup page after creating the project.
+
+> [!TIP]
+> Use descriptive project names to easily identify different codebases later. Consider including the project type or version in the name.
 
 ### Project Management
 
@@ -78,6 +84,9 @@ Each provider has different steps to get an API key:
 - **Google**: Access [Google AI Studio](https://aistudio.google.com/app/apikey)
 - **OpenRouter**: Check [OpenRouter Settings](https://openrouter.ai/settings/keys)
 
+> [!IMPORTANT]
+> Most providers require a paid account, though some offer free tiers with limitations.
+
 ### Security Note
 
 All API calls are made directly from your browser to the AI provider. RevivAI never stores or sees your API keys or data.
@@ -118,6 +127,9 @@ Specify which files to exclude (comma-separated):
 ```
 node_modules/**, *.log, dist/**, .git/**
 ```
+
+> [!WARNING]
+> Large codebases can consume many AI tokens and increase costs. Use compression and filtering to optimize your upload.
 
 ### Upload Process
 
@@ -181,6 +193,7 @@ The AI can help with many code-related questions:
 - "Generate a flowchart of the user login process"
 - "Show the component hierarchy"
 
+
 ### Chat Features
 
 #### Message Management
@@ -211,6 +224,9 @@ The AI can help with many code-related questions:
 
 RevivAI can automatically generate comprehensive documentation for your codebase using AI.
 
+> [!TIP]
+> Start with a template to get a structured foundation, then customize the chapters to match your project's specific needs.
+
 ![Writer Screenshot](images/writer.png)
 
 ### Getting Started with Documentation
@@ -233,6 +249,9 @@ RevivAI provides several documentation templates:
 - Generates a custom documentation outline
 - Adapts to your specific project type and architecture
 
+> [!NOTE]
+> The AI-Assisted template uses your actual code structure to create relevant chapters. Results may vary depending on your codebase complexity.
+
 ### Working with Chapters
 
 ![Chapters Screenshot](images/chapter-editor.png)
@@ -252,6 +271,9 @@ RevivAI provides several documentation templates:
 - **Drag & Drop**: Reorder chapters by dragging them in the sidebar
 - **Delete Chapters**: Remove unwanted chapters using the delete button
 
+> [!TIP]
+> Write detailed outlines for better AI-generated content. Include specific topics, code examples you want covered, and any diagrams that would be helpful.
+
 ### AI Generation Process
 
 ![Generation Screenshot](images/generate.png)
@@ -266,6 +288,9 @@ RevivAI provides several documentation templates:
 - **Progress Tracking**: See which chapters are being worked on
 - **Error Handling**: Failed generations can be retried
 - **Content Quality**: AI writes beginner-friendly, comprehensive content
+
+> [!WARNING]
+> Generation can consume significant API tokens, especially for large projects. Monitor your usage and consider enabling parallelization limits if you're concerned about costs.
 
 ### Previewing & Exporting Documentation
 
@@ -299,6 +324,9 @@ RevivAI provides several documentation templates:
 
 Customize RevivAI's behavior through the settings panel to optimize performance and output quality.
 
+> [!NOTE]
+> Settings are saved locally in your browser and persist across sessions. Changes take effect immediately.
+
 ![Settings Screenshot](images/settings.png)
 
 ### Accessing Settings
@@ -329,6 +357,9 @@ Click the settings icon (sliders) in the navigation bar to open the settings dia
 - **Benefits**: Faster generation with higher values
 - **Caution**: May trigger API rate limits with very high values
 
+> [!WARNING]
+> Setting parallelization too high can trigger rate limits from your AI provider, causing generation failures. Start with lower values and increase gradually.
+
 ### Model Management
 
 #### Changing AI Provider
@@ -341,6 +372,9 @@ Click the settings icon (sliders) in the navigation bar to open the settings dia
 - **Different Models**: Each provider offers different capabilities
 - **Cost Optimization**: Some providers may be more cost-effective
 - **Performance**: Different models excel at different tasks
+
+> [!TIP]
+> Experiment with different providers to find the best balance of cost, speed, and quality for your specific needs. Some models are better at code analysis, others at creative writing.
 
 ### Project Management
 
@@ -370,3 +404,20 @@ Click the settings icon (sliders) in the navigation bar to open the settings dia
 - **Quality Issues**: Adjust temperature for better content quality
 - **Language Problems**: Ensure language setting matches your preference
 - **Performance**: Enable compression and optimize file filtering
+
+> [!NOTE]
+> Most issues can be resolved by adjusting settings or retrying the operation. If problems persist, check your AI provider's status page for service interruptions.
+
+---
+
+## Getting Help
+
+If you need additional help:
+
+1. **Check Settings**: Many issues can be resolved by adjusting settings
+2. **Retry Operations**: Generation failures can often be resolved by retrying
+3. **Review Documentation**: This guide covers most common use cases
+4. **Check API Status**: Verify your AI provider's service status
+
+> [!TIP]
+> RevivAI is designed to be intuitive and user-friendly. Most features work automatically once you've uploaded your codebase and configured an AI provider.
