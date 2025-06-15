@@ -406,18 +406,4 @@ Click the settings icon (sliders) in the navigation bar to open the settings dia
 - **Performance**: Enable compression and optimize file filtering
 
 > [!NOTE]
-> Most issues can be resolved by adjusting settings or retrying the operation. If problems persist, check your AI provider's status page for service interruptions.
-
----
-
-## Getting Help
-
-If you need additional help:
-
-1. **Check Settings**: Many issues can be resolved by adjusting settings
-2. **Retry Operations**: Generation failures can often be resolved by retrying
-3. **Review Documentation**: This guide covers most common use cases
-4. **Check API Status**: Verify your AI provider's service status
-
-> [!TIP]
 > RevivAI is designed to be intuitive and user-friendly. Most features work automatically once you've uploaded your codebase and configured an AI provider.
