@@ -18,6 +18,11 @@ RevivAI is an AI-powered code documentation assistant designed to help developer
 
 <br>
 
+## How to Use?
+You need to setup the application first. Follow the [Setup Instructions](#setup-instructions) below. After you started the application, you can follow [Guide](guide/GUIDE.md) in the guide folder, which will show all available features and how to use them.
+
+<br>
+
 ## Setup Instructions
 
 To set up RevivAI locally, follow these steps:
@@ -78,24 +83,6 @@ To set up RevivAI locally, follow these steps:
    ```bash
    docker run -p 3000:3000 --name revivai-app revivai
    ```
-
-<br>
-
-## Usage Examples
-
-### Uploading a Codebase
-
-To upload a codebase, click on the "Upload" button in the navbar. You can choose to upload files from your local machine or provide a URL to a public GitHub repository.
-
-### Interacting with the AI
-
-Once your codebase is uploaded, you can start a chat with the AI. Type your questions in the chat input, such as:
-- "What does this function do?"
-- "Can you explain the structure of this codebase?"
-
-### Generating Documentation
-
-After analyzing your code, RevivAI will generate documentation based on the provided codebase. You can view and export this documentation for your project.
 
 <br>
 
