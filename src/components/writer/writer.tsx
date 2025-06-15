@@ -73,7 +73,11 @@ export function Writer({ db, model }: WriterProps) {
 			}
 
 			return (
-				<WriterEditorLazy key={chapter.id} chapter={chapter} onChange={(updated: Chapter) => updateChapter(chapter.id, updated)} />
+				<WriterEditorLazy
+					key={chapter.id}
+					chapter={chapter}
+					onChange={(updated: Chapter) => updateChapter(chapter.id, updated)}
+				/>
 			);
 		}
 	};

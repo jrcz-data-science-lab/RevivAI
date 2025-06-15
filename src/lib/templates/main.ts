@@ -21,7 +21,7 @@ export interface Template {
 export type TemplateKey = keyof typeof templates;
 
 // List of templates available in the writer
-// Each template applies function, modifying the Chapters table in the database 
+// Each template applies function, modifying the Chapters table in the database
 export const templates = {
 	smart: {
 		name: 'AI Assisted',

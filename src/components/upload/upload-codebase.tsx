@@ -8,9 +8,10 @@ import { cn, getTokensCountColor } from '@/lib/utils';
 interface UploadCodebaseProps {
 	codebase: Codebase;
 	onNewCodebase: () => void;
+	onDone?: () => void;
 }
 
-export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps) {
+export function UploadCodebase({ codebase, onNewCodebase, onDone }: UploadCodebaseProps) {
 	const createdAtFormatted = formatDistanceToNow(codebase.createdAt, { addSuffix: true, includeSeconds: true });
 
 	// Sort the files by token count
@@ -85,9 +86,15 @@ export function UploadCodebase({ codebase, onNewCodebase }: UploadCodebaseProps)
 					</ScrollArea>
 				</div>
 			</div>
-			<Button type="submit" className="w-full" size="sm" variant="outline" onClick={onNewCodebase}>
-				Upload New Codebase
-			</Button>
+
+			<div className="flex gap-2">
+				<Button className="w-full" size="sm" variant="outline" onClick={onNewCodebase}>
+					Upload New
+				</Button>
+				<Button className="w-full" size="sm" variant="default" onClick={onDone}>
+					Done
+				</Button>
+			</div>
 		</div>
 	);
 }

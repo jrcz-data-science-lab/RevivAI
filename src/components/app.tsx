@@ -11,7 +11,9 @@ import { useModel } from '@/hooks/useModel';
 import { useEffect } from 'react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
-import { Onboarding } from './onboarding/onboarding';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { isUploadOpenAtom } from './upload/upload';
+import { useSetAtom } from 'jotai';
 
 interface AppProps {
 	projectId: string;
@@ -24,12 +26,23 @@ interface AppProps {
 export default function App({ projectId }: AppProps) {
 	// Hydrate the current project ID, specifying initial values
 	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
-
+	
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);
 	const { model } = useModel();
 	const { isProjectExists } = useProjects();
 	const { hash, setHash } = useHashRouter('chat');
+	const setIsUploadOpen = useSetAtom(isUploadOpenAtom);
+
+	// Open upload dialog if no codebase exists
+	useEffect(() => {
+		const checkIfCodebaseExists = async () => {
+			const codebasesCount = await db.codebases.count();
+			if (codebasesCount === 0) setIsUploadOpen(true);
+		};
+
+		checkIfCodebaseExists();
+	}, [setIsUploadOpen]);
 
 	// If no project ID is provided or the project does not exist, show a message
 	if (!projectId || !isProjectExists(projectId)) {
@@ -37,7 +50,7 @@ export default function App({ projectId }: AppProps) {
 			<motion.div
 				initial={{ opacity: 0, translateY: 16 }}
 				animate={{ opacity: 1, translateY: 0 }}
-				transition={{ duration: 0.1, delay: 1 }}
+				transition={{ duration: 0.1, delay: 0.3 }}
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
 				<div className="text-muted-foreground w-full text-center">This project doesn't exist.</div>
@@ -55,7 +68,7 @@ export default function App({ projectId }: AppProps) {
 			<motion.div
 				initial={{ opacity: 0, translateY: 16 }}
 				animate={{ opacity: 1, translateY: 0 }}
-				transition={{ duration: 0.1, delay: 1 }}
+				transition={{ duration: 0.1, delay: 0.3 }}
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
 				<div className="text-muted-foreground w-full text-center">LLM provider is not specified.</div>

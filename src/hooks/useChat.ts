@@ -6,9 +6,7 @@ import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
 import type { Codebase, Database } from './useDb';
 import { useLiveQuery } from 'dexie-react-hooks';
 import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
-import { atomWithStorage } from 'jotai/utils';
 import { useSettings } from './useSettings';
-import settings from '@/components/settings';
 import { getLanguagePrompt } from '@/lib/languages';
 
 interface UseChatProps {
@@ -33,7 +31,7 @@ export interface ChatState {
 export const contextSizeAtom = atom(0);
 
 // Chat state
-export const chatStateAtom = atomWithStorage<ChatState>('chat', {
+export const chatStateAtom = atom<ChatState>({
 	messages: [],
 	isStreaming: false,
 	errorMessage: null,

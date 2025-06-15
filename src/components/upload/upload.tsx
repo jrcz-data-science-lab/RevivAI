@@ -53,22 +53,29 @@ export function Upload() {
 		toast.success('Previous codebase removed!');
 	};
 
+	// Only allow closing if there's a codebase or if opening the dialog
+	const handleOpenChange = (open: boolean) => {
+		if (open || currentCodebase) {
+			setIsOpen(open);
+		}
+	};
+
 	return (
-		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+		<Dialog open={isOpen} onOpenChange={handleOpenChange}>
 			<DialogTrigger asChild>
 				<Button data-onboarding="upload-code" variant="ghost" size="icon" round title="Upload code files">
 					<FolderUp />
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="max-w-xl">
+			<DialogContent className="max-w-xl" hideClose={!currentCodebase} onEscapeKeyDown={(e) => !currentCodebase && e.preventDefault()} onPointerDownOutside={(e) => !currentCodebase && e.preventDefault()}>
 				<DialogHeader className="mb-4">
 					<DialogTitle>Let's upload your code!</DialogTitle>
 					<DialogDescription>Upload your project files from GitHub or from your local directory.</DialogDescription>
 				</DialogHeader>
 
 				{currentCodebase ? (
-					<UploadCodebase codebase={currentCodebase} onNewCodebase={removeCodebase} />
+					<UploadCodebase codebase={currentCodebase} onNewCodebase={removeCodebase} onDone={() => setIsOpen(false)} />
 				) : (
 					<UploadForm onUploadSuccess={addCodebase} />
 				)}

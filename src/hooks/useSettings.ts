@@ -2,12 +2,11 @@ import type { LanguageName } from '@/lib/languages';
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-
 export interface Settings {
-		parallelization: number;
-		temperature: number;
-		language: LanguageName;
-	}
+	parallelization: number;
+	temperature: number;
+	language: LanguageName;
+}
 
 const settingsAtom = atomWithStorage<Settings>('settings', {
 	parallelization: 1,
