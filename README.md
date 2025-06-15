@@ -114,3 +114,10 @@ Contributions are welcome! Please follow these steps to contribute:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+<br>
+
+## Credits
+This repository contains the work from a thesis graduation project completed during an internship at the [JRCZ Data Science Labs](https://jrcz.nl/), affiliated with [HZ University of Applied Sciences](https://hz.nl/).
+
+<img src="./assets/organizations.png" alt="Organizations Logos" width="300">
