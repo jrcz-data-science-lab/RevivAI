@@ -136,7 +136,7 @@ node_modules/**, *.log, dist/**, .git/**
 1. **Open Upload Dialog**: Click the folder icon in the navigation bar
 2. **Choose Method**: Select either "Local Files" or "GitHub Repository"
 3. **Configure Filters**: Set include/ignore patterns if needed
-4. **Enable Compression**: Check this option to reduce the codebase size for better performance
+4. **Enable Compression**: Check this option to reduce the codebase size. This may slightly decrease documentation quality, but it saves tokens and allows you to process larger codebases.
 5. **Upload**: Click "Upload" and wait for processing
 
 ![Upload Screenshot](images/upload-done.png)
