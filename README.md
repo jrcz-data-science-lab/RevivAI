@@ -18,8 +18,11 @@ RevivAI is an AI-powered code documentation assistant designed to help developer
 
 <br>
 
-## How to Use?
-You need to setup the application first. Follow the [Setup Instructions](#setup-instructions) below. After you started the application, you can follow [Guide](guide/GUIDE.md) in the guide folder, which will show all available features and how to use them.
+## How to Use It
+
+Before getting started, make sure to complete the [Setup Instructions](#setup-instructions) below. Once the application is running, refer to the guide in the `/guide` folder for detailed instructions on using all available features.
+
+#### [Open the Guide 📚](guide/GUIDE.md)
 
 <br>
 
@@ -98,13 +101,13 @@ Contributions are welcome! Please follow these steps to contribute:
 
 <br>
 
-## License
+## Credits
+This project was created by [Kirills Reunovs](https://github.com/Kirlovon) as a bachelor thesis project during an internship at the [JRCZ Data Science Labs](https://jrcz.nl/), affiliated with [HZ University of Applied Sciences](https://hz.nl/).
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+<img src="./assets/organizations.png" alt="Organizations Logos" width="300">
 
 <br>
 
-## Credits
-This repository contains the work from a thesis graduation project completed during an internship at the [JRCZ Data Science Labs](https://jrcz.nl/), affiliated with [HZ University of Applied Sciences](https://hz.nl/).
+## License
 
-<img src="./assets/organizations.png" alt="Organizations Logos" width="300">
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
