@@ -4,7 +4,6 @@ import { ProjectsList } from './projects-list.tsx';
 import ProjectsNew, { type ProjectNewFormSchema } from './projects-new.tsx';
 import Title from '../title.tsx';
 import { useModel } from '@/hooks/useModel.ts';
-import { Upload } from '../upload/upload.tsx';
 
 export function Projects() {
 	const { projects, createProject, deleteProject } = useProjects();
@@ -31,14 +30,6 @@ export function Projects() {
 			className="flex flex-col p-4 gap-4 max-w-prose py-16 z-50"
 		>
 			<div className="flex flex-col mb-12 -mt-8 space-y-8 w-full">
-				<a
-					rel="noreferrer"
-					target="_blank"
-					href="https://github.com/jrcz-data-science-lab/RevivAI"
-					className="cursor-pointer opacity-20 hover:opacity-50 transition-opacity"
-				>
-					<img src="/logo.svg" alt="RevivAI" className="h-6 mx-auto not-dark:invert-100" />
-				</a>
 				<Title />
 			</div>
 
