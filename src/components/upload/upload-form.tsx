@@ -187,7 +187,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 								Comma-separated glob patterns to include. Only matching files will be included.
 							</FormDescription>
 							<FormControl>
-								<Input placeholder="**/src/**/*" {...field} />
+								<Input placeholder="src/**/*" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

@@ -2,7 +2,7 @@ import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore
 import { minimatch } from 'minimatch';
 
 // List if ignored patters
-export const ignorePatterns = [
+export const ignorePatterns = [...new Set([
 	...defaultIgnoreList,
 	'**/node_modules/**',
 	'**/vendor/**',
@@ -12,10 +12,13 @@ export const ignorePatterns = [
 	'**/coverage/**',
 	'**/vendor/**',
 	'**/package-lock.json',
-];
+])];
 
 // Files to include
 export const includePatterns = [
+	'**/.nvmrc',
+	'**/.node-version',
+	'**/.python-version',
 	'**/*.env.dev*',
 	'**/*.env.test*',
 	'**/*.env.local*',
@@ -36,12 +39,24 @@ export const includePatterns = [
 	'**/*.svelte',
 	'**/*.vue',
 	'**/*.astro',
+	'**/*.cr',
 	'**/*.rs',
 	'**/*.rst',
 	'**/*.go',
+	'**/*.mod',
+	'**/*.ex',
+	'**/*.exs',
+	'**/*.gleam',
+	'**/*.glsl',
 	'**/*.sql',
 	'**/*.swift',
+	'**/*.zig',
+	'**/*.dart',
+	'**/*.kt',
+	'**/*.kts',
 	'**/*.rb',
+	'**/*.rake',
+	'**/*.lua',
 	'**/*.erb',
 	'**/*.html',
 	'**/*.css',
@@ -74,9 +89,14 @@ export const includePatterns = [
 	'**/Makefile',
 	'**/Gemfile',
 	'**/pom.xml',
+	'**/Procfile',
 	'**/build.gradle',
 	'**/package.json',
 ];
+
+// Precalculate the matchers for ignore and include patterns
+const ignorePatternsMatchers = ignorePatterns.map((pattern) => minimatch.filter(pattern, { dot: true }));
+const includePatternsMatchers = includePatterns.map((pattern) => minimatch.filter(pattern));
 
 /**
  * Check if the path is ignored
@@ -85,12 +105,22 @@ export const includePatterns = [
  * @returns True if the path is ignored, false otherwise.
  */
 export function isPathIgnored(path: string, customIgnorePatterns?: string) {
-	if (customIgnorePatterns) {
-		const customPatterns = customIgnorePatterns.split(',').map((pattern) => pattern.trim());
-		return [...ignorePatterns, ...customPatterns].some((pattern) => minimatch(path, pattern));
+	// Match default ignore patterns first
+	for (const matcher of ignorePatternsMatchers) {
+		if (matcher(path)) return true;
 	}
 
-	return ignorePatterns.some((pattern) => minimatch(path, pattern));
+	// If custom ignore patterns are provided, match them as well
+	if (customIgnorePatterns) {
+		const customPatterns = customIgnorePatterns.split(',').map(p => p.trim());
+		const customMatchers = customPatterns.map(pattern => minimatch.filter(pattern, { dot: true }));
+
+		for (const customMatcher of customMatchers) {
+			if (customMatcher(path)) return true;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -100,10 +130,19 @@ export function isPathIgnored(path: string, customIgnorePatterns?: string) {
  * @returns True if the path is included, false otherwise.
  */
 export function isPathIncluded(path: string, customIncludePatterns?: string) {
-	if (customIncludePatterns) {
-		const customPatterns = customIncludePatterns.split(',').map((pattern) => pattern.trim());
-		return [...includePatterns, ...customPatterns].some((pattern) => minimatch(path, pattern));
+	// Match default include patterns first
+	for (const matcher of includePatternsMatchers) {
+		if (matcher(path)) return true;
 	}
 
-	return includePatterns.some((pattern) => minimatch(path, pattern));
+	if (customIncludePatterns) {
+		const customPatterns = customIncludePatterns.split(',').map((p) => p.trim());
+		const customMatchers = customPatterns.map((pattern) => minimatch.filter(pattern, { dot: true }));
+		
+		for (const customMatcher of customMatchers) {
+			if (customMatcher(path)) return true;
+		}
+	}
+
+	return false;
 }

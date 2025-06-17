@@ -1,8 +1,7 @@
-import { ActionError, defineAction } from 'astro:actions';
-import { z } from 'astro:schema';
 import path from 'node:path';
 import { runCli } from 'repomix';
-import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { ActionError, defineAction } from 'astro:actions';
+import { mkdir, writeFile, rm, readFile, readdir, lstat } from 'node:fs/promises';
 import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 import { promptifySchema } from '@/lib/schemas';
 import { ignorePatterns, includePatterns } from '@/lib/filterFiles';
@@ -12,6 +11,16 @@ const WORKING_DIR = process.cwd();
 export interface PromptifyResult {
 	prompt: string;
 	metadata: PackResult;
+}
+
+/**
+ * Clean and format glob patterns for RepoMix CLI.
+ * @param globs - Comma-separated glob patterns.
+ * @returns Cleaned and formatted glob patterns.
+ */
+function cleanGlobs(globs: string ) {
+	if (!globs) return '';
+	return globs.split(',').map((glob) => glob.trim()).filter(Boolean).join(',');
 }
 
 /**
@@ -63,15 +72,25 @@ async function runRepomixForDirectory(
 	compress: boolean,
 	ignore: string,
 	include: string,
-) {
-	const result = await runCli([dirPath], WORKING_DIR, {
+) {	
+	let projectRoot = dirPath;
+
+	// If project contains one folder - assume it's the root. Otherwise, use upload directory as root.
+	const dirContents = await readdir(dirPath);
+	if (dirContents.length === 1) {
+		const itemPath = path.join(dirPath, dirContents[0]);
+		const stat = await lstat(itemPath);
+		if (stat.isDirectory() && itemPath.startsWith(dirPath)) projectRoot = itemPath;
+	}
+
+	const result = await runCli(['./'], projectRoot, {
 		style: 'markdown',
 		quiet: true,
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		include: include || includePatterns.join(','),
-		ignore: `${ignorePatterns}${ignore ? `,${ignore}` : ''}`,
+		include: `${includePatterns || cleanGlobs(include)}`,
+		ignore: `${ignorePatterns}${ignore ? `,${cleanGlobs(ignore)}` : ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -106,8 +125,8 @@ async function runRepomixForRemote(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		include: include || includePatterns.join(','),
-		ignore: `${ignorePatterns}${ignore ? `,${ignore}` : ''}`,
+		include: `${includePatterns || cleanGlobs(include)}`,
+		ignore: `${ignorePatterns}${ignore ? `,${cleanGlobs(ignore)}` : ''}`,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
