@@ -9,9 +9,10 @@ Welcome to RevivAI! This guide will walk you through all the main features and h
 1. [Creating a New Project](#creating-a-new-project)
 2. [Setting Up LLM Providers](#setting-up-llm-providers)
 3. [Uploading Your Code](#uploading-your-code)
-4. [Chatting with Your Codebase](#chatting-with-your-codebase)
-5. [Generating Documentation](#generating-documentation)
-6. [Settings](#settings)
+4. [Understanding the Interface](#understanding-the-interface)
+5. [Chatting with Your Codebase](#chatting-with-your-codebase)
+6. [Generating Documentation](#generating-documentation)
+7. [Settings](#settings)
 
 ---
 
@@ -128,9 +129,6 @@ Specify which files to exclude (comma-separated):
 node_modules/**, *.log, dist/**, .git/**
 ```
 
-> [!WARNING]
-> Large codebases can consume many AI tokens and increase costs. Use compression and filtering to optimize your upload.
-
 ### Upload Process
 
 1. **Open Upload Dialog**: Click the folder icon in the navigation bar
@@ -149,11 +147,32 @@ After upload, you'll see:
 - **Largest Files**: Which files use the most tokens
 - **Compression Status**: Whether compression was applied
 
+> [!WARNING]
+> Large codebases can consume many AI tokens and increase costs. Use compression and filtering to optimize your upload.
+
 ### Managing Codebases
 
 - **View Current**: See details about your uploaded codebase in the upload dialog
 - **Upload New**: Replace the current codebase with a new one
 - **File Analysis**: Review which files use the most tokens
+
+---
+
+## Understanding the Interface
+
+Once you've created a project and uploaded your code, you'll see RevivAI's main interface with a navigation bar at the top containing several important icons and controls.
+
+![Navbar Screenshot](images/navbar.png)
+
+### Navbar Components
+
+The navbar provides quick access to all major features:
+
+1. **Back Button**: Returns you to the projects homepage
+2. **Chat/Writer Tabs**: Switch between chatting with your code and generating documentation
+3. **Theme Toggle**: Switch between light and dark modes for comfortable viewing
+4. **Upload Button**: Access the upload dialog to manage your codebase
+5. **Settings Button**: Open settings to configure AI providers, language, and generation options
 
 ---
 
