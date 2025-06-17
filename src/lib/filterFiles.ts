@@ -20,7 +20,6 @@ export const includePatterns = [
 	'**/*.env.test*',
 	'**/*.env.local*',
 	'**/*.env.example*',
-	'**/*.env',
 	'**/*.cpp',
 	'**/*.h',
 	'**/*.hpp',
@@ -31,6 +30,9 @@ export const includePatterns = [
 	'**/*.js',
 	'**/*.ts',
 	'**/*.jsx',
+	'**/*.tsx',
+	'**/*.mjs',
+	'**/*.cjs',
 	'**/*.svelte',
 	'**/*.vue',
 	'**/*.astro',
@@ -40,6 +42,7 @@ export const includePatterns = [
 	'**/*.sql',
 	'**/*.swift',
 	'**/*.rb',
+	'**/*.erb',
 	'**/*.html',
 	'**/*.css',
 	'**/*.sass',
@@ -50,9 +53,10 @@ export const includePatterns = [
 	'**/*.yml',
 	'**/*.xml',
 	'**/*.md',
+	'**/*.mdx',
 	'**/*.txt',
 	'**/*.csv',
-	'**/*.tsx',
+	'**/*.php',
 	'**/*.py',
 	'**/*.pyi',
 	'**/*.pyx',
@@ -83,7 +87,7 @@ export const includePatterns = [
 export function isPathIgnored(path: string, customIgnorePatterns?: string) {
 	if (customIgnorePatterns) {
 		const customPatterns = customIgnorePatterns.split(',').map((pattern) => pattern.trim());
-		return [...defaultIgnoreList, ...customPatterns].some((pattern) => minimatch(path, pattern));
+		return [...ignorePatterns, ...customPatterns].some((pattern) => minimatch(path, pattern));
 	}
 
 	return ignorePatterns.some((pattern) => minimatch(path, pattern));
@@ -98,7 +102,7 @@ export function isPathIgnored(path: string, customIgnorePatterns?: string) {
 export function isPathIncluded(path: string, customIncludePatterns?: string) {
 	if (customIncludePatterns) {
 		const customPatterns = customIncludePatterns.split(',').map((pattern) => pattern.trim());
-		return [...defaultIgnoreList, ...customPatterns].some((pattern) => minimatch(path, pattern));
+		return [...includePatterns, ...customPatterns].some((pattern) => minimatch(path, pattern));
 	}
 
 	return includePatterns.some((pattern) => minimatch(path, pattern));

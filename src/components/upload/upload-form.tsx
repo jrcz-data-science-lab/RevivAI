@@ -64,17 +64,27 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 		// Append the type of codebase
 		if (data.type === 'files' && data.files) {
+			let skipCount = 0;
+
 			for (const file of data.files) {
 				const filePath = file.webkitRelativePath || file.name;
 
 				// Skip uploading unnecessary files
 				if (isPathIgnored(filePath, data.ignore) || !isPathIncluded(filePath, data.include)) continue;
 
-				// Replace big files (>20mb) with a placeholder
-				if (file.size > 20_000_000) continue;
+				// Skip Replace big files (>20mb)
+				if (file.size > 20_000_000) {
+					skipCount += 1;
+					continue;
+				}
 
 				formData.append('files', file, filePath);
 			}
+
+			if (skipCount > 0) {
+				toast.error(`Skipped ${skipCount} files that are too large or do not match include patterns.`, { richColors: true });
+			}
+
 		} else if (data.type === 'remote' && data.url) {
 			formData.append('url', data.url);
 		}
