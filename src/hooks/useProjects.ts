@@ -1,4 +1,4 @@
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 export interface ProjectMetadata {
@@ -18,6 +18,7 @@ export const projectsAtom = atomWithStorage<ProjectMetadata[]>('projects', []);
  * @returns An object with methods to create, delete, and check if a project exists.
  */
 export function useProjects() {
+	const currentProjectId = useAtomValue(currentProjectIdAtom);
 	const [projects, setProjects] = useAtom(projectsAtom);
 
 	/**
@@ -54,5 +55,5 @@ export function useProjects() {
 		return projects.some((project) => project.id === id);
 	};
 
-	return { createProject, deleteProject, projects, isProjectExists };
+	return { currentProjectId, createProject, deleteProject, projects, isProjectExists };
 }

@@ -4,15 +4,24 @@ import { SlidersHorizontal } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Label } from './ui/label';
 import { useAtomValue } from 'jotai';
-import { currentProjectIdAtom } from '@/hooks/useProjects';
+import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useSettings } from '@/hooks/useSettings';
 import { Input } from './ui/input';
 import { languages, type LanguageName } from '@/lib/languages';
 
 function Settings() {
-	const projectId = useAtomValue(currentProjectIdAtom);
+	const { currentProjectId, deleteProject  } = useProjects();
 	const { settings, setLanguage, setParallelization, setTemperature } = useSettings();
+
+	const handleDeleteProject = async () => {
+		if (!currentProjectId) return;
+
+		if (confirm('Are you sure you want to delete this project?')) {
+			deleteProject(currentProjectId);
+			window.location.href = '/';
+		}
+	}
 
 	return (
 		<Dialog>
@@ -102,7 +111,7 @@ function Settings() {
 							</p>
 						</div>
 
-						<a href={`/setup?redirectToProject=${projectId}`}>
+						<a href={`/setup?redirectToProject=${currentProjectId}`}>
 							<Button variant="outline" size="sm">
 								Go to Setup
 							</Button>
@@ -115,7 +124,7 @@ function Settings() {
 							<p className="text-muted-foreground">Delete all information about current project.</p>
 						</div>
 
-						<Button variant="destructive" size="sm">
+						<Button variant="destructive" size="sm" onClick={handleDeleteProject}>
 							Delete Project
 						</Button>
 					</div>
