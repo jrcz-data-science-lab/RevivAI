@@ -2,17 +2,37 @@ import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore
 import { minimatch } from 'minimatch';
 
 // List if ignored patters
-export const ignorePatterns = [...new Set([
-	...defaultIgnoreList,
-	'**/node_modules/**',
-	'**/vendor/**',
-	'**/dist/**',
-	'**/build/**',
-	'**/out/**',
-	'**/coverage/**',
-	'**/vendor/**',
-	'**/package-lock.json',
-])];
+export const ignorePatterns = [
+	...new Set([
+		...defaultIgnoreList,
+		'**/node_modules/**',
+		'**/vendor/**',
+		'**/dist/**',
+		'**/build/**',
+		'**/out/**',
+		'**/coverage/**',
+		'**/vendor/**',
+		'**/package-lock.json',
+		'**/.env',
+		'**/*.key',
+		'**/*.pem',
+		'**/*.p12',
+		'**/*.pfx',
+		'**/*.crt',
+		'**/*.cer',
+		'**/*.der',
+		'**/id_rsa',
+		'**/id_dsa',
+		'**/id_ecdsa',
+		'**/id_ed25519',
+		'**/.ssh/**',
+		'**/secrets/**',
+		'**/config/secrets/**',
+		'**/*.log',
+		'**/passwords.txt',
+		'**/password.txt',
+	]),
+];
 
 // Files to include
 export const includePatterns = [
