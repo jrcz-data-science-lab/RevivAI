@@ -4,7 +4,6 @@ import { ActionError, defineAction } from 'astro:actions';
 import { mkdir, writeFile, rm, readFile, readdir, lstat } from 'node:fs/promises';
 import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 import { promptifySchema } from '@/lib/schemas';
-import { ignorePatterns, includePatterns } from '@/lib/filterFiles';
 
 const WORKING_DIR = process.cwd();
 
@@ -89,8 +88,8 @@ async function runRepomixForDirectory(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		include: `${includePatterns || cleanGlobs(include)}`,
-		ignore: `${ignorePatterns}${ignore ? `,${cleanGlobs(ignore)}` : ''}`,
+		include: include ? cleanGlobs(include) : undefined,
+		ignore: ignore ? cleanGlobs(ignore) : undefined,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');
@@ -125,8 +124,8 @@ async function runRepomixForRemote(
 		compress: compress,
 		output: outputFile,
 		removeEmptyLines: true,
-		include: `${includePatterns || cleanGlobs(include)}`,
-		ignore: `${ignorePatterns}${ignore ? `,${cleanGlobs(ignore)}` : ''}`,
+		include: include ? cleanGlobs(include) : undefined,
+		ignore: ignore ? cleanGlobs(ignore) : undefined,
 	});
 
 	if (!result) throw new Error('No output from RepoMix');

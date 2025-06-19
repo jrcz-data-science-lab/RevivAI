@@ -15,7 +15,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { FolderUp, LoaderCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UploadFiles } from './upload-files';
-import { isPathIgnored, isPathIncluded } from '@/lib/filterFiles';
+import { createFileFilter } from '@/lib/filterFiles';
 
 export type UploadFormSchema = z.infer<typeof promptifySchema>;
 
@@ -54,7 +54,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 	 * @param data - The form data
 	 * @returns FormData object
 	 */
-	const createFormData = (data: UploadFormSchema) => {
+	const createFormData = async (data: UploadFormSchema) => {
 		const formData = new FormData();
 
 		formData.append('type', data.type);
@@ -64,13 +64,17 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 
 		// Append the type of codebase
 		if (data.type === 'files' && data.files) {
+			const ignores = data.ignore ? data.ignore.split(',').map((s) => s.trim()) : [];
+			const includes = data.include ? data.include.split(',').map((s) => s.trim()) : [];
+			const matchFile = createFileFilter(ignores, includes);
 			let skipCount = 0;
 
-			for (const file of data.files) {
+			for (let i = 0; i < data.files.length; i++) {
+				const file = data.files[i];
 				const filePath = file.webkitRelativePath || file.name;
 
 				// Skip uploading unnecessary files
-				if (isPathIgnored(filePath, data.ignore) || !isPathIncluded(filePath, data.include)) continue;
+				if (!matchFile(file)) continue;
 
 				// Skip Replace big files (>20mb)
 				if (file.size > 20_000_000) {
@@ -101,7 +105,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 		}
 
 		try {
-			const formData = createFormData(input);
+			const formData = await createFormData(input);
 			const { data, error } = await actions.promptify(formData);
 
 			// Handle errors
@@ -184,7 +188,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 						<FormItem>
 							<FormLabel>Include Patterns</FormLabel>
 							<FormDescription>
-								Comma-separated glob patterns to include. Only matching files will be included.
+								Only files matching these comma-separated glob patterns will be included.
 							</FormDescription>
 							<FormControl>
 								<Input placeholder="src/**/*" {...field} />
@@ -200,7 +204,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Ignore Patterns</FormLabel>
-							<FormDescription>Comma-separated global patterns to ignore.</FormDescription>
+							<FormDescription>Files matching these patterns will be excluded.</FormDescription>
 							<FormControl>
 								<Input placeholder="node_modules/**/*" {...field} />
 							</FormControl>

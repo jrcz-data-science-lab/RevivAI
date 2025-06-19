@@ -35,7 +35,7 @@ export const ignorePatterns = [
 ];
 
 // Files to include
-export const includePatterns = [
+export const codeFilesPatterns = [
 	'**/.nvmrc',
 	'**/.node-version',
 	'**/.python-version',
@@ -114,55 +114,34 @@ export const includePatterns = [
 	'**/package.json',
 ];
 
-// Precalculate the matchers for ignore and include patterns
-const ignorePatternsMatchers = ignorePatterns.map((pattern) => minimatch.filter(pattern, { dot: true }));
-const includePatternsMatchers = includePatterns.map((pattern) => minimatch.filter(pattern));
-
 /**
- * Check if the path is ignored
- * @param path - The path to check.
- * @param customIgnorePatterns - Custom ignore patterns
- * @returns True if the path is ignored, false otherwise.
+ * Create a file filter function that filters files based on ignore and include patterns.
+ * @param customIgnore - Custom ignore patterns as a comma-separated string.
+ * @param customInclude - Custom include patterns as a comma-separated string.
+ * @returns A function that filters files based on the provided patterns.
  */
-export function isPathIgnored(path: string, customIgnorePatterns?: string) {
-	// Match default ignore patterns first
-	for (const matcher of ignorePatternsMatchers) {
-		if (matcher(path)) return true;
-	}
+export function createFileFilter(customIgnore: string[], customInclude: string[]): (file: File) => boolean {
+	// const combinedIgnorePatterns = [...ignorePatterns, ...customIgnore];
+	const ignoreRegExps = [...ignorePatterns, ...customIgnore]
+		.map((pattern) => minimatch.makeRe(pattern))
+		.filter(Boolean) as RegExp[];
 
-	// If custom ignore patterns are provided, match them as well
-	if (customIgnorePatterns) {
-		const customPatterns = customIgnorePatterns.split(',').map(p => p.trim());
-		const customMatchers = customPatterns.map(pattern => minimatch.filter(pattern, { dot: true }));
+	const includeRegExps = [...codeFilesPatterns, ...customInclude]
+		.map((pattern) => minimatch.makeRe(pattern))
+		.filter(Boolean) as RegExp[];
 
-		for (const customMatcher of customMatchers) {
-			if (customMatcher(path)) return true;
-		}
-	}
+	return (file: File) => {
+		const filePath = file.webkitRelativePath || file.name;
 
-	return false;
-}
+		// Since webkitRelativePath includes the root directory, we slice it off
+		const relativePath = filePath.includes('/') ? filePath.substring(filePath.indexOf('/') + 1) : filePath;
 
-/**
- * Check if the path is included
- * @param path - The path to check.
- * @param customIncludePatterns - Custom include patterns
- * @returns True if the path is included, false otherwise.
- */
-export function isPathIncluded(path: string, customIncludePatterns?: string) {
-	// Match default include patterns first
-	for (const matcher of includePatternsMatchers) {
-		if (matcher(path)) return true;
-	}
+		const isIgnored = ignoreRegExps.some((pattern) => pattern.test(relativePath));
+		if (isIgnored) return false; // File is ignored
 
-	if (customIncludePatterns) {
-		const customPatterns = customIncludePatterns.split(',').map((p) => p.trim());
-		const customMatchers = customPatterns.map((pattern) => minimatch.filter(pattern, { dot: true }));
-		
-		for (const customMatcher of customMatchers) {
-			if (customMatcher(path)) return true;
-		}
-	}
+		const isIncluded = includeRegExps.some((pattern) => pattern.test(relativePath));
+		if (!isIncluded) return false; // File is not included
 
-	return false;
+		return true;
+	};
 }
