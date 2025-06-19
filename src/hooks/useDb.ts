@@ -1,5 +1,5 @@
-import Dexie, { type EntityTable } from 'dexie';
 import type { PackResult } from 'node_modules/repomix/lib/core/packager';
+import Dexie, { type EntityTable } from 'dexie';
 
 export type Database = ReturnType<typeof createDatabase>;
 
