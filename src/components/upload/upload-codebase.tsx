@@ -1,4 +1,4 @@
-import type { Codebase } from '@/hooks/useDb';
+import type { Codebase } from '@/hooks/useCodebase';
 import { Button } from '../ui/button';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { ScrollArea } from '../ui/scroll-area';

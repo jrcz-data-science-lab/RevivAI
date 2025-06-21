@@ -1,4 +1,3 @@
-import type { GeneratedFile } from '@/hooks/useDb';
 import mermaid from 'mermaid';
 
 // Initialize Mermaid with default settings

@@ -1,4 +1,4 @@
-import type { Chapter } from '@/hooks/useDb';
+import type { Chapter } from '@/hooks/useWriter';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import {

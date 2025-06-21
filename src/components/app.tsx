@@ -11,9 +11,10 @@ import { useModel } from '@/hooks/useModel';
 import { useEffect } from 'react';
 import { useHydrateAtoms } from 'jotai/utils';
 import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { isUploadOpenAtom } from './upload/upload';
+import { isUploadOpenAtom, Upload } from './upload/upload';
 import { useSetAtom } from 'jotai';
+import { useCodebase } from '@/hooks/useCodebase';
+import Settings from './settings';
 
 interface AppProps {
 	projectId: string;
@@ -26,10 +27,12 @@ interface AppProps {
 export default function App({ projectId }: AppProps) {
 	// Hydrate the current project ID, specifying initial values
 	useHydrateAtoms(new Map([[currentProjectIdAtom, projectId]]));
-	
+
 	const { theme } = useTheme();
 	const { db } = useDb(projectId);
 	const { model } = useModel();
+	const { codebase } = useCodebase({ db });
+
 	const { isProjectExists } = useProjects();
 	const { hash, setHash } = useHashRouter('chat');
 	const setIsUploadOpen = useSetAtom(isUploadOpenAtom);
@@ -88,9 +91,11 @@ export default function App({ projectId }: AppProps) {
 
 	// Return the app screen based on the hash value
 	const getAppScreen = (page: string) => {
-		if (page === 'chat') return <Chat db={db} model={model} />;
-		if (page === 'writer') return <Writer db={db} model={model} />;
-		return <div className="text-muted-foreground w-full text-center">This page doesn't exist</div>;
+		if (codebase) {
+			if (page === 'chat') return <Chat model={model} codebase={codebase} />;
+			if (page === 'writer') return <Writer db={db} model={model} codebase={codebase} />;
+			return <div className="text-muted-foreground w-full text-center">This page doesn't exist</div>;
+		}
 	};
 
 	return (
@@ -101,6 +106,8 @@ export default function App({ projectId }: AppProps) {
 				</div>
 
 				<Toaster theme={theme} position="bottom-right" closeButton={true} />
+				<Upload db={db} />
+				<Settings />
 
 				{getAppScreen(hash)}
 			</div>

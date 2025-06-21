@@ -1,6 +1,6 @@
 import type { z } from 'zod';
-import type { CodebaseType } from '@/hooks/useDb';
 import type { PromptifyResult } from '@/actions/promptify';
+import type { CodebaseType } from '@/hooks/useCodebase';
 import { useState } from 'react';
 import { actions } from 'astro:actions';
 import { toast } from 'sonner';
@@ -86,9 +86,10 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
 			}
 
 			if (skipCount > 0) {
-				toast.error(`Skipped ${skipCount} files that are too large or do not match include patterns.`, { richColors: true });
+				toast.error(`Skipped ${skipCount} files that are too large or do not match include patterns.`, {
+					richColors: true,
+				});
 			}
-
 		} else if (data.type === 'remote' && data.url) {
 			formData.append('url', data.url);
 		}

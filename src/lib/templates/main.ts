@@ -7,6 +7,7 @@ import type { WriterTemplateColor } from '@/components/writer/writer-templates-i
 
 import { applyReadmeTemplate } from './readmeTemplate';
 import { applySmartTemplate } from './smartTemplate';
+import type { Codebase } from '@/hooks/useCodebase';
 
 export interface Template {
 	name: string;
@@ -14,7 +15,13 @@ export interface Template {
 	color: WriterTemplateColor;
 	icon: ElementType;
 	cancelable: boolean;
-	apply: (db: Database, model: LanguageModelV1, settings: Settings, abortSignal: AbortSignal) => Promise<void>;
+	apply: (
+		db: Database,
+		model: LanguageModelV1,
+		codebase: Codebase,
+		settings: Settings,
+		abortSignal: AbortSignal,
+	) => Promise<void>;
 }
 
 // All possible templates

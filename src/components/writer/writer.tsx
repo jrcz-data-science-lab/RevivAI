@@ -1,4 +1,4 @@
-import type { Database, Chapter } from '@/hooks/useDb';
+import type { Database } from '@/hooks/useDb';
 import type { LanguageModelV1 } from 'ai';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -8,12 +8,14 @@ import { WriterTemplates } from './writer-templates';
 import { useWriter, type WriterItemId } from '@/hooks/useWriter';
 import { motion } from 'motion/react';
 import { lazy, Suspense } from 'react';
+import type { Codebase } from '@/hooks/useCodebase';
 
 const WriterEditorLazy = lazy(() => import('./writer-editor'));
 
 interface WriterProps {
 	db: Database;
 	model: LanguageModelV1;
+	codebase: Codebase;
 }
 
 /**
@@ -26,7 +28,7 @@ interface WriterProps {
  * and chapter organization in a sidebar-based layout.
  * @returns The Writer component that renders the complete writing workspace.
  */
-export function Writer({ db, model }: WriterProps) {
+export function Writer({ db, model, codebase }: WriterProps) {
 	const {
 		isGenerating,
 		chapters,
@@ -39,7 +41,7 @@ export function Writer({ db, model }: WriterProps) {
 		addChapter,
 		applyTemplate,
 		updateChapter,
-	} = useWriter({ db, model });
+	} = useWriter({ db, model, codebase });
 
 	/**
 	 * Renders the active item based on the activeItemId.
@@ -52,6 +54,7 @@ export function Writer({ db, model }: WriterProps) {
 				<WriterGenerate
 					db={db}
 					model={model}
+					codebase={codebase}
 					isLoading={isGenerating}
 					onGenerate={generate}
 					onGenerationCancel={cancelGeneration}
@@ -76,7 +79,7 @@ export function Writer({ db, model }: WriterProps) {
 				<WriterEditorLazy
 					key={chapter.id}
 					chapter={chapter}
-					onChange={(updated: Chapter) => updateChapter(chapter.id, updated)}
+					onChange={(updated) => updateChapter(chapter.id, updated)}
 				/>
 			);
 		}

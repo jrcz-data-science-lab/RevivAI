@@ -1,13 +1,14 @@
-import { memo, useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import { CircleStop, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTokensCount } from '../../hooks/useTokensCount';
-import { contextSizeAtom } from '../../hooks/useChat';
+import { chatTokensCountAtom } from '../../hooks/useChat';
 import { useAtomValue } from 'jotai';
 import { Badge } from '../ui/badge';
 import { InfoBar } from '../info-bar';
+import { countTokens } from '@/lib/countTokens';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface ChatInputProps {
 	onSubmit: (value: string) => void;
@@ -15,6 +16,7 @@ interface ChatInputProps {
 	onClear: () => void;
 	modelName: string;
 	messagesCount: number;
+	codebaseTokensCount: number;
 	isStreaming: boolean;
 }
 
@@ -22,14 +24,24 @@ interface ChatInputProps {
  * ChatInput component that handles the input and submission of messages.
  * It also displays the model name, number of messages, and total tokens used.
  */
-export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStreaming, onClear }: ChatInputProps) {
+export function ChatInput({
+	onSubmit,
+	modelName,
+	messagesCount,
+	onAbort,
+	isStreaming,
+	onClear,
+	codebaseTokensCount,
+}: ChatInputProps) {
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [input, setInput] = useState('');
+	const chatTokensCount = useAtomValue(chatTokensCountAtom);
+	const debouncedInput = useDebounce(input, 200);
 
 	// Display context size
-	const contextSize = useAtomValue(contextSizeAtom);
-	const tokensCount = useTokensCount(input, 150);
-	const totalTokens = tokensCount + contextSize;
+	const totalTokens = useMemo(() => {
+		return codebaseTokensCount + chatTokensCount + countTokens(debouncedInput);
+	}, [codebaseTokensCount, chatTokensCount, debouncedInput]);
 
 	const submitMessage = useCallback(
 		(value: string) => {
@@ -92,4 +104,4 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 	);
 }
 
-export default memo(ChatInput);
+export default ChatInput;

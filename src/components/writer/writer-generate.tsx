@@ -8,10 +8,12 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { LoaderCircle, Sparkles } from 'lucide-react';
 import { WriterGenerateExports } from './writer-generate-exports';
 import { downloadExportedFiles } from '@/lib/export';
+import type { Codebase } from '@/hooks/useCodebase';
 
 interface WriterGenerateProps {
 	db: Database;
 	model: LanguageModelV1;
+	codebase: Codebase;
 	isLoading: boolean;
 	onGenerate: (exportId?: string) => void;
 	onGenerationCancel: () => void;
@@ -20,7 +22,14 @@ interface WriterGenerateProps {
 /**
  * WriterGenerate component that handles the generation and export of documentation.
  */
-export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationCancel }: WriterGenerateProps) {
+export function WriterGenerate({
+	db,
+	model,
+	codebase,
+	isLoading,
+	onGenerate,
+	onGenerationCancel,
+}: WriterGenerateProps) {
 	// Get all generated content
 	const generatedFiles = useLiveQuery(async () => {
 		const generated = await db.generated.toArray();
@@ -47,7 +56,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 	 * @param exportId - The ID of the export to delete.
 	 */
 	const deleteExport = async (exportId: string) => {
-		// Call cancellation function export is currently pending
+		// Cancel export if its currently pending
 		const pendingExports = await db.generated.where({ exportId }).toArray();
 		const isPending = pendingExports.some((file) => file.status === 'pending');
 		if (isPending) onGenerationCancel();
@@ -95,7 +104,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 						Generate
 					</Button>
 
-					<InfoBar modelName={model.modelId} />
+					<InfoBar modelName={model.modelId} totalTokens={codebase.metadata.totalTokens} />
 				</div>
 			</div>
 		</motion.div>

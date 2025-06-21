@@ -1,8 +1,7 @@
+import type { Chapter, WriterItemId } from '@/hooks/useWriter';
 import { AnimatePresence, motion, Reorder } from 'motion/react';
 import { Download, FileText, LibraryBig, Settings, Sparkles } from 'lucide-react';
 import { WriterSidebarItem } from './writer-sidebar-item';
-import type { Chapter } from '@/hooks/useDb';
-import type { WriterItemId } from '@/hooks/useWriter';
 
 interface WriterSidebarProps {
 	activeItemId: WriterItemId | undefined;

@@ -4,6 +4,7 @@ import { chapterSchema } from '../schemas';
 import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
 import type { Settings } from '@/hooks/useSettings';
 import { getLanguagePrompt } from '../languages';
+import type { Codebase } from '@/hooks/useCodebase';
 
 /**
  * Generates a template for the documentation based on the codebase.
@@ -15,12 +16,10 @@ import { getLanguagePrompt } from '../languages';
 export async function applySmartTemplate(
 	db: Database,
 	model: LanguageModelV1,
+	codebase: Codebase,
 	settings: Settings,
 	abortSignal: AbortSignal,
 ) {
-	const codebase = await db.codebases.orderBy('createdAt').last();
-	if (!codebase) return;
-
 	const { elementStream } = streamObject({
 		model,
 		output: 'array',

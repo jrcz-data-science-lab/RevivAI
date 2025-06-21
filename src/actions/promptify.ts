@@ -17,9 +17,13 @@ export interface PromptifyResult {
  * @param globs - Comma-separated glob patterns.
  * @returns Cleaned and formatted glob patterns.
  */
-function cleanGlobs(globs: string ) {
+function cleanGlobs(globs: string) {
 	if (!globs) return '';
-	return globs.split(',').map((glob) => glob.trim()).filter(Boolean).join(',');
+	return globs
+		.split(',')
+		.map((glob) => glob.trim())
+		.filter(Boolean)
+		.join(',');
 }
 
 /**
@@ -71,7 +75,7 @@ async function runRepomixForDirectory(
 	compress: boolean,
 	ignore: string,
 	include: string,
-) {	
+) {
 	let projectRoot = dirPath;
 
 	// If project contains one folder - assume it's the root. Otherwise, use upload directory as root.

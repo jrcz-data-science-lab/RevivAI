@@ -1,4 +1,4 @@
-import type { Chapter } from '@/hooks/useDb';
+import type { Chapter } from '@/hooks/useWriter';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

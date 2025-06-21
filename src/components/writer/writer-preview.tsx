@@ -1,3 +1,4 @@
+import type { GeneratedFile } from '@/hooks/useWriter';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
@@ -5,7 +6,6 @@ import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { GeneratedFile } from '@/hooks/useDb';
 import { rehypeInlineCodeProperty } from 'react-shiki';
 import CodeHighlight from '../chat/chat-code-highlight';
 import { Switch } from '../ui/switch';

@@ -3,15 +3,18 @@ import { Button } from './ui/button';
 import { SlidersHorizontal } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Label } from './ui/label';
-import { useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useSettings } from '@/hooks/useSettings';
 import { Input } from './ui/input';
 import { languages, type LanguageName } from '@/lib/languages';
 
+export const isSettingsOpenedAtom = atom(false);
+
 function Settings() {
-	const { currentProjectId, deleteProject  } = useProjects();
+	const [isOpen, setIsOpen] = useAtom(isSettingsOpenedAtom);
+	const { currentProjectId, deleteProject } = useProjects();
 	const { settings, setLanguage, setParallelization, setTemperature } = useSettings();
 
 	const handleDeleteProject = async () => {
@@ -21,16 +24,10 @@ function Settings() {
 			deleteProject(currentProjectId);
 			window.location.href = '/';
 		}
-	}
+	};
 
 	return (
-		<Dialog>
-			<DialogTrigger asChild>
-				<Button variant="ghost" round size="icon" title="Settings">
-					<SlidersHorizontal />
-				</Button>
-			</DialogTrigger>
-
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="overflow-y-scroll max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>Settings</DialogTitle>

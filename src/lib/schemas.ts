@@ -31,22 +31,3 @@ export const chapterSchema = z.object({
 	title: z.string().max(50).describe('Chapter title.'),
 	outline: z.string().max(1500).describe('Chapter structure with headings, sub-headings and their descriptions.'),
 });
-
-// // Chapter LLM request schema
-// export const chapterSchema2 = z.object({
-// 	title: z.string().max(50).describe('Chapter title.'),
-// 	description: z.string().max(1000).describe('Chapter description.'),
-// 	subsections: z
-// 		.array(
-// 			z.object({
-// 				title: z.string().max(50).describe('Sub-section title.'),
-// 				outline: z
-// 					.string()
-// 					.max(1000)
-// 					.describe('Sub-section structure with headings, sub-headings and their descriptions.'),
-// 			}),
-// 		)
-// 		.max(10)
-// 		.describe('Sub-sections of the chapter.'),
-// 	// outline: z.string().max(1500).describe('Chapter structure with headings, sub-headings and their descriptions.'),
-// });

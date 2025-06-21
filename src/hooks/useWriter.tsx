@@ -1,6 +1,7 @@
-import { generateText, type LanguageModelV1 } from 'ai';
-import type { Chapter, Codebase, Database, GeneratedFile } from './useDb';
+import type { Codebase } from './useCodebase';
+import type { Database } from './useDb';
 import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
+import { generateText, type LanguageModelV1 } from 'ai';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -14,11 +15,35 @@ import { templates, type TemplateKey } from '@/lib/templates/main';
 
 export interface UseWriterProps {
 	db: Database;
+	codebase: Codebase;
 	model: LanguageModelV1;
 }
 
 // Type of opened items in the sidebar. String is a UUID of user created chapter.
 export type WriterItemId = 'generate' | 'templates' | string;
+
+// Each chapter
+export interface Chapter {
+	id: string;
+	index: number;
+	title: string;
+	outline: string;
+}
+
+// File generation status
+export type GeneratedFileStatus = 'pending' | 'completed' | 'failed';
+
+// Generated documentation file
+export interface GeneratedFile {
+	id: string;
+	exportId: string;
+	chapterId: string;
+	status: GeneratedFileStatus;
+	createdAt: Date;
+	updatedAt: Date;
+	fileName: string;
+	content: string;
+}
 
 // True if marking pending files as failed was triggered
 let pendingFailed = false;
@@ -29,7 +54,7 @@ const activeItemIdAtom = atomWithStorage<WriterItemId>('active-item-id', 'templa
 /**
  * Custom hook to manage the writer state and actions.
  */
-export function useWriter({ db, model }: UseWriterProps) {
+export function useWriter({ db, codebase, model }: UseWriterProps) {
 	const { settings } = useSettings();
 	const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -132,7 +157,7 @@ export function useWriter({ db, model }: UseWriterProps) {
 		abortControllerRef.current = abortController;
 
 		// Get template generation promise
-		const templatePromise = template.apply(db, model, settings, abortController.signal);
+		const templatePromise = template.apply(db, model, codebase, settings, abortController.signal);
 
 		if (templatePromise) {
 			const abort = () => {
@@ -181,7 +206,6 @@ export function useWriter({ db, model }: UseWriterProps) {
 		abortControllerRef.current = abortController;
 
 		try {
-			const [codebase] = await db.codebases.toArray();
 			if (!codebase) {
 				toast.error('No codebase found. Please add a codebase first.');
 				return;

@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import type { LanguageModelV1 } from 'ai';
+import type { Database } from '@/hooks/useDb';
+import type { Codebase } from '@/hooks/useCodebase';
+import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useChat } from '../../hooks/useChat';
@@ -6,18 +9,15 @@ import ChatInput from './chat-input';
 import ChatWelcome from './chat-welcome';
 import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
-import type { LanguageModelV1 } from 'ai';
-import type { Database } from '@/hooks/useDb';
-import { useTheme } from '@/hooks/useTheme';
 
 interface ChatProps {
-	db: Database;
 	model: LanguageModelV1;
+	codebase: Codebase;
 }
 
-export function Chat({ db, model }: ChatProps) {
+export function Chat({ model, codebase }: ChatProps) {
 	const chatContainerRef = useRef<HTMLDivElement>(null);
-	const chat = useChat({ db, model });
+	const chat = useChat({ model, codebase });
 
 	const scrollToLastMessage = (behavior: ScrollBehavior) => {
 		if (!chatContainerRef.current) return;
@@ -99,11 +99,12 @@ export function Chat({ db, model }: ChatProps) {
 
 							<ChatInput
 								modelName={model.modelId}
-								messagesCount={chat.messages.length}
+								isStreaming={chat.isStreaming}
 								onSubmit={(text) => chat.prompt(text)}
 								onAbort={() => chat.abort()}
 								onClear={() => chat.deleteAllMessages()}
-								isStreaming={chat.isStreaming}
+								messagesCount={chat.messages.length}
+								codebaseTokensCount={codebase.metadata.totalTokens ?? 0}
 							/>
 						</motion.div>
 					</div>

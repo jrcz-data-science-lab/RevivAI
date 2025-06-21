@@ -31,7 +31,12 @@ export function DialogOverlay({ className, ...props }: React.ComponentProps<type
 	);
 }
 
-export function DialogContent({ className, children, hideClose, ...props }: React.ComponentProps<typeof DialogPrimitive.Content> & { hideClose?: boolean }) {
+export function DialogContent({
+	className,
+	children,
+	hideClose,
+	...props
+}: React.ComponentProps<typeof DialogPrimitive.Content> & { hideClose?: boolean }) {
 	return (
 		<DialogPortal data-slot="dialog-portal">
 			<DialogOverlay />

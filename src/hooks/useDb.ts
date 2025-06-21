@@ -1,41 +1,8 @@
-import type { PackResult } from 'node_modules/repomix/lib/core/packager';
 import Dexie, { type EntityTable } from 'dexie';
+import type { Codebase } from './useCodebase';
+import type { Chapter, GeneratedFile } from './useWriter';
 
 export type Database = ReturnType<typeof createDatabase>;
-
-export interface Chapter {
-	id: string;
-	index: number;
-	title: string;
-	outline: string;
-}
-
-export type CodebaseType = 'files' | 'remote';
-
-export interface Codebase {
-	id: string;
-	createdAt: Date;
-	ignore: string;
-	include: string;
-	prompt: string;
-	compress: boolean;
-	type: CodebaseType;
-	repositoryUrl?: string;
-	metadata: PackResult;
-}
-
-export type GeneratedFileStatus = 'pending' | 'completed' | 'failed';
-
-export interface GeneratedFile {
-	id: string;
-	exportId: string;
-	chapterId: string;
-	status: GeneratedFileStatus;
-	createdAt: Date;
-	updatedAt: Date;
-	fileName: string;
-	content: string;
-}
 
 /**
  * Creates a new Dexie database instance for the given project ID.

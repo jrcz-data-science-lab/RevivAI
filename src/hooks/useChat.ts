@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useCallback, useEffect, useRef } from 'react';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import { produce } from 'immer';
 import { countTokens } from '../lib/countTokens';
 import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
-import type { Codebase, Database } from './useDb';
-import { useLiveQuery } from 'dexie-react-hooks';
+import type { Codebase } from '@/hooks/useCodebase';
 import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
 import { useSettings } from './useSettings';
 import { getLanguagePrompt } from '@/lib/languages';
 
 interface UseChatProps {
-	db: Database;
 	model: LanguageModelV1;
+	codebase: Codebase;
 }
 
 export interface ChatMessage {
@@ -27,8 +26,8 @@ export interface ChatState {
 	currentMessage: ChatMessage | null;
 }
 
-// Context size
-export const contextSizeAtom = atom(0);
+// Tokens count for all messages in the chat
+export const chatTokensCountAtom = atom(0);
 
 // Chat state
 export const chatStateAtom = atom<ChatState>({
@@ -41,23 +40,15 @@ export const chatStateAtom = atom<ChatState>({
 /**
  * Chat hook for interacting with the AI models
  */
-export function useChat({ db, model }: UseChatProps) {
+export function useChat({ model, codebase }: UseChatProps) {
 	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const { settings } = useSettings();
 
-	const setContextSize = useSetAtom(contextSizeAtom);
+	const setChatTokensCount = useSetAtom(chatTokensCountAtom);
 	const [state, setState] = useAtom<ChatState>(chatStateAtom);
 
-	// Codebase prompt
-	const codebase = useLiveQuery(() => db.codebases.orderBy('createdAt').last(), [db]);
-	const codebasePrompt = useMemo(() => codebase?.prompt ?? '', [codebase]);
-
-	// Tokens count for the codebase
-	const codebaseTokens = useMemo(() => {
-		if (!codebase) return 0;
-		return codebase.metadata.totalTokens ?? countTokens(codebase.prompt);
-	}, [codebase?.id]);
+	const codebasePrompt = codebase?.prompt ?? '';
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -67,11 +58,11 @@ export function useChat({ db, model }: UseChatProps) {
 		};
 	}, []);
 
-	// Recalculate context size when messages change
+	// Recalculate total chat tokens count when messages change
 	useEffect(() => {
-		const newContextSize = state.messages.reduce((acc, msg) => acc + countTokens(msg.prompt + msg.answer), 0);
-		setContextSize(newContextSize + codebaseTokens);
-	}, [state.messages.length, codebaseTokens, setContextSize]);
+		const newTokensCount = state.messages.reduce((acc, msg) => acc + countTokens(`${msg.prompt} ${msg.answer}`), 0);
+		setChatTokensCount(newTokensCount);
+	}, [state.messages.length]);
 
 	/**
 	 * Abort the current streaming request
@@ -97,6 +88,9 @@ export function useChat({ db, model }: UseChatProps) {
 	 */
 	const prompt = useCallback(
 		async (text: string) => {
+			// Calculate new total chat tokens
+			setChatTokensCount((prev) => prev + countTokens(text));
+
 			// Cleanup previous streams
 			await abort();
 
@@ -134,9 +128,6 @@ export function useChat({ db, model }: UseChatProps) {
 				{ role: 'user', content: text },
 			];
 
-			// Calculate new context size
-			setContextSize((prev) => prev + countTokens(text));
-
 			try {
 				const controller = new AbortController();
 				abortControllerRef.current = controller;
@@ -172,7 +163,7 @@ export function useChat({ db, model }: UseChatProps) {
 				handleError(error);
 			}
 		},
-		[abort, setContextSize, state.messages, state.currentMessage, codebasePrompt], // Added state dependencies to avoid stale closures
+		[abort, setChatTokensCount, state.messages, state.currentMessage, codebasePrompt], // Added state dependencies to avoid stale closures
 	);
 
 	/**
