@@ -34,6 +34,11 @@ export default function App({ projectId }: AppProps) {
 	const { hash, setHash } = useHashRouter('chat');
 	const setIsUploadOpen = useSetAtom(isUploadOpenAtom);
 
+	// Hide the loading spinner after the app is mounted
+	useEffect(() => {
+		document.querySelector('#loading-spinner')?.remove();
+	}, []);
+
 	// Open upload dialog if no codebase exists
 	useEffect(() => {
 		const checkIfCodebaseExists = async () => {
@@ -96,7 +101,6 @@ export default function App({ projectId }: AppProps) {
 				</div>
 
 				<Toaster theme={theme} position="bottom-right" closeButton={true} />
-				{/* <Onboarding /> */}
 
 				{getAppScreen(hash)}
 			</div>

@@ -49,7 +49,7 @@ function Settings() {
 							<SelectTrigger className="w-fit">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
-							<SelectContent className="max-h-40">
+							<SelectContent className="max-h-80">
 								{Object.entries(languages).map(([key, [name]]) => (
 									<SelectItem key={key} value={key}>
 										{name}

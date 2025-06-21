@@ -82,30 +82,6 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 						onDownload={(id, renderDiagrams) => downloadExport(id, renderDiagrams)}
 					/>
 				)}
-
-				{/* <div className="flex justify-between border p-4 gap-6 rounded-md">
-					<div>
-						<Label className="text-md">Generate Diagrams</Label>
-						<p className="text-md text-muted-foreground">
-							Allow to generate diagrams in your documentation. You can choose between Mermaid code blocks or prerender
-							them as SVG images.
-						</p>
-					</div>
-
-					<Select
-						value={config.diagrams}
-						onValueChange={(value) => setConfig({ ...config, diagrams: value as WriterGenerateConfig['diagrams'] })}
-					>
-						<SelectTrigger className="w-38">
-							<SelectValue placeholder="Diagrams" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="svg">SVG Images</SelectItem>
-							<SelectItem value="mermaid">Mermaid Code</SelectItem>
-							<SelectItem value="none">None</SelectItem>
-						</SelectContent>
-					</Select>
-				</div> */}
 			</div>
 
 			<div className="flex flex-col gap-4">
