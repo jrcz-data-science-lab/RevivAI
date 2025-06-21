@@ -53,44 +53,42 @@ export function ChatInput({ onSubmit, modelName, messagesCount, onAbort, isStrea
 	};
 
 	return (
-		<form>
-			<div className="flex flex-col gap-3 w-full h-auto">
-				<div id="chat-input" className="relative w-full h-auto">
-					<Button
-						size="icon"
-						variant={isStreaming ? 'outline' : 'link'}
-						onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
-						className={cn(
-							'absolute bottom-1.5 right-1.5',
-							input === '' && !isStreaming && 'opacity-50 pointer-events-none cursor-default',
-						)}
-					>
-						{isStreaming ? <CircleStop /> : <Send />}
-					</Button>
-					<Textarea
-						ref={inputRef}
-						placeholder="Type your message here."
-						value={input}
-						onKeyDown={handleKeydown}
-						onChange={(event) => setInput(event.target.value)}
-					/>
-				</div>
-
-				<div className="flex justify-between align-center">
-					<InfoBar modelName={modelName} messagesCount={messagesCount} totalTokens={totalTokens} />
-
-					{messagesCount > 0 && (
-						<Badge
-							onClick={onClear}
-							variant="secondary"
-							className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform"
-						>
-							Clear Chat
-						</Badge>
+		<div className="flex flex-col gap-3 w-full h-auto">
+			<div id="chat-input" className="relative w-full h-auto">
+				<Button
+					size="icon"
+					variant={isStreaming ? 'outline' : 'link'}
+					onClick={() => (isStreaming ? onAbort() : submitMessage(input))}
+					className={cn(
+						'absolute bottom-1.5 right-1.5',
+						input === '' && !isStreaming && 'opacity-50 pointer-events-none cursor-default',
 					)}
-				</div>
+				>
+					{isStreaming ? <CircleStop /> : <Send />}
+				</Button>
+				<Textarea
+					ref={inputRef}
+					placeholder="Type your message here."
+					value={input}
+					onKeyDown={handleKeydown}
+					onChange={(event) => setInput(event.target.value)}
+				/>
 			</div>
-		</form>
+
+			<div className="flex justify-between align-center">
+				<InfoBar modelName={modelName} messagesCount={messagesCount} totalTokens={totalTokens} />
+
+				{messagesCount > 0 && (
+					<Badge
+						onClick={onClear}
+						variant="secondary"
+						className="cursor-pointer capitalize active:translate-y-0.5 duration-75 transition-transform"
+					>
+						Clear Chat
+					</Badge>
+				)}
+			</div>
+		</div>
 	);
 }
 
