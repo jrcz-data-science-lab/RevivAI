@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { produce } from 'immer';
-import { countTokens } from '../lib/countTokens';
+import { countTokens, upgradeTokenModel } from '../lib/countTokens';
 import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
 import type { Codebase } from '@/hooks/useCodebase';
 import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
@@ -90,6 +90,9 @@ export function useChat({ model, codebase }: UseChatProps) {
 		async (text: string) => {
 			// Calculate new total chat tokens
 			setChatTokensCount((prev) => prev + countTokens(text));
+
+			// Switch tokenization model for better accuracy
+			upgradeTokenModel();
 
 			// Cleanup previous streams
 			await abort();
