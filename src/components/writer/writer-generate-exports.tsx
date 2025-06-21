@@ -8,10 +8,11 @@ import { AnimatePresence, color, motion } from 'motion/react';
 import { format } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { WriterPreview } from './writer-preview';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];
-	onDownload: (exportId: string) => void;
+	onDownload: (exportId: string, renderDiagrams: boolean) => void;
 	onDelete: (chapterId: string) => void;
 	onContinue: (exportId: string) => void;
 }
@@ -56,8 +57,6 @@ export function WriterGenerateExports({
 			let status: StructuredExport['status'] = 'completed';
 			if (failedFiles.length > 0) status = 'failed';
 			if (pendingFiles.length > 0) status = 'pending';
-			// // If any of files are pending, set status to pending
-			// const status = completedFiles.length === exportFiles.length ? 'completed' : 'pending';
 
 			structuredExports.push({
 				id: exportId,
@@ -167,9 +166,28 @@ export function WriterGenerateExports({
 							</Button>
 
 							{exportItem.status === 'completed' && (
-								<Button size="sm" variant="ghost" onClick={() => onDownload(exportItem.id)}>
-									Download
-								</Button>
+								<Popover>
+									<PopoverTrigger>
+										<Button size="sm" variant="ghost">
+											Download
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="mr-4 min-w-80">
+										<h4 className="font-bold">Diagrams</h4>
+										<p className="text-muted-foreground mb-3 text-sm">
+											Select which diagram format should be used in the exported documentation.
+										</p>
+
+										<div className="flex gap-2">
+											<Button size="sm" variant="outline" onClick={() => onDownload(exportItem.id, false)}>
+												Mermaid Code
+											</Button>
+											<Button size="sm" variant="outline" onClick={() => onDownload(exportItem.id, true)}>
+												Rendered SVGs
+											</Button>
+										</div>
+									</PopoverContent>
+								</Popover>
 							)}
 
 							<Button variant="ghost" size="sm" className="group" onClick={() => onDelete(exportItem.id)}>

@@ -29,8 +29,10 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 
 	/**
 	 * Download the generated export as a zip file.
+	 * @param exportId - The ID of the export to download.
+	 * @param renderDiagrams - Whether to render diagrams as SVG images or Mermaid code.
 	 */
-	const downloadExport = async (exportId: string, renderDiagrams = true) => {
+	const downloadExport = async (exportId: string, renderDiagrams: boolean) => {
 		const generated = await db.generated.where('exportId').equals(exportId).toArray();
 		if (generated.length === 0) {
 			toast.error('No generated files found for this export.');
@@ -77,7 +79,7 @@ export function WriterGenerate({ db, model, isLoading, onGenerate, onGenerationC
 						generatedFiles={generatedFiles}
 						onContinue={(id) => onGenerate(id)}
 						onDelete={(id) => deleteExport(id)}
-						onDownload={(id) => downloadExport(id)}
+						onDownload={(id, renderDiagrams) => downloadExport(id, renderDiagrams)}
 					/>
 				)}
 
