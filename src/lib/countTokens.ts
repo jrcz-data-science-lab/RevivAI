@@ -1,4 +1,5 @@
 import { Tiktoken } from 'js-tiktoken/lite';
+
 let encoder: Tiktoken;
 
 /**

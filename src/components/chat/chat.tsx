@@ -1,5 +1,4 @@
 import type { LanguageModelV1 } from 'ai';
-import type { Database } from '@/hooks/useDb';
 import type { Codebase } from '@/hooks/useCodebase';
 import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';

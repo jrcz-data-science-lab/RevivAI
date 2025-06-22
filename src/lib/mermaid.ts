@@ -41,7 +41,6 @@ export async function renderMermaidInMarkdown(markdown: string) {
 
 		try {
 			const svg = await renderMermaidCode(code, `diagram-${i}`);
-			console.log('Rendered SVG:', svg);
 			result = result.replace(fullBlock, svg);
 		} catch {
 			console.error('Error rendering Mermaid diagram:', code);
