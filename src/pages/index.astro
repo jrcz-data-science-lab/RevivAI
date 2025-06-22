@@ -11,6 +11,16 @@ export const prerender = false;
 	<NavbarMini />
 	<ProjectsApp client:only />
 
-	<img src="/logo2.svg" alt="RevivAI" class="w-full absolute top-16 px-16 opacity-10 not-dark:invert-100 z-0 animate-in fade-in duration-[2s]" draggable="false" />
-	<p class="text-sm text-muted-foreground absolute bottom-3 mx-auto px-4 animate-in fade-in duration-[2s] text-center">Made by Kirills Reunovs, in association with HZ University and JRCZ Data Science Labs. {new Date().getFullYear()}</p>
+	<img src="/logo2.svg" alt="RevivAI" class="w-full absolute top-16 px-16 opacity-15 not-dark:invert-100 z-0" draggable="false" />
+	<p class="text-sm text-muted-foreground absolute bottom-3 mx-auto px-4 text-center">
+		Made by <a href="https://github.com/kirlovon" target="_blank" class="text-foreground hover:underline">Kirills Reunovs</a>
+		<span class="text-muted mx-2">/</span>
+		<a href="https://jrcz.nl" target="_blank" class="hover:underline hover:text-foreground">JRCZ</a>
+		<span class="text-muted mx-2">/</span>
+		<a href="https://hz.nl" target="_blank" class="hover:underline hover:text-foreground">HZ University</a>
+		<span class="text-muted mx-2">/</span>
+		<a href="https://github.com/jrcz-data-science-lab/RevivAI" target="_blank" class="hover:underline hover:text-foreground">Repository</a>
+		<span class="text-muted mx-2">/</span>
+		{new Date().getFullYear()}
+	</p>
 </AppLayout>

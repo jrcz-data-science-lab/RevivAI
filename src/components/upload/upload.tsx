@@ -33,6 +33,7 @@ export function Upload({ db }: UploadProps) {
 			metadata: data.metadata,
 		});
 
+		setIsOpen(false);
 		toast.success('Codebase uploaded successfully!');
 	};
 
