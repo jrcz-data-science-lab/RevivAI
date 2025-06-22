@@ -2,9 +2,6 @@
 import AppLayout from '@/layouts/app-layout.astro';
 import { Projects as ProjectsApp } from '@/components/projects/projects';
 import NavbarMini from '@/components/navbar-mini.astro';
-
-// Do not render on the server
-export const prerender = false;
 ---
 
 <AppLayout>
@@ -17,10 +14,14 @@ export const prerender = false;
 		<span class="text-muted mx-2">/</span>
 		<a href="https://jrcz.nl" target="_blank" class="hover:underline hover:text-foreground">JRCZ</a>
 		<span class="text-muted mx-2">/</span>
-		<a href="https://hz.nl" target="_blank" class="hover:underline hover:text-foreground">HZ University</a>
-		<span class="text-muted mx-2">/</span>
 		<a href="https://github.com/jrcz-data-science-lab/RevivAI" target="_blank" class="hover:underline hover:text-foreground">Repository</a>
 		<span class="text-muted mx-2">/</span>
-		{new Date().getFullYear()}
+		<a
+			href="https://github.com/jrcz-data-science-lab/RevivAI/blob/main/guide/GUIDE.md"
+			target="_blank"
+			class="hover:underline hover:text-foreground">Guide</a
+		>
+		<span class="text-muted mx-2">/</span>
+		<span>{new Date().getFullYear()}</span>
 	</p>
 </AppLayout>
