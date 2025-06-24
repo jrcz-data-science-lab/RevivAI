@@ -317,7 +317,7 @@ export function useWriter({ db, codebase, model }: UseWriterProps) {
 				{ role: 'user', content: languagePrompt },
 				{ role: 'user', content: `# Table of Contents: \n\n ${tocPrompt}` },
 				{ role: 'user', content: `# Chapter Metadata: \n\n${JSON.stringify(metadata, null, 2)}` },
-				{ role: 'user', content: `# Chapter Outline / Template: \n\n ${chapter.outline}` },
+				{ role: 'user', content: `# Chapter Outline: \n\n ${chapter.outline}` },
 			],
 		});
 
