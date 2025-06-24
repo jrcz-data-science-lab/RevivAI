@@ -53,13 +53,25 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 		(href: string, event: React.MouseEvent<HTMLAnchorElement>) => {
 			event.preventDefault();
 
+			// If link to the chapter
 			const fileName = decodeURIComponent(href.split('/').pop() || '');
 			const file = files.find((f) => f.fileName === fileName);
-
 			if (file) {
 				setSelectedFileId(file.id);
-			} else {
-				window.open(href, '_blank');
+				return;
+			} 
+
+			// If link to the heading
+			if (href.startsWith('#') && mainRef.current) {
+				const headingName = href.slice(1);
+				const headings = mainRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+				for (const heading of headings) {
+					if (heading.innerHTML.toLowerCase() === headingName.toLowerCase()) {
+						heading.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+						return;
+					}
+				}
 			}
 		},
 		[files],
