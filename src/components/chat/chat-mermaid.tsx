@@ -31,7 +31,7 @@ export default function ChatMermaid({ children }: ChatMermaidProps) {
 
 	// If the diagram is not rendered yet, show the code as a fallback
 	if (!diagramSVG) {
-		return <div className="flex min-h-32 justify-center items-center">{children}</div>;
+		return <div className="flex min-h-32 justify-center items-center" />;
 	}
 
 	// If the diagram is rendered, show the SVG image

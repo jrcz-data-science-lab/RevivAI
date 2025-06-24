@@ -66,7 +66,7 @@
 		"react-medium-image-zoom": "^5.2.14",
 		"react-shiki": "^0.6.0",
 		"remark-gfm": "^4.0.1",
-		"repomix": "^0.3.5",
+		"repomix": "^0.3.9",
 		"sonner": "^1.7.4",
 		"tailwind-merge": "^3.2.0",
 		"tailwindcss": "^4.0.6",
