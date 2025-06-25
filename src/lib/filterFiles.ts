@@ -14,6 +14,7 @@ export const ignorePatterns = [
 		'**/vendor/**',
 		'**/package-lock.json',
 		'**/.env',
+		'**/*.svg',
 		'**/*.key',
 		'**/*.pem',
 		'**/*.p12',

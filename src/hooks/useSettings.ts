@@ -10,7 +10,7 @@ export interface Settings {
 
 const settingsAtom = atomWithStorage<Settings>('settings', {
 	parallelization: 1,
-	temperature: 0.1,
+	temperature: 0.5,
 	language: 'en',
 });
 

@@ -5,10 +5,10 @@ import { Button } from '../ui/button';
 import { Toaster } from '@/components/ui/toaster';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Input } from '../ui/input';
+import { SetupHelp } from './setup-help';
 import { SetupBanner } from './setup-banner';
 import { LoaderCircle } from 'lucide-react';
 import { getDefaultCredentials, useSetup } from '@/hooks/useSetup';
-import { SetupHelp } from './setup-help';
 
 // True if the public model is provided
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
@@ -18,7 +18,7 @@ const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
  */
 export function Setup() {
 	const { submit, credentialsForm, handleProviderChange, isTesting, setCredentialsForm, validate } = useSetup();
-
+	
 	/**
 	 * Render the form for the selected LLM provider
 	 * @param provider The LLM provider data
