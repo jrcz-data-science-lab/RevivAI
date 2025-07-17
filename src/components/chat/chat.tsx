@@ -59,7 +59,7 @@ export function Chat({ model, codebase }: ChatProps) {
 				<div className="z-0 flex flex-col w-full min-h-fit max-w-prose gap-2 px-1">
 					{!chatActive && (
 						<div className="mb-12 mx-6">
-							<ChatWelcome />
+							<ChatWelcome codebase={codebase} />
 						</div>
 					)}
 
