@@ -1,17 +1,17 @@
 import type { Chapter } from '@/hooks/useWriter';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
 import {
 	MDXEditor,
+	codeBlockPlugin,
+	headingsPlugin,
 	linkPlugin,
 	listsPlugin,
-	quotePlugin,
-	headingsPlugin,
-	codeBlockPlugin,
-	thematicBreakPlugin,
 	markdownShortcutPlugin,
+	quotePlugin,
+	thematicBreakPlugin,
 } from '@mdxeditor/editor';
 import { useCallback } from 'react';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 interface WriterEditorProps {
 	chapter: Chapter;

@@ -39,8 +39,8 @@ function Title() {
 					{'Documentation'.split('').map((letter, index) => (
 						<motion.span
 							key={index}
-							initial={{ translateY: 80, rotate: 60 }}
-							animate={{ translateY: 0, rotate: 0 }}
+							initial={{ y: 80, rotate: 60 }}
+							animate={{ y: 0, rotate: 0 }}
 							transition={{
 								duration: 0.4,
 								delay: 0.8 + index * 0.02,
@@ -57,8 +57,8 @@ function Title() {
 					{'from'.split('').map((letter, index) => (
 						<motion.span
 							key={index}
-							initial={{ translateY: 80, rotate: 60 }}
-							animate={{ translateY: 0, rotate: 0 }}
+							initial={{ y: 80, rotate: 60 }}
+							animate={{ y: 0, rotate: 0 }}
 							transition={{
 								duration: 0.5,
 								delay: 1 + index * 0.04,
@@ -74,8 +74,8 @@ function Title() {
 					{'Code.'.split('').map((letter, index) => (
 						<motion.span
 							key={index}
-							initial={{ translateY: 80, rotate: 90 }}
-							animate={{ translateY: 0, rotate: 0 }}
+							initial={{ y: 80, rotate: 90 }}
+							animate={{ y: 0, rotate: 0 }}
 							transition={{
 								duration: 0.6,
 								delay: 1.2 + index * 0.06,

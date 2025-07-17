@@ -1,7 +1,6 @@
-import type { Database } from './useDb';
-import type { PackResult } from 'node_modules/repomix/lib/core/packager';
-import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
+import type { PackResult } from 'node_modules/repomix/lib/core/packager';
+import type { Database } from './useDb';
 
 interface UseCodebaseProps {
 	db: Database;

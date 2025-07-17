@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
-import { FolderUp, LoaderPinwheel } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FolderUp, LoaderPinwheel } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 interface UploadFilesProps {
 	onChange: (files: FileList) => void;

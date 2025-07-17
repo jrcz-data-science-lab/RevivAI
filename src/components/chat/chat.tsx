@@ -1,13 +1,13 @@
-import type { LanguageModelV1 } from 'ai';
 import type { Codebase } from '@/hooks/useCodebase';
-import { useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/lib/utils';
+import type { LanguageModelV1 } from 'ai';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 import { useChat } from '../../hooks/useChat';
-import ChatInput from './chat-input';
-import ChatWelcome from './chat-welcome';
-import ChatMessage from './chat-message';
 import { ChatError } from './chat-error';
+import ChatInput from './chat-input';
+import ChatMessage from './chat-message';
+import ChatWelcome from './chat-welcome';
 
 interface ChatProps {
 	model: LanguageModelV1;
@@ -89,8 +89,8 @@ export function Chat({ model, codebase }: ChatProps) {
 						)}
 					>
 						<motion.div
-							initial={{ opacity: 0, translateY: 16 }}
-							animate={{ opacity: 1, translateY: 0 }}
+							initial={{ opacity: 0, y: 16 }}
+							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.6, type: 'spring' }}
 							className="max-w-prose w-full pb-8"
 						>

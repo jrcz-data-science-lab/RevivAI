@@ -1,14 +1,14 @@
 import type { GeneratedFile } from '@/hooks/useWriter';
 import { cn, colorHash } from '@/lib/utils';
-import { useMemo, useState } from 'react';
-import { Button } from '../ui/button';
-import { Trash } from 'lucide-react';
-import { Progress } from '../ui/progress';
-import { AnimatePresence, motion } from 'motion/react';
 import { format } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { WriterPreview } from './writer-preview';
+import { Trash } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useMemo, useState } from 'react';
+import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Progress } from '../ui/progress';
+import { WriterPreview } from './writer-preview';
 
 interface WriterGenerateExportsProps {
 	generatedFiles: GeneratedFile[];

@@ -1,14 +1,14 @@
+import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
+import { useSettings } from '@/hooks/useSettings';
+import { type LanguageName, languages } from '@/lib/languages';
+import { atom, useAtom, useAtomValue } from 'jotai';
+import { SlidersHorizontal } from 'lucide-react';
 import { memo } from 'react';
 import { Button } from './ui/button';
-import { SlidersHorizontal } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Label } from './ui/label';
-import { atom, useAtom, useAtomValue } from 'jotai';
-import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { useSettings } from '@/hooks/useSettings';
 import { Input } from './ui/input';
-import { languages, type LanguageName } from '@/lib/languages';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 export const isSettingsOpenedAtom = atom(false);
 

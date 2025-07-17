@@ -1,13 +1,13 @@
-import type { ElementType } from 'react';
-import type { LanguageModelV1 } from 'ai';
-import { Brain, ScrollText } from 'lucide-react';
+import type { WriterTemplateColor } from '@/components/writer/writer-templates-item';
 import type { Database } from '@/hooks/useDb';
 import type { Settings } from '@/hooks/useSettings';
-import type { WriterTemplateColor } from '@/components/writer/writer-templates-item';
+import type { LanguageModelV1 } from 'ai';
+import { Brain, ScrollText } from 'lucide-react';
+import type { ElementType } from 'react';
 
+import type { Codebase } from '@/hooks/useCodebase';
 import { applyReadmeTemplate } from './readmeTemplate';
 import { applySmartTemplate } from './smartTemplate';
-import type { Codebase } from '@/hooks/useCodebase';
 
 export interface Template {
 	name: string;

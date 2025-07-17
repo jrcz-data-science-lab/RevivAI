@@ -1,6 +1,6 @@
 import type { Template } from '@/lib/templates/main';
-import { Card } from '../ui/card';
 import { cn } from '@/lib/utils';
+import { Card } from '../ui/card';
 
 interface WriterTemplatesItemProps {
 	template: Template;

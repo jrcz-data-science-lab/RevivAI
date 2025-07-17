@@ -1,10 +1,10 @@
-import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
 import { cn } from '@/lib/utils';
-import { lazy, memo, Suspense } from 'react';
-import { motion } from 'motion/react';
 import { Copy, LoaderPinwheel, Trash } from 'lucide-react';
-import { Separator } from '../ui/separator';
+import { motion } from 'motion/react';
+import { Suspense, lazy, memo } from 'react';
+import type { ChatMessage as ChatMessageType } from '../../hooks/useChat';
 import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 
 const ChatMarkdownLazy = lazy(() => import('./chat-markdown'));
 
@@ -26,8 +26,8 @@ function ChatMessage({ message, isWriting, onDelete }: ChatMessageProps) {
 
 	return (
 		<motion.div
-			initial={isWriting ? { opacity: 0, translateY: 16 } : {}}
-			animate={{ opacity: 1, translateY: 0 }}
+			initial={isWriting ? { opacity: 0, y: 16 } : {}}
+			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3, type: 'tween' }}
 			className={cn('message w-full flex flex-col gap-6 origin-center group relative')}
 		>

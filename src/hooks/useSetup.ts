@@ -1,8 +1,8 @@
-import { generateObject } from 'ai';
-import { toast } from 'sonner';
-import { useState } from 'react';
 import { testSchema } from '@/lib/schemas';
-import { createModel, useModel, type LLMCredentials, type LLMProvider } from './useModel';
+import { generateObject } from 'ai';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { type LLMCredentials, type LLMProvider, createModel, useModel } from './useModel';
 
 /**
  * Get the default credentials for the selected LLM provider

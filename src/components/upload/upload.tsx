@@ -1,11 +1,11 @@
 import type { PromptifyResult } from '@/actions/promptify';
+import { useCodebase } from '@/hooks/useCodebase';
 import type { Database } from '@/hooks/useDb';
+import { atom, useAtom } from 'jotai';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { UploadForm, type UploadFormSchema } from './upload-form';
-import { atom, useAtom } from 'jotai';
 import { UploadCodebase } from './upload-codebase';
-import { useCodebase } from '@/hooks/useCodebase';
+import { UploadForm, type UploadFormSchema } from './upload-form';
 
 export interface UploadProps {
 	db: Database;

@@ -1,6 +1,6 @@
-import type { ElementType } from 'react';
 import { cn } from '@/lib/utils';
 import { Trash } from 'lucide-react';
+import type { ElementType } from 'react';
 
 interface WriterSidebarItemProps {
 	icon: ElementType;

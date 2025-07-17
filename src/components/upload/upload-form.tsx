@@ -1,21 +1,21 @@
-import type { z } from 'zod';
-import type { PromptifyResult } from '@/actions/promptify';
-import type { CodebaseType } from '@/hooks/useCodebase';
-import { useState } from 'react';
 import { actions } from 'astro:actions';
-import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
+import type { PromptifyResult } from '@/actions/promptify';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { GithubIcon } from '@/components/ui/github-icon';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { CodebaseType } from '@/hooks/useCodebase';
+import { createFileFilter } from '@/lib/filterFiles';
 import { promptifySchema } from '@/lib/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { GithubIcon } from '@/components/ui/github-icon';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { FolderUp, LoaderCircle } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import type { z } from 'zod';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { UploadFiles } from './upload-files';
-import { createFileFilter } from '@/lib/filterFiles';
 
 export type UploadFormSchema = z.infer<typeof promptifySchema>;
 

@@ -1,14 +1,14 @@
+import type { Codebase } from '@/hooks/useCodebase';
 import type { Database } from '@/hooks/useDb';
+import { type WriterItemId, useWriter } from '@/hooks/useWriter';
 import type { LanguageModelV1 } from 'ai';
 import { Plus } from 'lucide-react';
-import { Button } from '../ui/button';
-import { WriterSidebar } from './writer-sidebar';
-import { WriterGenerate } from './writer-generate';
-import { WriterTemplates } from './writer-templates';
-import { useWriter, type WriterItemId } from '@/hooks/useWriter';
 import { motion } from 'motion/react';
-import { lazy, Suspense } from 'react';
-import type { Codebase } from '@/hooks/useCodebase';
+import { Suspense, lazy } from 'react';
+import { Button } from '../ui/button';
+import { WriterGenerate } from './writer-generate';
+import { WriterSidebar } from './writer-sidebar';
+import { WriterTemplates } from './writer-templates';
 
 const WriterEditorLazy = lazy(() => import('./writer-editor'));
 

@@ -28,8 +28,8 @@ export function AnimatedText({
 				<span className="overflow-hidden" key={i}>
 					<motion.span
 						className="inline-block min-w-fit"
-						initial={{ translateY: 64 }}
-						animate={{ translateY: 0 }}
+						initial={{ y: 64 }}
+						animate={{ y: 0 }}
 						exit={{ opacity: 0 }}
 						transition={{
 							duration: speed,

@@ -1,4 +1,4 @@
-import { lazy, memo, type ReactNode } from 'react';
+import { type ReactNode, lazy, memo } from 'react';
 import ShikiHighlighter, { type Element, isInlineCode } from 'react-shiki';
 
 const ChatMermaidLazy = lazy(() => import('./chat-mermaid'));

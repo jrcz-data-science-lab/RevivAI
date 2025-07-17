@@ -1,14 +1,14 @@
+import { useDebounce } from '@/hooks/useDebounce';
+import { countTokens } from '@/lib/countTokens';
+import { cn } from '@/lib/utils';
+import { useAtomValue } from 'jotai';
+import { CircleStop, Send } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
-import { CircleStop, Send } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { chatTokensCountAtom } from '../../hooks/useChat';
-import { useAtomValue } from 'jotai';
-import { Badge } from '../ui/badge';
 import { InfoBar } from '../info-bar';
-import { countTokens } from '@/lib/countTokens';
-import { useDebounce } from '@/hooks/useDebounce';
+import { Badge } from '../ui/badge';
 
 interface ChatInputProps {
 	onSubmit: (value: string) => void;

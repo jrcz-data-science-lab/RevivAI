@@ -1,11 +1,11 @@
-import { DoorClosed, FolderUp, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { memo } from 'react';
-import { isSettingsOpenedAtom } from './settings';
-import { isUploadOpenAtom } from './upload/upload';
-import { ThemeToggle } from './theme-toggle';
 import { useSetAtom } from 'jotai';
+import { ThemeToggle } from './theme-toggle';
+import { isUploadOpenAtom } from './upload/upload';
+import { isSettingsOpenedAtom } from './settings';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DoorClosed, FolderUp, SlidersHorizontal } from 'lucide-react';
 
 export type TabName = 'chat' | 'writer';
 

@@ -1,9 +1,9 @@
 import type { Codebase } from '@/hooks/useCodebase';
-import { Button } from '../ui/button';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { ScrollArea } from '../ui/scroll-area';
-import { useMemo } from 'react';
 import { cn, getTokensCountColor } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { useMemo } from 'react';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface UploadCodebaseProps {
 	codebase: Codebase;

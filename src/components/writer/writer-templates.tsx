@@ -1,8 +1,8 @@
-import { WriterTemplatesItem } from './writer-templates-item';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { type TemplateKey, templates } from '@/lib/templates/main';
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import { templates, type TemplateKey } from '@/lib/templates/main';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { WriterTemplatesItem } from './writer-templates-item';
 
 interface WriterTemplatesProps {
 	isLoading: boolean;

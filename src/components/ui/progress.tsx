@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
+import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 

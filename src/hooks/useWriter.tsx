@@ -1,17 +1,17 @@
+import { Button } from '@/components/ui/button';
+import { getLanguagePrompt } from '@/lib/languages';
+import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
+import { type TemplateKey, templates } from '@/lib/templates/main';
+import { createTOCPrompt } from '@/lib/utils';
+import { type LanguageModelV1, generateText } from 'ai';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useAtom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import type { Codebase } from './useCodebase';
 import type { Database } from './useDb';
-import writerSystemPrompt from '@/lib/prompts/writer.md?raw';
-import { generateText, type LanguageModelV1 } from 'ai';
-import { toast } from 'sonner';
-import { useEffect, useRef } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { atomWithStorage } from 'jotai/utils';
-import { useAtom } from 'jotai';
-import { createTOCPrompt } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { useSettings } from './useSettings';
-import { getLanguagePrompt } from '@/lib/languages';
-import { templates, type TemplateKey } from '@/lib/templates/main';
 
 export interface UseWriterProps {
 	db: Database;

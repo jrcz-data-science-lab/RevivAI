@@ -1,20 +1,20 @@
-import { useTheme } from '@/hooks/useTheme';
-import Navbar, { type TabName } from './navbar';
-import { Toaster } from './ui/toaster';
-import { Chat } from './chat/chat';
-import { Writer } from './writer/writer';
-import { useHashRouter } from '@/hooks/useHashRouter';
-import { useDb } from '@/hooks/useDb';
-import { Button } from './ui/button';
-import { motion } from 'motion/react';
-import { useModel } from '@/hooks/useModel';
-import { useEffect } from 'react';
-import { useHydrateAtoms } from 'jotai/utils';
-import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
-import { isUploadOpenAtom, Upload } from './upload/upload';
-import { useSetAtom } from 'jotai';
 import { useCodebase } from '@/hooks/useCodebase';
+import { useDb } from '@/hooks/useDb';
+import { useHashRouter } from '@/hooks/useHashRouter';
+import { useModel } from '@/hooks/useModel';
+import { currentProjectIdAtom, useProjects } from '@/hooks/useProjects';
+import { useTheme } from '@/hooks/useTheme';
+import { useSetAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
+import { motion } from 'motion/react';
+import { useEffect } from 'react';
+import { Chat } from './chat/chat';
+import Navbar, { type TabName } from './navbar';
 import Settings from './settings';
+import { Button } from './ui/button';
+import { Toaster } from './ui/toaster';
+import { Upload, isUploadOpenAtom } from './upload/upload';
+import { Writer } from './writer/writer';
 
 interface AppProps {
 	projectId: string;
@@ -56,8 +56,8 @@ export default function App({ projectId }: AppProps) {
 	if (!projectId || !isProjectExists(projectId)) {
 		return (
 			<motion.div
-				initial={{ opacity: 0, translateY: 16 }}
-				animate={{ opacity: 1, translateY: 0 }}
+				initial={{ opacity: 0, y: 16 }}
+				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.1, delay: 0.3 }}
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>
@@ -74,8 +74,8 @@ export default function App({ projectId }: AppProps) {
 	if (!model) {
 		return (
 			<motion.div
-				initial={{ opacity: 0, translateY: 16 }}
-				animate={{ opacity: 1, translateY: 0 }}
+				initial={{ opacity: 0, y: 16 }}
+				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.1, delay: 0.3 }}
 				className="text-muted-foreground flex flex-col gap-4 justify-center items-center"
 			>

@@ -1,6 +1,6 @@
+import { CircleX } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { CircleX } from 'lucide-react';
 
 interface ChatErrorProps {
 	errorMessage: string | null;
@@ -11,9 +11,9 @@ export function ChatError({ errorMessage }: ChatErrorProps) {
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, translateY: 16 }}
-			animate={{ opacity: 1, translateY: 0 }}
-			exit={{ opacity: 0, translateY: -16 }}
+			initial={{ opacity: 0, y: 16 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: -16 }}
 			transition={{ duration: 0.6, type: 'spring' }}
 			className="mb-4"
 		>

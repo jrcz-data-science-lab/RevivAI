@@ -1,12 +1,12 @@
-import type { z } from 'zod';
-import { memo } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { newProjectFormSchema } from '@/lib/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { memo } from 'react';
+import { useForm } from 'react-hook-form';
+import type { z } from 'zod';
 
 interface ProjectsNewProps {
 	onCreate: (data: ProjectNewFormSchema) => void;

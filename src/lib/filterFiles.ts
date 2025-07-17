@@ -1,5 +1,5 @@
-import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore';
 import { minimatch } from 'minimatch';
+import { defaultIgnoreList } from 'node_modules/repomix/lib/config/defaultIgnore';
 
 // List if ignored patters
 export const ignorePatterns = [

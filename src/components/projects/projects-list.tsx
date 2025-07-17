@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { Trash } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
-import { cn } from '@/lib/utils.ts';
 import { Button } from '@/components/ui/button';
 import type { ProjectMetadata } from '@/hooks/useProjects';
+import { cn } from '@/lib/utils.ts';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { Trash } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useMemo } from 'react';
 
 interface ProjectsListProps {
 	projects: ProjectMetadata[];

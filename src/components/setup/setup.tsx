@@ -1,14 +1,14 @@
-import type { LLMCredentials, LLMProvider } from '@/hooks/useModel';
-import { motion } from 'motion/react';
-import { Label } from '../ui/label';
-import { Button } from '../ui/button';
 import { Toaster } from '@/components/ui/toaster';
-import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
-import { Input } from '../ui/input';
-import { SetupHelp } from './setup-help';
-import { SetupBanner } from './setup-banner';
-import { LoaderCircle } from 'lucide-react';
+import type { LLMCredentials, LLMProvider } from '@/hooks/useModel';
 import { getDefaultCredentials, useSetup } from '@/hooks/useSetup';
+import { LoaderCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
+import { SetupBanner } from './setup-banner';
+import { SetupHelp } from './setup-help';
 
 // True if the public model is provided
 const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
@@ -18,7 +18,7 @@ const PUBLIC_MODEL_PROVIDED = !!import.meta.env.PUBLIC_OLLAMA_API_URL;
  */
 export function Setup() {
 	const { submit, credentialsForm, handleProviderChange, isTesting, setCredentialsForm, validate } = useSetup();
-	
+
 	/**
 	 * Render the form for the selected LLM provider
 	 * @param provider The LLM provider data
@@ -73,9 +73,9 @@ export function Setup() {
 	return (
 		<div className="relative w-full flex justify-center items-center max-w-prose overflow-x-hidden px-6 pt-8 mb-16 mx-auto">
 			<motion.div
-				initial={{ opacity: 0, translateY: 8 }}
-				animate={{ opacity: 1, translateY: 0 }}
-				exit={{ opacity: 0, translateY: 8 }}
+				initial={{ opacity: 0, y: 8 }}
+				animate={{ opacity: 1, y: 0 }}
+				exit={{ opacity: 0, y: 8 }}
 				transition={{ duration: 0.6, type: 'spring' }}
 				className="flex flex-col p-4 gap-4 max-w-full"
 			>

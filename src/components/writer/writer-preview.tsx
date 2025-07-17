@@ -1,15 +1,15 @@
 import type { GeneratedFile } from '@/hooks/useWriter';
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Button } from '../ui/button';
-import { ScrollArea } from '../ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { rehypeInlineCodeProperty } from 'react-shiki';
+import remarkGfm from 'remark-gfm';
 import CodeHighlight from '../chat/chat-code-highlight';
-import { Switch } from '../ui/switch';
+import { Button } from '../ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Label } from '../ui/label';
+import { ScrollArea } from '../ui/scroll-area';
+import { Switch } from '../ui/switch';
 
 interface WriterPreviewProps {
 	open: boolean;
@@ -59,7 +59,7 @@ export function WriterPreview({ open, onClose, files }: WriterPreviewProps) {
 			if (file) {
 				setSelectedFileId(file.id);
 				return;
-			} 
+			}
 
 			// If link to the heading
 			if (href.startsWith('#') && mainRef.current) {

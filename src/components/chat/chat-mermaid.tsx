@@ -1,7 +1,7 @@
-import Zoom from 'react-medium-image-zoom';
-import { useEffect, useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { renderMermaidCode, validateMermaidCode } from '@/lib/mermaid';
+import { useEffect, useMemo, useState } from 'react';
+import Zoom from 'react-medium-image-zoom';
 
 // Styles for image zooming
 import '@/styles/medium-image-zoom.css';

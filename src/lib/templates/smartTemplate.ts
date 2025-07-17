@@ -1,10 +1,10 @@
-import type { Database } from '@/hooks/useDb';
-import { generateText, streamObject, type LanguageModelV1 } from 'ai';
-import { chapterSchema } from '../schemas';
-import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
-import type { Settings } from '@/hooks/useSettings';
-import { getLanguagePrompt } from '../languages';
 import type { Codebase } from '@/hooks/useCodebase';
+import type { Database } from '@/hooks/useDb';
+import type { Settings } from '@/hooks/useSettings';
+import WriterGenerateStructure from '@/lib/prompts/writer-generate.md?raw';
+import { type LanguageModelV1, generateText, streamObject } from 'ai';
+import { getLanguagePrompt } from '../languages';
+import { chapterSchema } from '../schemas';
 
 /**
  * Generates a template for the documentation based on the codebase.

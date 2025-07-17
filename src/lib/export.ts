@@ -1,6 +1,6 @@
-import { zipSync, strToU8 } from 'fflate';
-import { renderMermaidInMarkdown } from './mermaid';
 import type { GeneratedFile } from '@/hooks/useWriter';
+import { strToU8, zipSync } from 'fflate';
+import { renderMermaidInMarkdown } from './mermaid';
 
 /**
  * Download exported files as a zip archive or individual files.

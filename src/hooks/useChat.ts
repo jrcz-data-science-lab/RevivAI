@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { atom, useAtom, useSetAtom } from 'jotai';
-import { produce } from 'immer';
-import { countTokens, upgradeTokenModel } from '../lib/countTokens';
-import { streamText, type CoreMessage, type LanguageModelV1 } from 'ai';
 import type { Codebase } from '@/hooks/useCodebase';
-import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
-import { useSettings } from './useSettings';
 import { getLanguagePrompt } from '@/lib/languages';
+import chatSystemPrompt from '@/lib/prompts/chat.md?raw';
+import { type CoreMessage, type LanguageModelV1, streamText } from 'ai';
+import { produce } from 'immer';
+import { atom, useAtom, useSetAtom } from 'jotai';
+import { useCallback, useEffect, useRef } from 'react';
+import { countTokens, upgradeTokenModel } from '../lib/countTokens';
+import { useSettings } from './useSettings';
 
 interface UseChatProps {
 	model: LanguageModelV1;
