@@ -28,7 +28,7 @@ export function InfoBar({ modelName, messagesCount, totalTokens }: InfoBarProps)
 			{typeof totalTokens === 'number' && (
 				<>
 					<span className="text-muted">/</span>
-					<span>
+					<span className={getTokensCountColor(totalTokens)}>
 						<b>{formatter.format(totalTokens)}</b> {totalTokens === 1 ? 'token' : 'tokens'}
 					</span>
 				</>

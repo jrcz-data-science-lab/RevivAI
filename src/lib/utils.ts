@@ -18,7 +18,7 @@ export function cn(...inputs: ClassValue[]) {
  * @returns The tailwind color class.
  */
 export function getTokensCountColor(tokensCount: number, mediumThreshold = 90_000, highThreshold = 200_000) {
-	if (tokensCount > highThreshold) return 'text-destructive';
+	if (tokensCount > highThreshold) return 'text-red-500';
 	if (tokensCount > mediumThreshold) return 'text-amber-500';
 	return '';
 }
