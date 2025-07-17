@@ -45,6 +45,12 @@ export function useProjects() {
 		setProjects((projects) => {
 			return projects.filter((project) => project.id !== id);
 		});
+
+		// Delete the IndexedDB database for this project
+		if (typeof window !== 'undefined' && 'indexedDB' in window) {
+			const dbName = `revivai-${id}`;
+			indexedDB.deleteDatabase(dbName);
+		}
 	};
 
 	/**
